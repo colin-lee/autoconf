@@ -1,25 +1,32 @@
 package me.config;
 
-import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Set;
 
 /**
  * 基于本地文件的配置
  * Created by lirui on 2015/9/23.
  */
 public class LocalConfig extends ConfigCache implements IConfig {
-    private static final Logger log = LoggerFactory.getLogger(LocalConfig.class);
+    private final Logger log = LoggerFactory.getLogger(LocalConfig.class);
     private final String name;
     private final Path localPath;
-    private Set<IConfigChangeListener> listeners = Sets.newConcurrentHashSet();
+    private final IChangeable eventBus;
 
     public LocalConfig(String name, Path localPath) {
         this.name = name;
         this.localPath = localPath;
+        this.eventBus = new EventBus(this);
+        try {
+            this.setContent(Files.toByteArray(localPath.toFile()));
+        } catch (IOException e) {
+            this.setContent(new byte[0]);
+            log.error("configName={}, localPath={}", name, localPath, e);
+        }
     }
 
     @Override
@@ -27,46 +34,25 @@ public class LocalConfig extends ConfigCache implements IConfig {
         return name;
     }
 
-    @Override
     public void addListener(IConfigChangeListener listener) {
-        addListener(listener, true);
+        eventBus.addListener(listener);
     }
 
-    @Override
     public void addListener(IConfigChangeListener listener, boolean loadAfterRegister) {
-        if (listener != null && !listeners.contains(listener)) {
-            listeners.add(listener);
-            if (loadAfterRegister) {
-                try {
-                    listener.dataChanged(this);
-                } catch (Exception e) {
-                    log.error("cannot reload " + name, e);
-                }
-            }
-        }
+        eventBus.addListener(listener, loadAfterRegister);
     }
 
-    @Override
     public void removeListener(IConfigChangeListener listener) {
-        if (listener != null) {
-            listeners.remove(listener);
-        }
+        eventBus.removeListener(listener);
     }
 
-    void notifyListener() {
-        for (IConfigChangeListener i : listeners) {
-            log.info("{} changed, notify {}", name, i);
-            try {
-                i.dataChanged(this);
-            } catch (Exception e) {
-                log.error("cannot reload " + name, e);
-            }
-        }
+    public void notifyListeners() {
+        eventBus.notifyListeners();
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ConfigFile{");
+        final StringBuilder sb = new StringBuilder("LocalConfig{");
         sb.append("name='").append(name).append('\'');
         sb.append(", localPath=").append(localPath);
         sb.append('}');

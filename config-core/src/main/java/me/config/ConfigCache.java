@@ -14,7 +14,7 @@ import java.util.Map;
  * 根据缓存获取内容
  * Created by lirui on 15/9/23.
  */
-public class ConfigCache {
+public class ConfigCache implements IConfigCache {
     protected Charset UTF8 = Charset.forName("UTF-8");
     protected Charset GBK = Charset.forName("GBK");
     private boolean parsed;
@@ -87,7 +87,6 @@ public class ConfigCache {
      * @param key 查找的key
      * @return
      */
-
     public String get(String key) {
         if (!parsed) {
             synchronized (this) {
