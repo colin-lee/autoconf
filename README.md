@@ -4,11 +4,10 @@
 - 基于Zookeeper集群实现集中式、实时更新配置
 - 基于本地FileCache实现冷启动加速、去中心强依赖功能
 - 扫描本地FileCache的修改，调试时临时修改参数不必通过web界面操作，避免生成很多特例配置
-
-
-    每个配置文件对应zookeeper的一个path，并且会把这个内容写入到一个本地目录下的同名文件中。
-    会有一个异步线程扫描本地文件的修改，若有修改会触发重新加载。
-    本地修改的内容会在服务重启以及zookeeper重写覆盖，只能是临时调试使用。
+        
+        每个配置文件对应zookeeper的一个path，并且会把这个内容写入到一个本地目录下的同名文件中。
+        会有一个异步线程扫描本地文件的修改，若有修改会触发重新加载。
+        本地修改的内容会在服务重启以及zookeeper重写覆盖，只能是临时调试使用。
 
 ###本地配置目录
 - 可以通过环境变量 -DlocalConfigPath=/data/config 来指明本地配置目录
@@ -35,11 +34,9 @@
 
 ###KV格式配置
 - 提供各种数据类型的get方法，比如
-> getInt(String key, int defaultVal)
-> getInt(String key)
-> 如果不提供默认值，相当于数字类型默认为0，bool类型默认为false。
-
-
+        getInt(String key, int defaultVal)
+        getInt(String key)
+        如果不提供默认值，相当于数字类型默认为0，bool类型默认为false。
 - 判断是否有对应配置，`has(String key)`
 
 ###文本格式配置
@@ -57,7 +54,6 @@
 
 ###配置加载优先顺序
 默认在zookeeper上创建 /cms/config 根目录。如果当前进程信息如下
-
 
     process.team = teamName
     process.profile = deploy
