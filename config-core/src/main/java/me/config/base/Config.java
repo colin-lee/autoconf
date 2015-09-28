@@ -51,16 +51,18 @@ public class Config extends MapSource {
 			synchronized (this) {
 				if (!parsed) {
 					Map<String, String> m = Maps.newHashMap();
-					String txt = new String(content, UTF8);
-					for (String i : lines(txt, true)) {
-						int pos = i.indexOf('=');
-						if (pos != -1 && (pos + 1) < i.length()) {
-							String k = i.substring(0, pos).trim();
-							String v = i.substring(pos + 1).trim();
-							m.put(k, v);
+					if (content != null) {
+						String txt = new String(content, UTF8);
+						for (String i : lines(txt, true)) {
+							int pos = i.indexOf('=');
+							if (pos != -1 && (pos + 1) < i.length()) {
+								String k = i.substring(0, pos).trim();
+								String v = i.substring(pos + 1).trim();
+								m.put(k, v);
+							}
 						}
+						copyOf(m);
 					}
-					copyOf(m);
 					parsed = true;
 				}
 			}
