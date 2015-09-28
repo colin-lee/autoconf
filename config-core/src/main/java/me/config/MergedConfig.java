@@ -40,7 +40,7 @@ public class MergedConfig extends BaseConfig {
 			c.addListener(listener, false);
 		}
 
-		// 同名配置，排在前面的优先
+		// 同名配置，排在前面的优先，所以按照做一次排序反转
 		this.configs = Lists.newArrayList(configs);
 		Collections.reverse(this.configs);
 
