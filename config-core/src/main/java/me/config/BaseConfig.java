@@ -4,22 +4,22 @@ package me.config;
  *
  * Created by lirui on 15/9/24.
  */
-public abstract class BaseConfig extends ConfigCache implements IConfig {
+public abstract class BaseConfig extends Config implements IChangeableConfig {
 	private final IChangeable eventBus;
 
 	public BaseConfig() {
 		this.eventBus = new EventBus(this);
 	}
 
-	public void addListener(IConfigChangeListener listener) {
+	public void addListener(IChangeListener listener) {
 		eventBus.addListener(listener);
 	}
 
-	public void addListener(IConfigChangeListener listener, boolean loadAfterRegister) {
+	public void addListener(IChangeListener listener, boolean loadAfterRegister) {
 		eventBus.addListener(listener, loadAfterRegister);
 	}
 
-	public void removeListener(IConfigChangeListener listener) {
+	public void removeListener(IChangeListener listener) {
 		eventBus.removeListener(listener);
 	}
 

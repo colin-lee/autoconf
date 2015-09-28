@@ -10,7 +10,7 @@ public interface IChangeable {
      *
      * @param listener 更新回调方法
      */
-    void addListener(IConfigChangeListener listener);
+    void addListener(IChangeListener listener);
 
     /**
      * 注册更新回调方法
@@ -18,14 +18,14 @@ public interface IChangeable {
      * @param listener 更新回调方法
      * @param loadAfterRegister 注册后立即调用回调函数
      */
-    void addListener(IConfigChangeListener listener, boolean loadAfterRegister);
+    void addListener(IChangeListener listener, boolean loadAfterRegister);
 
     /**
      * 去掉listener
      *
      * @param listener 更新回调函数
      */
-    void removeListener(IConfigChangeListener listener);
+    void removeListener(IChangeListener listener);
 
     /**
      * 通知所有注册的回调函数

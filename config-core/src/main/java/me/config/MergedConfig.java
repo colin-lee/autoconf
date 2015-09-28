@@ -18,24 +18,24 @@ import java.util.Map;
  */
 public class MergedConfig extends BaseConfig {
 	private final String name;
-	private final List<IConfig> configs;
-	public MergedConfig(List<IConfig> configs) {
+	private final List<IChangeableConfig> configs;
+	public MergedConfig(List<IChangeableConfig> configs) {
 		super();
-		this.name = Joiner.on(',').join(Collections2.transform(configs, new Function<IConfig, String>() {
+		this.name = Joiner.on(',').join(Collections2.transform(configs, new Function<IChangeableConfig, String>() {
 			@Override
-			public String apply(IConfig input) {
+			public String apply(IChangeableConfig input) {
 				return input.getName();
 			}
 		}));
 
 		// 注册单个配置文件的更新回调功能
-		IConfigChangeListener listener = new IConfigChangeListener() {
+		IChangeListener listener = new IChangeListener() {
 			@Override
 			public void dataChanged(IConfig config) {
 				merge();
 			}
 		};
-		for(IConfig c: configs) {
+		for(IChangeableConfig c: configs) {
 			c.addListener(listener, false);
 		}
 
@@ -49,7 +49,7 @@ public class MergedConfig extends BaseConfig {
 
 	private void merge() {
 		Map<String, String> m = Maps.newHashMap();
-		for(IConfig c: this.configs) {
+		for(IChangeableConfig c: this.configs) {
 			m.putAll(c.getAll());
 		}
 		StringBuilder sbd = new StringBuilder();

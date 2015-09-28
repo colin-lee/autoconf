@@ -12,18 +12,18 @@ import java.util.Set;
  */
 public class EventBus implements IChangeable {
     private final Logger log = LoggerFactory.getLogger(EventBus.class);
-    private final Set<IConfigChangeListener> listeners = Sets.newConcurrentHashSet();
-    private final IConfig config;
+    private final Set<IChangeListener> listeners = Sets.newConcurrentHashSet();
+    private final IChangeableConfig config;
 
-    public EventBus(IConfig config) {
+    public EventBus(IChangeableConfig config) {
         this.config = config;
     }
 
-    public void addListener(IConfigChangeListener listener) {
+    public void addListener(IChangeListener listener) {
         addListener(listener, true);
     }
 
-    public void addListener(IConfigChangeListener listener, boolean loadAfterRegister) {
+    public void addListener(IChangeListener listener, boolean loadAfterRegister) {
         if (listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
             if (loadAfterRegister) {
@@ -36,14 +36,14 @@ public class EventBus implements IChangeable {
         }
     }
 
-    public void removeListener(IConfigChangeListener listener) {
+    public void removeListener(IChangeListener listener) {
         if (listener != null) {
             listeners.remove(listener);
         }
     }
 
     public void notifyListeners() {
-        for (IConfigChangeListener i : listeners) {
+        for (IChangeListener i : listeners) {
             log.info("{} changed, notify {}", config.getName(), i);
             try {
                 i.dataChanged(config);

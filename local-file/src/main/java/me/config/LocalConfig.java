@@ -33,7 +33,6 @@ public class LocalConfig extends BaseConfig {
         return name;
     }
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("LocalConfig{");
