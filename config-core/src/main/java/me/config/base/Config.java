@@ -34,12 +34,14 @@ public class Config extends MapSource {
 		return content;
 	}
 
-	public synchronized void setContent(byte[] content) {
+	public void copyOf(byte[] content) {
 		this.content = content;
 	}
 
-	public synchronized void setSource(Map<String, String> m) {
-		copyOf(m);
+	@Override
+	public void copyOf(Map<String, String> m) {
+		super.copyOf(m);
+		parsed = true;
 		this.content = null;
 	}
 
@@ -49,7 +51,8 @@ public class Config extends MapSource {
 			synchronized (this) {
 				if (!parsed) {
 					Map<String, String> m = Maps.newHashMap();
-					for (String i : getLines(UTF8, true)) {
+					String txt = new String(content, UTF8);
+					for (String i : lines(txt, true)) {
 						int pos = i.indexOf('=');
 						if (pos != -1 && (pos + 1) < i.length()) {
 							String k = i.substring(0, pos).trim();
@@ -68,7 +71,7 @@ public class Config extends MapSource {
 	@Override
 	public Map<String, String> getAll() {
 		if (!parsed) {
-			get("_"); // 触发加载配置
+			this.get("_"); // 触发加载配置
 		}
 		return super.getAll();
 	}
@@ -90,11 +93,15 @@ public class Config extends MapSource {
 	}
 
 	public List<String> getLines(Charset charset) {
-		return getLines(charset, true);
+		return lines(new String(getContent(), charset), true);
 	}
 
 	public List<String> getLines(Charset charset, boolean removeComment) {
-		List<String> raw = Splitter.on('\n').trimResults().omitEmptyStrings().splitToList(getString(charset));
+		return lines(new String(getContent(), charset), removeComment);
+	}
+
+	private List<String> lines(String s, boolean removeComment) {
+		List<String> raw = Splitter.on('\n').trimResults().omitEmptyStrings().splitToList(s);
 		if (!removeComment) return raw;
 
 		List<String> clean = Lists.newArrayList();

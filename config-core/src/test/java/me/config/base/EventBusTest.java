@@ -49,8 +49,8 @@ public class EventBusTest {
 				count.incrementAndGet();
 			}
 		};
-		bus.addListener(listener, false);
 		//注明不做首次调用
+		bus.addListener(listener, false);
 		assertThat(count.get(), is(0));
 		bus.addListener(new IChangeListener() {
 			@Override
