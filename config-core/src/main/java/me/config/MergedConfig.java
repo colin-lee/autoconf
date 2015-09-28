@@ -28,13 +28,14 @@ public class MergedConfig extends BaseConfig {
 			}
 		}));
 
-		// 注册单个配置文件的更新回调功能
 		IChangeListener listener = new IChangeListener() {
 			@Override
 			public void dataChanged(IConfig config) {
 				merge();
 			}
 		};
+
+		// 注册单个配置文件的更新回调功能
 		for(IChangeableConfig c: configs) {
 			c.addListener(listener, false);
 		}
@@ -52,11 +53,7 @@ public class MergedConfig extends BaseConfig {
 		for(IChangeableConfig c: this.configs) {
 			m.putAll(c.getAll());
 		}
-		StringBuilder sbd = new StringBuilder();
-		for(Map.Entry<String, String> i: m.entrySet()) {
-			sbd.append(i.getKey()).append('=').append(i.getValue()).append('\n');
-		}
-		setContent(sbd.toString().getBytes(UTF8));
+		setSource(m);
 	}
 
 	public String getName() {
