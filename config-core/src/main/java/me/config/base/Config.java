@@ -14,30 +14,30 @@ import java.util.Map;
  * Created by lirui on 2015/9/23.
  */
 public class Config extends MapSource implements IConfig {
-    protected Charset UTF8 = Charset.forName("UTF-8");
-    protected Charset GBK = Charset.forName("GBK");
+	protected Charset UTF8 = Charset.forName("UTF-8");
+	protected Charset GBK = Charset.forName("GBK");
 	private boolean parsed = false;
-    private byte[] content;
+	private byte[] content;
 
-    public synchronized byte[] getContent() {
+	public synchronized byte[] getContent() {
 		if (content == null) {
 			Map<String, String> m = getAll();
 			if (m.size() == 0) {
 				content = new byte[0];
 			} else {
 				StringBuilder sbd = new StringBuilder();
-				for (Map.Entry<String, String> i: m.entrySet()) {
+				for (Map.Entry<String, String> i : m.entrySet()) {
 					sbd.append(i.getKey()).append('=').append(i.getValue()).append('\n');
 				}
 				content = sbd.toString().getBytes(UTF8);
 			}
 		}
-        return content;
-    }
+		return content;
+	}
 
-    public synchronized void setContent(byte[] content) {
-        this.content = content;
-    }
+	public synchronized void setContent(byte[] content) {
+		this.content = content;
+	}
 
 	public synchronized void setSource(Map<String, String> m) {
 		copyOf(m);
@@ -46,9 +46,9 @@ public class Config extends MapSource implements IConfig {
 
 	@Override
 	public String get(String key) {
-		if (! parsed) {
+		if (!parsed) {
 			synchronized (this) {
-				if (! parsed) {
+				if (!parsed) {
 					Map<String, String> m = Maps.newHashMap();
 					for (String i : getLines(UTF8, true)) {
 						int pos = i.indexOf('=');
@@ -68,41 +68,41 @@ public class Config extends MapSource implements IConfig {
 
 	@Override
 	public Map<String, String> getAll() {
-		if (! parsed) {
+		if (!parsed) {
 			get("_"); // 触发加载配置
 		}
 		return super.getAll();
 	}
 
 	public String getString() {
-        return new String(getContent(), UTF8);
-    }
+		return new String(getContent(), UTF8);
+	}
 
-    public String getGbkString() {
-        return new String(getContent(), GBK);
-    }
+	public String getGbkString() {
+		return new String(getContent(), GBK);
+	}
 
-    public String getString(Charset charset) {
-        return new String(getContent(), charset);
-    }
+	public String getString(Charset charset) {
+		return new String(getContent(), charset);
+	}
 
-    public List<String> getLines() {
-        return getLines(UTF8, true);
-    }
+	public List<String> getLines() {
+		return getLines(UTF8, true);
+	}
 
-    public List<String> getLines(Charset charset) {
-        return getLines(charset, true);
-    }
+	public List<String> getLines(Charset charset) {
+		return getLines(charset, true);
+	}
 
-    public List<String> getLines(Charset charset, boolean removeComment) {
-        List<String> raw = Splitter.on('\n').trimResults().omitEmptyStrings().splitToList(getString(charset));
-        if (!removeComment) return raw;
+	public List<String> getLines(Charset charset, boolean removeComment) {
+		List<String> raw = Splitter.on('\n').trimResults().omitEmptyStrings().splitToList(getString(charset));
+		if (!removeComment) return raw;
 
-        List<String> clean = Lists.newArrayList();
-        for (String i : raw) {
-            if (i.charAt(0) == '#' || i.startsWith("//")) continue;
-            clean.add(i);
-        }
-        return clean;
-    }
+		List<String> clean = Lists.newArrayList();
+		for (String i : raw) {
+			if (i.charAt(0) == '#' || i.startsWith("//")) continue;
+			clean.add(i);
+		}
+		return clean;
+	}
 }

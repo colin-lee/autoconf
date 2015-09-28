@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * 扩展map功能，可以获取不同类型的属性值
- *
+ * <p/>
  * Created by lirui on 15/9/28.
  */
 public class MapSource {

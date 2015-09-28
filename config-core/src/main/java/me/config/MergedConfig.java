@@ -23,6 +23,7 @@ import java.util.Map;
 public class MergedConfig extends BaseConfig {
 	private final String name;
 	private final List<IChangeableConfig> configs;
+
 	public MergedConfig(List<IChangeableConfig> configs) {
 		super();
 		this.name = Joiner.on(',').join(Collections2.transform(configs, new Function<IChangeableConfig, String>() {
@@ -40,7 +41,7 @@ public class MergedConfig extends BaseConfig {
 		};
 
 		// 注册单个配置文件的更新回调功能
-		for(IChangeableConfig c: configs) {
+		for (IChangeableConfig c : configs) {
 			c.addListener(listener, false);
 		}
 
@@ -54,7 +55,7 @@ public class MergedConfig extends BaseConfig {
 
 	private void merge() {
 		Map<String, String> m = Maps.newHashMap();
-		for(IChangeableConfig c: this.configs) {
+		for (IChangeableConfig c : this.configs) {
 			m.putAll(c.getAll());
 		}
 		setSource(m);

@@ -2,7 +2,7 @@ package me.config.api;
 
 /**
  * 配置更新回调
- *
+ * <p/>
  * Created by lirui on 2015/09/22.
  */
 public interface IChangeListener {

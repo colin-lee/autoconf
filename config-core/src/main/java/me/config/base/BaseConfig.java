@@ -5,7 +5,6 @@ import me.config.api.IChangeable;
 import me.config.api.IChangeableConfig;
 
 /**
- *
  * Created by lirui on 15/9/24.
  */
 public abstract class BaseConfig extends Config implements IChangeableConfig {

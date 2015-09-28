@@ -13,33 +13,33 @@ import java.nio.file.Path;
  * Created by lirui on 2015/9/23.
  */
 public class LocalConfig extends BaseConfig {
-    private final Logger log = LoggerFactory.getLogger(LocalConfig.class);
-    private final String name;
-    private final Path localPath;
+	private final Logger log = LoggerFactory.getLogger(LocalConfig.class);
+	private final String name;
+	private final Path localPath;
 
-    public LocalConfig(String name, Path localPath) {
+	public LocalConfig(String name, Path localPath) {
 		super();
-        this.name = name;
-        this.localPath = localPath;
-        try {
-            this.setContent(Files.toByteArray(localPath.toFile()));
-        } catch (IOException e) {
-            this.setContent(new byte[0]);
-            log.error("configName={}, localPath={}", name, localPath, e);
-        }
-    }
+		this.name = name;
+		this.localPath = localPath;
+		try {
+			this.setContent(Files.toByteArray(localPath.toFile()));
+		} catch (IOException e) {
+			this.setContent(new byte[0]);
+			log.error("configName={}, localPath={}", name, localPath, e);
+		}
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("LocalConfig{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", localPath=").append(localPath);
-        sb.append('}');
-        return sb.toString();
-    }
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("LocalConfig{");
+		sb.append("name='").append(name).append('\'');
+		sb.append(", localPath=").append(localPath);
+		sb.append('}');
+		return sb.toString();
+	}
 }
