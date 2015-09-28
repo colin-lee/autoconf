@@ -1,4 +1,4 @@
-package me.config;
+package me.config.api;
 
 /**
  * 配置更新回调

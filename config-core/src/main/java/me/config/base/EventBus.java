@@ -1,6 +1,9 @@
-package me.config;
+package me.config.base;
 
 import com.google.common.collect.Sets;
+import me.config.api.IChangeListener;
+import me.config.api.IChangeable;
+import me.config.api.IChangeableConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

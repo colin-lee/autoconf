@@ -1,4 +1,4 @@
-package me.config;
+package me.config.api;
 
 import java.nio.charset.Charset;
 import java.util.List;

@@ -1,4 +1,4 @@
-package me.config;
+package me.config.base;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;

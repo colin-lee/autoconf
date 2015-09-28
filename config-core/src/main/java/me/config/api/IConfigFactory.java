@@ -1,4 +1,4 @@
-package me.config;
+package me.config.api;
 
 /**
  * 获取配置的工厂类

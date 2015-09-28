@@ -1,8 +1,9 @@
-package me.config;
+package me.config.base;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import me.config.api.IConfig;
 
 import java.nio.charset.Charset;
 import java.util.List;

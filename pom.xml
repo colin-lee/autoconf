@@ -9,9 +9,6 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>api</module>
-        <module>local-file</module>
-        <module>zk-file</module>
         <module>config-core</module>
     </modules>
 </project>

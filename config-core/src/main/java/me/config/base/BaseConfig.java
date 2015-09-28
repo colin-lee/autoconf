@@ -1,4 +1,8 @@
-package me.config;
+package me.config.base;
+
+import me.config.api.IChangeListener;
+import me.config.api.IChangeable;
+import me.config.api.IChangeableConfig;
 
 /**
  *
