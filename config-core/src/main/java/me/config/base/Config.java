@@ -13,8 +13,8 @@ import java.util.Map;
  * Created by lirui on 2015/9/23.
  */
 public class Config extends MapSource {
-	protected Charset UTF8 = Charset.forName("UTF-8");
-	protected Charset GBK = Charset.forName("GBK");
+	public static final Charset UTF8 = Charset.forName("UTF-8");
+	public static final Charset GBK = Charset.forName("GBK");
 	private boolean parsed = false;
 	private byte[] content;
 
@@ -32,6 +32,10 @@ public class Config extends MapSource {
 			}
 		}
 		return content;
+	}
+
+	public void copyOf(String s) {
+		this.content = s.getBytes(UTF8);
 	}
 
 	public void copyOf(byte[] content) {
@@ -80,10 +84,6 @@ public class Config extends MapSource {
 
 	public String getString() {
 		return new String(getContent(), UTF8);
-	}
-
-	public String getGbkString() {
-		return new String(getContent(), GBK);
 	}
 
 	public String getString(Charset charset) {
