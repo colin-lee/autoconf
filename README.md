@@ -78,10 +78,10 @@ KV格式配置
 
 以demo.ini的配置为例，根据当前进程process.properties的配置，会按照下面顺序加载
 
-1. `/cms/teamName/app/demo.ini/10.204.8.32:8011` 针对正式环境10.204.8.32:8011这个进程实例的特殊配置
-2. `/cms/teamName/app/demo.ini/10.204.8.32` 针对正式环境10.204.8.32这个机器的特殊配置
-3. `/cms/teamName/app/demo.ini/deploy` 针对正式环境的配置
-4. `/cms/teamName/app/demo.ini/view-main` 针对view-main业务的特殊配置
+1. `/cms/config/teamName/app/demo.ini/10.204.8.32:8011` 针对正式环境10.204.8.32:8011这个进程实例的特殊配置
+2. `/cms/config/teamName/app/demo.ini/10.204.8.32` 针对正式环境10.204.8.32这个机器的特殊配置
+3. `/cms/config/teamName/app/demo.ini/deploy` 针对正式环境的配置
+4. `/cms/config/teamName/app/demo.ini/view-main` 针对view-main业务的特殊配置
 
 
 配置更新回调
