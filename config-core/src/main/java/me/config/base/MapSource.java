@@ -54,10 +54,7 @@ public class MapSource {
 	public boolean getBool(String key, boolean defaultVal) {
 		String val = get(key);
 		if (!Strings.isNullOrEmpty(val)) {
-			try {
-				return Boolean.parseBoolean(val);
-			} catch (NumberFormatException ignored) {
-			}
+			return Boolean.parseBoolean(val);
 		}
 		return defaultVal;
 	}
