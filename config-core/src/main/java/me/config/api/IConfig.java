@@ -9,6 +9,12 @@ import java.util.Map;
  * Created by lirui on 15/9/24.
  */
 public interface IConfig {
+	/**
+	 * 获取配置名
+	 * @return 配置名
+	 */
+	String getName();
+
 	int getInt(String key);
 
 	/**

@@ -3,7 +3,7 @@ package me.config.base;
 import com.google.common.collect.Sets;
 import me.config.api.IChangeListener;
 import me.config.api.IChangeable;
-import me.config.api.IChangeableConfig;
+import me.config.api.IConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +16,9 @@ import java.util.Set;
 public class EventBus implements IChangeable {
 	private final Logger log = LoggerFactory.getLogger(EventBus.class);
 	private final Set<IChangeListener> listeners = Sets.newConcurrentHashSet();
-	private final IChangeableConfig config;
+	private final IConfig config;
 
-	public EventBus(IChangeableConfig config) {
+	public EventBus(IConfig config) {
 		this.config = config;
 	}
 

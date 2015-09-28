@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 import me.config.api.IChangeListener;
 import me.config.api.IChangeableConfig;
 import me.config.api.IConfig;
-import me.config.base.BaseConfig;
+import me.config.base.ChangeableConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,18 +20,16 @@ import java.util.Map;
  * 2. 仅支持UTF8编码 <br/>
  * Created by lirui on 15/9/24.
  */
-public class MergedConfig extends BaseConfig {
-	private final String name;
+public class MergedConfig extends ChangeableConfig implements IChangeableConfig {
 	private final List<IChangeableConfig> configs;
 
 	public MergedConfig(List<IChangeableConfig> configs) {
-		super();
-		this.name = Joiner.on(',').join(Collections2.transform(configs, new Function<IChangeableConfig, String>() {
+		super(Joiner.on(',').join(Collections2.transform(configs, new Function<IChangeableConfig, String>() {
 			@Override
 			public String apply(IChangeableConfig input) {
 				return input.getName();
 			}
-		}));
+		})));
 
 		IChangeListener listener = new IChangeListener() {
 			@Override
@@ -61,7 +59,8 @@ public class MergedConfig extends BaseConfig {
 		setSource(m);
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public String toString() {
+		return "MergedConfig{" + "name=" + getName() + '}';
 	}
 }

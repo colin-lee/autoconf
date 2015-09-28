@@ -5,13 +5,21 @@ import me.config.api.IChangeable;
 import me.config.api.IChangeableConfig;
 
 /**
- * Created by lirui on 15/9/24.
+ * 配置基类
+ * Created by lirui on 2015/9/24.
  */
-public abstract class BaseConfig extends Config implements IChangeableConfig {
+public class ChangeableConfig extends Config implements IChangeableConfig {
+	private final String name;
 	private final IChangeable eventBus;
 
-	public BaseConfig() {
+	public ChangeableConfig(String name) {
+		this.name = name;
 		this.eventBus = new EventBus(this);
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	public void addListener(IChangeListener listener) {
