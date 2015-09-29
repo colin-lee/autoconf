@@ -153,22 +153,12 @@ public class ZookeeperUtil {
 		return null;
 	}
 
-	public static List<String> watchedGetChildren(CuratorFramework client, String path) {
-		try {
-			return client.getChildren().watched().forPath(path);
-		} catch (KeeperException.NoNodeException ignored) {
-		} catch (Exception e) {
-			throw new RuntimeException("watchedGetChildren(" + path + "), reason: " + e.getMessage());
-		}
-		return null;
-	}
-
-	public static List<String> watchedGetChildren(CuratorFramework client, String path, Watcher watcher) {
+	public static List<String> getChildren(CuratorFramework client, String path, Watcher watcher) {
 		try {
 			return client.getChildren().usingWatcher(watcher).forPath(path);
 		} catch (KeeperException.NoNodeException ignored) {
 		} catch (Exception e) {
-			throw new RuntimeException("watchedGetChildren(" + path + "), reason: " + e.getMessage());
+			throw new RuntimeException("getChildren(" + path + "), reason: " + e.getMessage());
 		}
 		return null;
 	}

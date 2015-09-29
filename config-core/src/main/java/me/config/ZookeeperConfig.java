@@ -53,7 +53,7 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	private void init() {
 		client.getConnectionStateListenable().addListener(stateListener);
 		ensure(client, basePath);
-		watchedGetChildren(client, basePath, watcher);
+		getChildren(client, basePath, watcher);
 		loadFromZookeeper();
 	}
 

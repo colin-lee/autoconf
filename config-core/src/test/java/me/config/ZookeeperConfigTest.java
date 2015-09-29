@@ -60,7 +60,7 @@ public class ZookeeperConfigTest {
 		String s = "a=6";
 		create(client, appPath, newBytes(s));
 		assertThat(newString(getData(client, appPath)), is(s));
-		Thread.sleep(200);
+		busyWait();
 		assertThat(config.getInt("a"), is(6));
 	}
 
@@ -71,34 +71,47 @@ public class ZookeeperConfigTest {
 		final Watcher watcher = new Watcher() {
 			@Override
 			public void process(WatchedEvent event) {
-				Event.EventType type = event.getType();
-				at.set(type.getIntValue());
+				Event.EventType t = event.getType();
+				at.set(t.getIntValue());
 				String p = event.getPath();
-				List<String> s = watchedGetChildren(client, p, this);
-				log.info("{}, value={}, {}, children:{}", type, type.getIntValue(), p, s);
+				List<String> s = getChildren(client, p, this);
 				getData(client, p, this);
 				exists(client, p, this);
+				log.info("value={}, {}, {}, children:{}", t.getIntValue(), t, p, s);
 			}
 		};
 		exists(client, path, watcher);
 		log.info("create {}", path);
 		ensure(client, path);
-		watchedGetChildren(client, path, watcher);
+		busyWait();
+		getChildren(client, path, watcher);
 		assertThat(at.get(), is(NodeCreated.getIntValue()));
 		log.info("setData {}", path);
 		setData(client, path, newBytes("a=5"));
+		busyWait();
 		assertThat(at.get(), is(NodeDataChanged.getIntValue()));
 		String child = ZKPaths.makePath(path, "child");
 		log.info("create {}", child);
 		create(client, child, newBytes("b=1"));
+		busyWait();
 		assertThat(at.get(), is(NodeChildrenChanged.getIntValue()));
 		log.info("setData {}", child);
 		setData(client, child, newBytes("b=2"));
+		busyWait();
 		log.info("delete {}", child);
 		delete(client, child);
+		busyWait();
 		assertThat(at.get(), is(NodeChildrenChanged.getIntValue()));
 		log.info("delete {}", path);
 		delete(client, path);
+		busyWait();
 		assertThat(at.get(), is(NodeDeleted.getIntValue()));
+		create(client, path);
+		busyWait();
+		assertThat(at.get(), is(NodeCreated.getIntValue()));
+	}
+
+	private void busyWait() throws InterruptedException {
+		Thread.sleep(100);
 	}
 }
