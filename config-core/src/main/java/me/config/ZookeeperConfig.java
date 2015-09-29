@@ -27,13 +27,13 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	private final CuratorFramework client;
 	private final Watcher watcher = new Watcher() {
 		public void process(WatchedEvent event) {
-			switch (event.getType()) {
-				case NodeDataChanged:
-					//XXX: cms在修改子节点内容的时候,同时也会修改basePath的内容
-				case NodeChildrenChanged:
-					loadFromZookeeper();
-				default:
-					log.info("skip Event:{}, {}", event.getType(), event.getPath());
+			loadFromZookeeper();
+		}
+	};
+	private final ConnectionStateListener stateListener = new ConnectionStateListener() {
+		public void stateChanged(CuratorFramework client, ConnectionState newState) {
+			if (newState.equals(ConnectionState.RECONNECTED)) {
+				init();
 			}
 		}
 	};
@@ -43,14 +43,6 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 		this.basePath = basePath;
 		this.paths = paths;
 		this.client = client;
-		ConnectionStateListener listener = new ConnectionStateListener() {
-			public void stateChanged(CuratorFramework client, ConnectionState newState) {
-				if (newState.equals(ConnectionState.RECONNECTED)) {
-					init();
-				}
-			}
-		};
-		client.getConnectionStateListenable().addListener(listener);
 		try {
 			init();
 		} catch (Exception e) {
@@ -59,6 +51,7 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	}
 
 	private void init() {
+		client.getConnectionStateListenable().addListener(stateListener);
 		ensure(client, basePath);
 		watchedGetChildren(client, basePath, watcher);
 		loadFromZookeeper();
@@ -72,7 +65,7 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 			String path = ZKPaths.makePath(basePath, i);
 			try {
 				if (exists(client, path) != null) {
-					byte[] content = getData(client, path);
+					byte[] content = getData(client, path, watcher);
 					//只有真正发生变化的时候才触发重新加载
 					if (hasChanged(content)) {
 						copyOf(content);
