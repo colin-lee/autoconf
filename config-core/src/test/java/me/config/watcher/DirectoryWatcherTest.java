@@ -95,15 +95,7 @@ public class DirectoryWatcherTest {
 		if (os.toLowerCase().contains("mac")) {
 			final String command = "touch " + f.getAbsolutePath();
 			log.info(command);
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						Runtime.getRuntime().exec(command);
-					} catch (IOException ignored) {
-					}
-				}
-			}).start();
+			Runtime.getRuntime().exec(command);
 		}
 	}
 
