@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.config.zookeeper.ZKUtil.*;
+import static me.config.zookeeper.ZookeeperUtil.*;
 
 /**
  * 基于远程zookeeper文件的配置

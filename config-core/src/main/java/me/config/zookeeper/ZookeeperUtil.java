@@ -14,11 +14,11 @@ import java.util.List;
  * zookeeper工具类
  * Created by lirui on 2015-09-29 11:05.
  */
-public class ZKUtil {
+public class ZookeeperUtil {
 	public static final Charset UTF8 = Charset.forName("UTF-8");
 	public static final Charset GBK = Charset.forName("GBK");
 
-	private ZKUtil() {
+	private ZookeeperUtil() {
 	}
 
 	public static String newString(byte[] data) {
@@ -42,7 +42,7 @@ public class ZKUtil {
 
 	public static String ensure(CuratorFramework client, String path) {
 		try {
-			client.checkExists().creatingParentContainersIfNeeded().forPath(path);
+			client.create().creatingParentContainersIfNeeded().forPath(path);
 		} catch (Exception e) {
 			throw new RuntimeException("ensure(" + path + "), reason: " + e.getMessage());
 		}
