@@ -15,24 +15,28 @@ import java.nio.file.Path;
  */
 public class LocalConfig extends ChangeableConfig implements IChangeableConfig {
 	private final Logger log = LoggerFactory.getLogger(LocalConfig.class);
-	private final Path localPath;
+	private final Path path;
 
-	public LocalConfig(String name, Path localPath) {
+	public LocalConfig(String name, Path path) {
 		super(name);
-		this.localPath = localPath;
+		this.path = path;
 		try {
-			this.copyOf(Files.toByteArray(localPath.toFile()));
+			this.copyOf(Files.toByteArray(path.toFile()));
 		} catch (IOException e) {
 			this.copyOf(new byte[0]);
-			log.error("configName={}, localPath={}", name, localPath, e);
+			log.error("configName={}, path={}", name, path, e);
 		}
+	}
+
+	public Path getPath() {
+		return path;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("LocalConfig{");
 		sb.append("name='").append(getName()).append('\'');
-		sb.append(", localPath=").append(localPath);
+		sb.append(", path=").append(path);
 		sb.append('}');
 		return sb.toString();
 	}

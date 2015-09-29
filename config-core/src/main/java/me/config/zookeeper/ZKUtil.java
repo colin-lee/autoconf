@@ -1,4 +1,4 @@
-package me.config.helper;
+package me.config.zookeeper;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
@@ -48,7 +48,6 @@ public class ZKUtil {
 		}
 		return path;
 	}
-
 
 	public static Stat exists(CuratorFramework client, String path) {
 		try {
@@ -115,6 +114,15 @@ public class ZKUtil {
 		}
 	}
 
+	public static void guaranteedDelete(CuratorFramework client, String path) {
+		try {
+			client.delete().guaranteed().deletingChildrenIfNeeded().forPath(path);
+		} catch (KeeperException.NoNodeException ignored) {
+		} catch (Exception e) {
+			throw new RuntimeException("guaranteedDelete(" + path + "), reason: " + e.getMessage());
+		}
+	}
+
 	public static byte[] getData(CuratorFramework client, String path) {
 		try {
 			return client.getData().forPath(path);
@@ -145,12 +153,22 @@ public class ZKUtil {
 		return null;
 	}
 
-	public static List<String> getChildren(CuratorFramework client, String path, Watcher watcher) {
+	public static List<String> watchedGetChildren(CuratorFramework client, String path) {
+		try {
+			return client.getChildren().watched().forPath(path);
+		} catch (KeeperException.NoNodeException ignored) {
+		} catch (Exception e) {
+			throw new RuntimeException("watchedGetChildren(" + path + "), reason: " + e.getMessage());
+		}
+		return null;
+	}
+
+	public static List<String> watchedGetChildren(CuratorFramework client, String path, Watcher watcher) {
 		try {
 			return client.getChildren().usingWatcher(watcher).forPath(path);
 		} catch (KeeperException.NoNodeException ignored) {
 		} catch (Exception e) {
-			throw new RuntimeException("getChildren(" + path + "), reason: " + e.getMessage());
+			throw new RuntimeException("watchedGetChildren(" + path + "), reason: " + e.getMessage());
 		}
 		return null;
 	}
