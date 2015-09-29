@@ -36,10 +36,12 @@ public class Config extends MapSource {
 
 	public void copyOf(String s) {
 		this.content = s.getBytes(UTF8);
+		parsed = false;
 	}
 
 	public void copyOf(byte[] content) {
 		this.content = content;
+		parsed = false;
 	}
 
 	@Override
@@ -49,27 +51,29 @@ public class Config extends MapSource {
 		this.content = null;
 	}
 
+	private synchronized void parse() {
+		if (!parsed) {
+			Map<String, String> m = Maps.newHashMap();
+			if (content != null) {
+				String txt = new String(content, UTF8);
+				for (String i : lines(txt, true)) {
+					int pos = i.indexOf('=');
+					if (pos != -1 && (pos + 1) < i.length()) {
+						String k = i.substring(0, pos).trim();
+						String v = i.substring(pos + 1).trim();
+						m.put(k, v);
+					}
+				}
+				copyOf(m);
+			}
+			parsed = true;
+		}
+	}
+
 	@Override
 	public String get(String key) {
 		if (!parsed) {
-			synchronized (this) {
-				if (!parsed) {
-					Map<String, String> m = Maps.newHashMap();
-					if (content != null) {
-						String txt = new String(content, UTF8);
-						for (String i : lines(txt, true)) {
-							int pos = i.indexOf('=');
-							if (pos != -1 && (pos + 1) < i.length()) {
-								String k = i.substring(0, pos).trim();
-								String v = i.substring(pos + 1).trim();
-								m.put(k, v);
-							}
-						}
-						copyOf(m);
-					}
-					parsed = true;
-				}
-			}
+			parse();
 		}
 		return super.get(key);
 	}
@@ -77,7 +81,7 @@ public class Config extends MapSource {
 	@Override
 	public Map<String, String> getAll() {
 		if (!parsed) {
-			this.get("_"); // 触发加载配置
+			parse();
 		}
 		return super.getAll();
 	}
