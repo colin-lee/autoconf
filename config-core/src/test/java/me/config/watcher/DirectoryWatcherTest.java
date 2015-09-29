@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import me.config.LocalConfig;
 import me.config.api.IChangeListener;
 import me.config.api.IConfig;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +18,22 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * 测试本地配置内容修改触发回调功能.
+ * 测试本地配置内容修改触发回调功能. mac系统上失效,会屏蔽这个用例.
  * Created by lirui on 2015-09-29 15:12.
  */
 public class DirectoryWatcherTest {
+	private static boolean isMac = false;
 	private final Logger log = LoggerFactory.getLogger(DirectoryWatcherTest.class);
+
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		String os = System.getProperties().getProperty("os.name");
+		isMac = os.toLowerCase().contains("mac");
+	}
 
 	@Test
 	public void testCallback() throws Exception {
+		if (isMac) return;
 		DirectoryWatcher watcher = DirectoryWatcher.getInstance();
 		File d1 = Files.createTempDir();
 		File f1 = File.createTempFile("conf-", ".ini", d1);
@@ -91,12 +100,6 @@ public class DirectoryWatcherTest {
 	private void write(byte[] bytes, File f) throws IOException {
 		log.info("write {} bytes into {}", bytes.length, f);
 		Files.write(bytes, f);
-		String os = System.getProperties().getProperty("os.name");
-		if (os.toLowerCase().contains("mac")) {
-			final String command = "touch " + f.getAbsolutePath();
-			log.info(command);
-			Runtime.getRuntime().exec(command);
-		}
 	}
 
 	private void delete(File f) {
