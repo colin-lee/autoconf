@@ -25,9 +25,40 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	private final String basePath;
 	private final List<String> paths;
 	private final CuratorFramework client;
-	private final Watcher watcher = new Watcher() {
+	private final Watcher leafWatcher = new Watcher() {
+		@Override
 		public void process(WatchedEvent event) {
-			loadFromZookeeper();
+			Event.EventType t = event.getType();
+			String path = event.getPath();
+			switch (t) {
+				case NodeDataChanged:
+					reload(getData(client, path, this));
+					break;
+				case NodeDeleted:
+					client.clearWatcherReferences(this);
+					loadFromZookeeper();
+					break;
+				default:
+					log.warn("skip {}, {}", t, path);
+			}
+		}
+	};
+	private final Watcher baseWatcher = new Watcher() {
+		public void process(WatchedEvent event) {
+			Event.EventType t = event.getType();
+			String path = event.getPath();
+			switch (t) {
+				case NodeCreated:
+				case NodeChildrenChanged:
+					loadFromZookeeper();
+					break;
+				case NodeDeleted:
+					client.clearWatcherReferences(this);
+					reload(new byte[0]);
+					break;
+				default:
+					log.warn("skip {}, {}", t, path);
+			}
 		}
 	};
 	private final ConnectionStateListener stateListener = new ConnectionStateListener() {
@@ -52,36 +83,44 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 
 	private void init() {
 		client.getConnectionStateListenable().addListener(stateListener);
-		ensure(client, basePath);
-		getChildren(client, basePath, watcher);
-		loadFromZookeeper();
+		if (exists(client, basePath, baseWatcher) != null) {
+			loadFromZookeeper();
+		}
 	}
 
 	public void loadFromZookeeper() {
 		log.info("{} load from zookeeper, basePath:{}, order:[{}]", basePath, paths);
+		List<String> children = getChildren(client, basePath, baseWatcher);
 		boolean found = false;
 		//按照特定顺序逐个查找配置
-		for(String i: paths) {
-			String path = ZKPaths.makePath(basePath, i);
-			try {
-				if (exists(client, path) != null) {
-					byte[] content = getData(client, path, watcher);
-					//只有真正发生变化的时候才触发重新加载
-					if (hasChanged(content)) {
-						copyOf(content);
-						notifyListeners();
-						log.info("{} load from zookeeper:{}", getName(), path);
-					}
+		if (children != null && children.size() > 0) {
+			for (String i : paths) {
+				if (!children.contains(i)) continue;
+				String path = ZKPaths.makePath(basePath, i);
+				try {
+					byte[] content = getData(client, path, leafWatcher);
+					reload(content);
+					log.info("{} load from {}", getName(), path);
 					found = true;
-					break;
+				} catch (Exception e) {
+					log.error("cannot load {} from zookeeper, basePath:{}", getName(), basePath, e);
 				}
-			} catch (Exception e) {
-				log.error("cannot load {} from zookeeper, basePath:{}", getName(), basePath, e);
 				break;
 			}
 		}
 		if (!found) {
+			exists(client, basePath, baseWatcher);
 			log.warn("cannot find {} in zookeeper, basePath:{}", getName(), basePath);
+			copyOf(new byte[0]);
+			notifyListeners();
+		}
+	}
+
+	private void reload(byte[] content) {
+		//只有真正发生变化的时候才触发重新加载
+		if (hasChanged(content)) {
+			copyOf(content);
+			notifyListeners();
 		}
 	}
 
