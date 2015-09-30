@@ -24,6 +24,10 @@ import java.util.Set;
 public class ZookeeperConfigWithCache extends ZookeeperConfig implements IChangeableConfig {
 	private static final Set<ZookeeperConfig> items = Sets.newConcurrentHashSet();
 	private final File cacheFile;
+	/**
+	 * 延迟加载远程配置初始值,避免加载配置影响启动
+	 */
+	long delayMillis = 10000;
 
 	public ZookeeperConfigWithCache(String name, String basePath, List<String> paths, CuratorFramework client, File cacheFile) {
 		super(name, basePath, paths, client);
@@ -59,7 +63,7 @@ public class ZookeeperConfigWithCache extends ZookeeperConfig implements IChange
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(delayMillis);
 				} catch (InterruptedException ignored) {
 				}
 				for (ZookeeperConfig i : items) {

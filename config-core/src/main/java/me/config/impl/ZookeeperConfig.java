@@ -1,5 +1,6 @@
 package me.config.impl;
 
+import com.google.common.base.MoreObjects;
 import me.config.api.IChangeableConfig;
 import me.config.base.ChangeableConfig;
 import org.apache.curator.framework.CuratorFramework;
@@ -25,13 +26,13 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	private final String zkPath;
 	private final List<String> paths;
 	private final CuratorFramework client;
-	private final Watcher baseWatcher = new Watcher() {
+	private final Watcher leafWatcher = new Watcher() {
+		@Override
 		public void process(WatchedEvent event) {
 			Event.EventType t = event.getType();
 			String p = event.getPath();
 			switch (t) {
-				case NodeCreated:
-				case NodeChildrenChanged:
+				case NodeDataChanged:
 					loadFromZookeeper();
 					break;
 				case NodeDeleted:
@@ -43,13 +44,13 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 			}
 		}
 	};
-	private final Watcher leafWatcher = new Watcher() {
-		@Override
+	private final Watcher baseWatcher = new Watcher() {
 		public void process(WatchedEvent event) {
 			Event.EventType t = event.getType();
 			String p = event.getPath();
 			switch (t) {
-				case NodeDataChanged:
+				case NodeCreated:
+				case NodeChildrenChanged:
 					loadFromZookeeper();
 					break;
 				case NodeDeleted:
@@ -114,8 +115,7 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 		if (!found) {
 			exists(client, zkPath, baseWatcher);
 			log.warn("cannot find {} in zookeeper, zkPath{}", getName(), zkPath);
-			copyOf(new byte[0]);
-			notifyListeners();
+			reload(new byte[0]);
 		}
 	}
 
@@ -145,6 +145,9 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 
 	@Override
 	public String toString() {
-		return "ZookeeperConfig{name=" + getName() + '}';
+		return MoreObjects.toStringHelper(this)
+				.add("name", getName())
+				.add("zkPath", zkPath)
+				.toString();
 	}
 }

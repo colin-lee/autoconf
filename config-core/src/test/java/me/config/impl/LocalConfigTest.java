@@ -23,8 +23,7 @@ public class LocalConfigTest {
 			assertThat(local.getInt("int"), is(1));
 			assertThat(local.getLong("long"), is(2L));
 		} finally {
-			boolean deleted = tempFile.delete();
-			if (!deleted) tempFile.deleteOnExit();
+			if (!tempFile.delete()) tempFile.deleteOnExit();
 		}
 	}
 }
