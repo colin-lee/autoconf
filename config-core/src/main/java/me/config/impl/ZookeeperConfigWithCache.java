@@ -73,8 +73,9 @@ public class ZookeeperConfigWithCache extends ZookeeperConfig implements IChange
 
 	@Override
 	protected void reload(byte[] content) {
-		super.reload(content);
 		if (hasChanged(content)) {
+			copyOf(content);
+			notifyListeners();
 			try {
 				Files.write(content, cacheFile);
 			} catch (IOException e) {
