@@ -11,5 +11,5 @@ public interface IChangeListener {
 	 *
 	 * @param config 配置文件
 	 */
-	void dataChanged(IConfig config);
+	void changed(IConfig config);
 }

@@ -38,7 +38,7 @@ public class MergedConfigTest {
 		final AtomicInteger count = new AtomicInteger(0);
 		merged.addListener(new IChangeListener() {
 			@Override
-			public void dataChanged(IConfig config) {
+			public void changed(IConfig config) {
 				count.incrementAndGet();
 			}
 		});

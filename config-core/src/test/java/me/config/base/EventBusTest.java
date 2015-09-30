@@ -22,7 +22,7 @@ public class EventBusTest {
 		final AtomicInteger count = new AtomicInteger(0);
 		IChangeListener listener = new IChangeListener() {
 			@Override
-			public void dataChanged(IConfig config) {
+			public void changed(IConfig config) {
 				count.incrementAndGet();
 			}
 		};
@@ -45,7 +45,7 @@ public class EventBusTest {
 		final AtomicInteger count = new AtomicInteger(0);
 		IChangeListener listener = new IChangeListener() {
 			@Override
-			public void dataChanged(IConfig config) {
+			public void changed(IConfig config) {
 				count.incrementAndGet();
 			}
 		};
@@ -54,7 +54,7 @@ public class EventBusTest {
 		assertThat(count.get(), is(0));
 		bus.addListener(new IChangeListener() {
 			@Override
-			public void dataChanged(IConfig config) {
+			public void changed(IConfig config) {
 				throw new RuntimeException("some error happened");
 			}
 		});

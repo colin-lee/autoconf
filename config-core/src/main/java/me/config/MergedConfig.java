@@ -33,7 +33,7 @@ public class MergedConfig extends ChangeableConfig implements IChangeableConfig 
 
 		IChangeListener listener = new IChangeListener() {
 			@Override
-			public void dataChanged(IConfig config) {
+			public void changed(IConfig config) {
 				merge();
 				notifyListeners();
 			}

@@ -43,7 +43,7 @@ public class DirectoryWatcherTest {
 		final AtomicInteger num = new AtomicInteger(0);
 		IChangeListener listener = new IChangeListener() {
 			@Override
-			public void dataChanged(IConfig config) {
+			public void changed(IConfig config) {
 				log.info("{} updated", config.getName());
 				num.incrementAndGet();
 			}

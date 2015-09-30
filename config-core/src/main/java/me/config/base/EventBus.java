@@ -31,7 +31,7 @@ public class EventBus implements IChangeable {
 			listeners.add(listener);
 			if (loadAfterRegister) {
 				try {
-					listener.dataChanged(config);
+					listener.changed(config);
 				} catch (Exception e) {
 					log.error("cannot reload " + config.getName(), e);
 				}
@@ -49,7 +49,7 @@ public class EventBus implements IChangeable {
 		for (IChangeListener i : listeners) {
 			log.info("{} changed, notify {}", config.getName(), i);
 			try {
-				i.dataChanged(config);
+				i.changed(config);
 			} catch (Exception e) {
 				log.error("cannot reload " + config.getName(), e);
 			}
