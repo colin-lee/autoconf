@@ -54,6 +54,7 @@ public class ZookeeperConfigTest {
 		String basePath = "/auto/config/test";
 		ArrayList<String> paths = Lists.newArrayList("127.0.0.1:8080", "127.0.0.1", "profile", "appName");
 		ZookeeperConfig config = new ZookeeperConfig("application.properties", basePath, paths, client);
+		config.start();
 		assertThat(config.getInt("a"), is(0));
 		//验证创建app独有配置
 		String appPath = ZKPaths.makePath(basePath, "appName");
