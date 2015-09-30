@@ -76,11 +76,15 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 		this.client = client;
 	}
 
-	public void start() {
+	protected void initZookeeper() {
 		client.getConnectionStateListenable().addListener(stateListener);
 		if (exists(client, zkPath, baseWatcher) != null) {
 			loadFromZookeeper();
 		}
+	}
+
+	public void start() {
+		initZookeeper();
 	}
 
 	protected void loadFromZookeeper() {

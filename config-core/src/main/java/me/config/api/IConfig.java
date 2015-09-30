@@ -11,6 +11,7 @@ import java.util.Map;
 public interface IConfig {
 	/**
 	 * 获取配置名
+	 *
 	 * @return 配置名
 	 */
 	String getName();

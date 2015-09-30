@@ -1,6 +1,7 @@
 package me.config.impl;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import me.config.api.IChangeableConfig;
 import me.config.api.IFileListener;
@@ -11,10 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 /**
  * 基于远程zookeeper文件的配置,启用本地文件缓存.<br/>
@@ -24,23 +22,12 @@ import java.util.concurrent.TimeUnit;
  * Created by lirui on 2015/9/30.
  */
 public class ZookeeperConfigWithCache extends ZookeeperConfig implements IChangeableConfig {
-	private static final ExecutorService executors = cachedExecutors();
+	private static final Set<ZookeeperConfig> items = Sets.newConcurrentHashSet();
 	private final File cacheFile;
 
 	public ZookeeperConfigWithCache(String name, String basePath, List<String> paths, CuratorFramework client, File cacheFile) {
 		super(name, basePath, paths, client);
 		this.cacheFile = cacheFile;
-	}
-
-	/**
-	 * 异步加载线程不易过多,并且完成加载之后,基本用不到了,所以用cachedPool
-	 *
-	 * @return ExecutorService
-	 */
-	static ExecutorService cachedExecutors() {
-		return new ThreadPoolExecutor(0, 5,
-				60L, TimeUnit.SECONDS,
-				new LinkedBlockingQueue<Runnable>(10));
 	}
 
 	@Override
@@ -50,21 +37,16 @@ public class ZookeeperConfigWithCache extends ZookeeperConfig implements IChange
 			try {
 				copyOf(Files.toByteArray(cacheFile));
 				//异步检查zookeeper中配置
-				executors.submit(new Runnable() {
-					@Override
-					public void run() {
-						ZookeeperConfigWithCache.super.start();
-					}
-				});
+				items.add(this);
 			} catch (IOException e) {
 				log.error("cannot read {}", cacheFile);
-				super.start();
+				initZookeeper();
 			}
 		} else {
 			//本地没有则直接从zookeeper加载
-			super.start();
+			initZookeeper();
 		}
-		// 注册本地配置变更通知回调
+		//注册本地配置变更通知回调
 		FileUpdateWatcher.getInstance().watch(cacheFile.toPath(), new IFileListener() {
 			@Override
 			public void changed(Path path, byte[] content) {
@@ -72,6 +54,21 @@ public class ZookeeperConfigWithCache extends ZookeeperConfig implements IChange
 				reload(content);
 			}
 		});
+		//延迟加载zookeeper上的配置,避免服务启动过慢
+		Thread zkThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException ignored) {
+				}
+				for (ZookeeperConfig i : items) {
+					i.initZookeeper();
+				}
+			}
+		}, "asyncLoadFromZookeeper");
+		zkThread.setDaemon(true);
+		zkThread.start();
 	}
 
 	@Override
