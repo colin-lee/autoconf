@@ -62,6 +62,16 @@ public class ZookeeperConfigTest {
 		assertThat(newString(getData(client, appPath)), is(s));
 		busyWait();
 		assertThat(config.getInt("a"), is(1));
+
+		//增加或者删除无用节点不影响当前配置
+		String notUsed = ZKPaths.makePath(basePath, "notUsed");
+		create(client, notUsed, newBytes("null"));
+		busyWait();
+		assertThat(config.getInt("a"), is(1));
+		delete(client, notUsed);
+		busyWait();
+		assertThat(config.getInt("a"), is(1));
+
 		//更高优先级的profile配置被创建,切换配置
 		s = "a = 2";
 		String profilePath = ZKPaths.makePath(basePath, "profile");
@@ -69,6 +79,7 @@ public class ZookeeperConfigTest {
 		assertThat(newString(getData(client, profilePath)), is(s));
 		busyWait();
 		assertThat(config.getInt("a"), is(2));
+
 		//更高优先级的ip配置创建,切换配置
 		s = "a = 3";
 		String ipPath = ZKPaths.makePath(basePath, "127.0.0.1");
@@ -76,6 +87,7 @@ public class ZookeeperConfigTest {
 		assertThat(newString(getData(client, ipPath)), is(s));
 		busyWait();
 		assertThat(config.getInt("a"), is(3));
+
 		//修改低优先级配置不影响当前使用的高优先级配置
 		s = "b = 4";
 		setData(client, profilePath, newBytes(s));
@@ -83,8 +95,33 @@ public class ZookeeperConfigTest {
 		busyWait();
 		assertThat(config.getInt("a"), is(3));
 		assertThat(config.getInt("b"), is(0));
+
+		//删除高优先级配置,自动降级到低优先级配置
+		delete(client, ipPath);
+		busyWait();
+		assertThat(config.getInt("a"), is(0));
+		assertThat(config.getInt("b"), is(4));
+		delete(client, profilePath);
+		busyWait();
+		assertThat(config.getInt("a"), is(1));
+		assertThat(config.getInt("b"), is(0));
+
+		//删除basePath目录,回退到没有任何配置的状态
+		delete(client, basePath);
+		busyWait();
+		assertThat(config.getInt("a"), is(0));
+
+		//测试全部删除后新增配置,也能生效
+		create(client, ipPath, newBytes(s));
+		busyWait();
+		assertThat(config.getInt("b"), is(4));
 	}
 
+	/**
+	 * 测试zookeeper的watch功能
+	 *
+	 * @throws Exception
+	 */
 	@Test
 	public void testListener() throws Exception {
 		String path = "/test/listener";
@@ -133,6 +170,6 @@ public class ZookeeperConfigTest {
 	}
 
 	private void busyWait() throws InterruptedException {
-		Thread.sleep(200);
+		Thread.sleep(100);
 	}
 }
