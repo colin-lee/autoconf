@@ -1,3 +1,4 @@
+![](https://travis-ci.org/colin-lee/autoconf.svg)
 ##配置管理系统(ConfigManagerSystem)
 
 ###设计理念
