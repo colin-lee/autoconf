@@ -32,6 +32,7 @@ public class FileUpdateWatcherTest {
 
 	@Test
 	public void testListener() throws Exception {
+		if (isMac) return;
 		FileUpdateWatcher watcher = FileUpdateWatcher.getInstance();
 		File d1 = Files.createTempDir();
 		File f1 = File.createTempFile("conf-", ".ini", d1);
