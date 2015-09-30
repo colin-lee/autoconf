@@ -58,11 +58,11 @@ getInt(String key)
 ###配置加载优先顺序
 默认在zookeeper上创建 /cms/config 根目录。如果当前进程信息如下
 
-> process.team = teamName
-> process.profile = deploy
-> process.name = view-main
-> process.ip = 10.204.8.32
-> process.port = 8011
+    process.team = teamName
+    process.profile = deploy
+    process.name = view-main
+    process.ip = 10.204.8.32
+    process.port = 8011
 
 
 以demo.ini的配置为例，根据当前进程process.properties的配置，会按照下面顺序加载
