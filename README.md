@@ -1,4 +1,4 @@
-![](https://travis-ci.org/colin-lee/autoconf.svg)
+[![Build Status](https://travis-ci.org/colin-lee/autoconf.svg?branch=master)](https://travis-ci.org/colin-lee/autoconf)
 ##配置管理系统(ConfigManagerSystem)
 
 ###设计理念
