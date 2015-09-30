@@ -1,6 +1,7 @@
 package me.config;
 
 import me.config.api.IChangeableConfig;
+import me.config.impl.ZookeeperConfig;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

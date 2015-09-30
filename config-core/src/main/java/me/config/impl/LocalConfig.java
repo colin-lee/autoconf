@@ -1,4 +1,4 @@
-package me.config;
+package me.config.impl;
 
 import com.google.common.io.Files;
 import me.config.api.IChangeableConfig;

@@ -1,4 +1,4 @@
-package me.config;
+package me.config.impl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;

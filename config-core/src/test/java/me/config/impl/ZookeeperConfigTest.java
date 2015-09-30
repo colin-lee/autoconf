@@ -1,4 +1,4 @@
-package me.config;
+package me.config.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
