@@ -92,7 +92,7 @@ public class FileUpdateWatcher implements Runnable {
 						if (listeners == null || listeners.size() == 0) continue;
 						//配置文件内容都不大,所以这里就读出来,不用每个listener再分别读取了
 						byte[] content = new byte[0];
-						if (kind != ENTRY_DELETE) {
+						if (child.toFile().exists()) {
 							content = Files.readAllBytes(child);
 						}
 						for (IFileListener i : listeners) {

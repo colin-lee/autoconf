@@ -63,7 +63,7 @@ public class ConfigFactory implements IConfigFactory {
 
 	@Override
 	public boolean hasConfig(String name) {
-		return false;
+		return m.containsKey(name);
 	}
 
 	private IChangeableConfig newConfig(String name) {
