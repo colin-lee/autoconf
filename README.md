@@ -52,7 +52,6 @@ getInt(String key)
 - `getLines(Charset charset)` 返回指定编码的所有文本行
 - `getLines(Charset charset, boolean removeComment)` 根据是否去除注释指定，返回对应编码所有文本行
 
-
 ###二进制格式配置
 - `getContent()` 返回配置的原始字节流，可以自己进行解析对应的byte\[\]内容
 
