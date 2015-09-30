@@ -21,9 +21,11 @@ public class LocalConfig extends ChangeableConfig implements IChangeableConfig {
 		super(name);
 		this.path = path;
 		try {
-			this.copyOf(Files.toByteArray(path.toFile()));
+			if (path.toFile().exists()) {
+				copyOf(Files.toByteArray(path.toFile()));
+			}
 		} catch (IOException e) {
-			this.copyOf(new byte[0]);
+			copyOf(new byte[0]);
 			log.error("configName={}, path={}", name, path, e);
 		}
 	}
