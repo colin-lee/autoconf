@@ -1,9 +1,15 @@
-<configuration>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <property name="APP_Name" value="ConfigTest"/>
+
+    <contextName>${APP_Name}</contextName>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{12} - %msg%n</pattern>
         </encoder>
     </appender>
+
+    <logger name="me.config" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

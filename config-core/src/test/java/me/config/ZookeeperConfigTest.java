@@ -53,15 +53,36 @@ public class ZookeeperConfigTest {
 	public void testLoad() throws Exception {
 		String basePath = "/auto/config/test";
 		ArrayList<String> paths = Lists.newArrayList("127.0.0.1:8080", "127.0.0.1", "profile", "appName");
-		ZookeeperConfig config = new ZookeeperConfig("test", basePath, paths, client);
+		ZookeeperConfig config = new ZookeeperConfig("application.properties", basePath, paths, client);
 		assertThat(config.getInt("a"), is(0));
 		//验证创建app独有配置
 		String appPath = ZKPaths.makePath(basePath, "appName");
-		String s = "a=6";
+		String s = "a=1";
 		create(client, appPath, newBytes(s));
 		assertThat(newString(getData(client, appPath)), is(s));
 		busyWait();
-		assertThat(config.getInt("a"), is(6));
+		assertThat(config.getInt("a"), is(1));
+		//更高优先级的profile配置被创建,切换配置
+		s = "a = 2";
+		String profilePath = ZKPaths.makePath(basePath, "profile");
+		create(client, profilePath, newBytes(s));
+		assertThat(newString(getData(client, profilePath)), is(s));
+		busyWait();
+		assertThat(config.getInt("a"), is(2));
+		//更高优先级的ip配置创建,切换配置
+		s = "a = 3";
+		String ipPath = ZKPaths.makePath(basePath, "127.0.0.1");
+		create(client, ipPath, newBytes(s));
+		assertThat(newString(getData(client, ipPath)), is(s));
+		busyWait();
+		assertThat(config.getInt("a"), is(3));
+		//修改低优先级配置不影响当前使用的高优先级配置
+		s = "b = 4";
+		setData(client, profilePath, newBytes(s));
+		assertThat(newString(getData(client, profilePath)), is(s));
+		busyWait();
+		assertThat(config.getInt("a"), is(3));
+		assertThat(config.getInt("b"), is(0));
 	}
 
 	@Test
@@ -112,6 +133,6 @@ public class ZookeeperConfigTest {
 	}
 
 	private void busyWait() throws InterruptedException {
-		Thread.sleep(100);
+		Thread.sleep(200);
 	}
 }

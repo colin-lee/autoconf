@@ -25,28 +25,10 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	private final String basePath;
 	private final List<String> paths;
 	private final CuratorFramework client;
-	private final Watcher leafWatcher = new Watcher() {
-		@Override
-		public void process(WatchedEvent event) {
-			Event.EventType t = event.getType();
-			String path = event.getPath();
-			switch (t) {
-				case NodeDataChanged:
-					reload(getData(client, path, this));
-					break;
-				case NodeDeleted:
-					client.clearWatcherReferences(this);
-					loadFromZookeeper();
-					break;
-				default:
-					log.warn("skip {}, {}", t, path);
-			}
-		}
-	};
 	private final Watcher baseWatcher = new Watcher() {
 		public void process(WatchedEvent event) {
 			Event.EventType t = event.getType();
-			String path = event.getPath();
+			String p = event.getPath();
 			switch (t) {
 				case NodeCreated:
 				case NodeChildrenChanged:
@@ -54,10 +36,28 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 					break;
 				case NodeDeleted:
 					client.clearWatcherReferences(this);
-					reload(new byte[0]);
+					loadFromZookeeper();
 					break;
 				default:
-					log.warn("skip {}, {}", t, path);
+					log.warn("skip {}, {}", t, p);
+			}
+		}
+	};
+	private final Watcher leafWatcher = new Watcher() {
+		@Override
+		public void process(WatchedEvent event) {
+			Event.EventType t = event.getType();
+			String p = event.getPath();
+			switch (t) {
+				case NodeDataChanged:
+					loadFromZookeeper();
+					break;
+				case NodeDeleted:
+					client.clearWatcherReferences(this);
+					loadFromZookeeper();
+					break;
+				default:
+					log.warn("skip {}, {}", t, p);
 			}
 		}
 	};
@@ -77,7 +77,7 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 		try {
 			init();
 		} catch (Exception e) {
-			log.error("cannot init {}, basePath:{}", getName(), basePath, e);
+			log.error("cannot init {}, zkPath{}", getName(), basePath, e);
 		}
 	}
 
@@ -89,28 +89,32 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	}
 
 	public void loadFromZookeeper() {
-		log.info("{} load from zookeeper, basePath:{}, order:[{}]", basePath, paths);
+		log.info("{}, zkPath:{}, order:{}", getName(), basePath, paths);
 		List<String> children = getChildren(client, basePath, baseWatcher);
 		boolean found = false;
 		//按照特定顺序逐个查找配置
 		if (children != null && children.size() > 0) {
+			log.info("zkPath:{}, children:{}", basePath, children);
 			for (String i : paths) {
 				if (!children.contains(i)) continue;
 				String path = ZKPaths.makePath(basePath, i);
 				try {
 					byte[] content = getData(client, path, leafWatcher);
-					reload(content);
-					log.info("{} load from {}", getName(), path);
-					found = true;
+					if (content != null && content.length > 0) {
+						log.info("{}, zkPath:{}", getName(), path);
+						log.debug("content:\n{}\n", newString(content));
+						reload(content);
+						found = true;
+						break;
+					}
 				} catch (Exception e) {
-					log.error("cannot load {} from zookeeper, basePath:{}", getName(), basePath, e);
+					log.error("cannot load {} from zookeeper, zkPath{}", getName(), basePath, e);
 				}
-				break;
 			}
 		}
 		if (!found) {
 			exists(client, basePath, baseWatcher);
-			log.warn("cannot find {} in zookeeper, basePath:{}", getName(), basePath);
+			log.warn("cannot find {} in zookeeper, zkPath{}", getName(), basePath);
 			copyOf(new byte[0]);
 			notifyListeners();
 		}
@@ -133,7 +137,7 @@ public class ZookeeperConfig extends ChangeableConfig implements IChangeableConf
 	private boolean hasChanged(byte[] now) {
 		if (now == null) return true;
 		byte[] old = getContent();
-		return Arrays.equals(now, old);
+		return !Arrays.equals(now, old);
 	}
 
 	@Override
