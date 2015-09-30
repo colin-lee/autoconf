@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -61,6 +60,7 @@ public class FileUpdateWatcher implements Runnable {
 			files = ArrayListMultimap.create();
 			watches.put(parent, files);
 		}
+		log.debug("watch {}, {}", path, listener);
 		files.put(path, listener);
 		return this;
 	}
@@ -77,7 +77,7 @@ public class FileUpdateWatcher implements Runnable {
 		while (running) {
 			WatchKey key = null;
 			try {
-				key = watchService.poll(3, TimeUnit.SECONDS);
+				key = watchService.take();
 				if (key != null) {
 					Path base = keys.get(key);
 					for (WatchEvent<?> event : key.pollEvents()) {

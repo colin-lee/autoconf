@@ -72,7 +72,7 @@ public class ConfigFactory implements IConfigFactory {
 			List<String> names = Splitter.on(matcher).trimResults().omitEmptyStrings().splitToList(name);
 			List<IChangeableConfig> list = Lists.newArrayList();
 			for (String i : names) {
-				list.add(newConfig(i, basePath.resolve(i)));
+				list.add(getConfig(i));
 			}
 			return new MergedConfig(list);
 		} else {
