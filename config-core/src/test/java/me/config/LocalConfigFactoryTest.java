@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import me.config.api.IChangeListener;
 import me.config.api.IChangeableConfig;
 import me.config.api.IConfig;
+import me.config.api.IConfigFactory;
 import me.config.watcher.FileUpdateWatcher;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -63,6 +64,20 @@ public class LocalConfigFactoryTest {
 			delete(f3);
 			delete(dir);
 		}
+	}
+
+	@Test
+	public void testInstance() throws Exception {
+		IConfigFactory factory = LocalConfigFactory.getInstance();
+		final AtomicInteger num = new AtomicInteger(0);
+		IChangeableConfig c = factory.getConfig("exist.ini", new IChangeListener() {
+			@Override
+			public void changed(IConfig config) {
+				num.incrementAndGet();
+			}
+		});
+		assertThat(c.getInt("a"), is(1));
+		assertThat(num.get(), is(1));
 	}
 
 	private void busyWait(final AtomicInteger num) throws InterruptedException {
