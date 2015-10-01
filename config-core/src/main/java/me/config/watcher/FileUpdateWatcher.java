@@ -27,7 +27,7 @@ public class FileUpdateWatcher implements Runnable {
 	private final Map<Path, Multimap<Path, IFileListener>> watches = Maps.newConcurrentMap();
 	private final Map<WatchKey, Path> keys = Maps.newConcurrentMap();
 	private WatchService watchService;
-	private boolean running;
+	private boolean running = false;
 
 	private FileUpdateWatcher() {
 		try {
@@ -66,9 +66,11 @@ public class FileUpdateWatcher implements Runnable {
 	}
 
 	public void start() {
-		Thread t = new Thread(this, "LocalFileUpdateWatcher");
-		t.setDaemon(true);
-		t.start();
+		if (!running) {
+			Thread t = new Thread(this, "LocalFileUpdateWatcher");
+			t.setDaemon(true);
+			t.start();
+		}
 	}
 
 	@Override

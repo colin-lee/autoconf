@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import me.config.api.IChangeListener;
 import me.config.api.IChangeableConfig;
 import me.config.api.IConfig;
+import me.config.watcher.FileUpdateWatcher;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class ConfigFactoryTest {
 		File f2 = dir.toPath().resolve("f2").toFile();
 		File f3 = dir.toPath().resolve("f3").toFile();
 		try {
+			FileUpdateWatcher.getInstance().start();
 			write(newBytes("a=1"), f1);
 			write(newBytes("a=2\nb=2"), f2);
 			ConfigFactory factory = new ConfigFactory(dir.toPath());
