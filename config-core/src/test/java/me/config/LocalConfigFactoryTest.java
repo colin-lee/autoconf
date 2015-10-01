@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
  * 测试工厂类
  * Created by lirui on 2015-09-30 22:49.
  */
-public class ConfigFactoryTest {
+public class LocalConfigFactoryTest {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Test
@@ -34,7 +34,7 @@ public class ConfigFactoryTest {
 			FileUpdateWatcher.getInstance().start();
 			write(newBytes("a=1"), f1);
 			write(newBytes("a=2\nb=2"), f2);
-			ConfigFactory factory = new ConfigFactory(dir.toPath());
+			LocalConfigFactory factory = new LocalConfigFactory(dir.toPath());
 			IChangeableConfig c1 = factory.getConfig("f1");
 			IChangeableConfig merge = factory.getConfig("f1,f2,f3");
 			assertThat(c1.getInt("a"), is(1));

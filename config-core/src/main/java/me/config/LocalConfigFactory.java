@@ -22,12 +22,12 @@ import java.util.concurrent.ConcurrentMap;
  * 本地配置工厂
  * Created by lirui on 2015-09-30 22:25.
  */
-public class ConfigFactory implements IConfigFactory {
+public class LocalConfigFactory implements IConfigFactory {
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	private final ConcurrentMap<String, IChangeableConfig> m = Maps.newConcurrentMap();
 	private final Path basePath;
 
-	public ConfigFactory(Path basePath) {
+	public LocalConfigFactory(Path basePath) {
 		this.basePath = basePath;
 	}
 
