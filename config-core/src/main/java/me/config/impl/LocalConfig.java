@@ -36,7 +36,7 @@ public class LocalConfig extends ChangeableConfig {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder("LocalConfig{");
-    sb.append("name='").append(getName()).append('\'');
+    sb.append("name=").append(getName());
     sb.append(", path=").append(path);
     sb.append('}');
     return sb.toString();

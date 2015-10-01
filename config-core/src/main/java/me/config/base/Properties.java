@@ -10,7 +10,7 @@ import java.util.Map;
  * <p/>
  * Created by lirui on 15/9/28.
  */
-public class MapSource {
+public class Properties {
   private Map<String, String> m = ImmutableMap.of();
 
   public void copyOf(Map<String, String> items) {

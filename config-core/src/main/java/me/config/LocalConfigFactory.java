@@ -4,6 +4,7 @@ import me.config.api.IChangeableConfig;
 import me.config.api.IConfigFactory;
 import me.config.api.IFileListener;
 import me.config.base.AbstractConfigFactory;
+import me.config.helper.Helper;
 import me.config.impl.LocalConfig;
 import me.config.watcher.FileUpdateWatcher;
 
@@ -46,6 +47,6 @@ public class LocalConfigFactory extends AbstractConfigFactory {
   }
 
   private static class LazyHolder {
-    private static final IConfigFactory instance = new LocalConfigFactory(Helpers.scanConfigPath());
+    private static final IConfigFactory instance = new LocalConfigFactory(Helper.localConfigPath());
   }
 }

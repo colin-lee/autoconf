@@ -12,7 +12,7 @@ import java.util.Map;
  * 根据缓存获取内容，支持纯文本或者KV格式的解析。并且使用懒加载模式，只在需要的时候做解析。
  * Created by lirui on 2015/9/23.
  */
-public class Config extends MapSource {
+public class Config extends Properties {
     public static final Charset UTF8 = Charset.forName("UTF-8");
     public static final Charset GBK = Charset.forName("GBK");
     private boolean parsed = false;

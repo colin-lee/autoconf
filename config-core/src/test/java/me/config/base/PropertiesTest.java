@@ -12,10 +12,10 @@ import static org.junit.Assert.assertThat;
  * 测试获取各种类型数据
  * Created by lirui on 2015-09-28 17:59.
  */
-public class MapSourceTest {
+public class PropertiesTest {
   @Test
   public void testDefault() throws Exception {
-    MapSource m = new MapSource();
+    Properties m = new Properties();
     String s = "-";
     assertThat(m.get(s), nullValue());
     assertThat(m.getInt(s), is(0));
@@ -26,7 +26,7 @@ public class MapSourceTest {
 
   @Test
   public void testDefault2() throws Exception {
-    MapSource m = new MapSource();
+    Properties m = new Properties();
     String s = "-";
     assertThat(m.get(s, "1"), is("1"));
     assertThat(m.getInt(s, 1), is(1));
@@ -37,7 +37,7 @@ public class MapSourceTest {
 
   @Test
   public void testGetType() throws Exception {
-    MapSource m = new MapSource();
+    Properties m = new Properties();
     Map<String, String> raw =
       ImmutableMap.of("int", "1", "long", "2", "bool", "TRUE", "double", "3.6", "s", "a string");
     m.copyOf(raw);
@@ -52,7 +52,7 @@ public class MapSourceTest {
 
   @Test
   public void testParseException() throws Exception {
-    MapSource m = new MapSource();
+    Properties m = new Properties();
     Map<String, String> raw =
       ImmutableMap.of("int", "s1", "long", "s2", "bool", "sTRUE", "double", "s3.6");
     m.copyOf(raw);
