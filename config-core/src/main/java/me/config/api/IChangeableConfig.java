@@ -6,10 +6,10 @@ package me.config.api;
  * Created by lirui on 2015/09/22.
  */
 public interface IChangeableConfig extends IConfig, IChangeable {
-	/**
-	 * 配置文件名
-	 *
-	 * @return 配置文件名
-	 */
-	String getName();
+  /**
+   * 配置文件名
+   *
+   * @return 配置文件名
+   */
+  String getName();
 }

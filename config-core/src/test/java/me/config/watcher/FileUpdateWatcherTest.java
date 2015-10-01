@@ -20,63 +20,64 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-29 15:12.
  */
 public class FileUpdateWatcherTest {
-	private final Logger log = LoggerFactory.getLogger(FileUpdateWatcherTest.class);
+  private final Logger log = LoggerFactory.getLogger(FileUpdateWatcherTest.class);
 
-	@Test
-	public void testListener() throws Exception {
-		FileUpdateWatcher watcher = FileUpdateWatcher.getInstance();
-		File d1 = Files.createTempDir();
-		File f1 = d1.toPath().resolve("update.txt").toFile();
-		//mac系统上获取回调通知特别慢,所以通过一个计数器来做忙等待.
-		final AtomicInteger num = new AtomicInteger(0);
-		IFileListener listener = new IFileListener() {
-			@Override
-			public void changed(Path path, byte[] content) {
-				log.info("{} changed", path);
-				num.incrementAndGet();
-			}
-		};
-		try {
-			watcher.watch(f1.toPath(), listener);
-			//修改文件内容
-			num.set(0);
-			write(newBytes("a=1"), f1);
-			busyWait(num);
-			assertThat(num.get(), is(1));
+  @Test
+  public void testListener() throws Exception {
+    FileUpdateWatcher watcher = FileUpdateWatcher.getInstance();
+    File d1 = Files.createTempDir();
+    File f1 = d1.toPath().resolve("update.txt").toFile();
+    //mac系统上获取回调通知特别慢,所以通过一个计数器来做忙等待.
+    final AtomicInteger num = new AtomicInteger(0);
+    IFileListener listener = new IFileListener() {
+      @Override
+      public void changed(Path path, byte[] content) {
+        log.info("{} changed", path);
+        num.incrementAndGet();
+      }
+    };
+    try {
+      watcher.watch(f1.toPath(), listener);
+      //修改文件内容
+      num.set(0);
+      write(newBytes("a=1"), f1);
+      busyWait(num);
+      assertThat(num.get(), is(1));
 
-			//删除文件
-			num.set(0);
-			delete(f1);
-			busyWait(num);
-			assertThat(num.get(), is(1));
-		} finally {
-			delete(f1);
-			delete(d1);
-		}
-	}
+      //删除文件
+      num.set(0);
+      delete(f1);
+      busyWait(num);
+      assertThat(num.get(), is(1));
+    } finally {
+      delete(f1);
+      delete(d1);
+    }
+  }
 
-	private void busyWait(final AtomicInteger num) throws InterruptedException {
-		int tries = 0;
-		while (++tries < 60) {
-			Thread.sleep(1000);
-			if (num.get() > 0) {
-				log.info("delay {} ms", 1000 * tries);
-				return;
-			}
-		}
-		log.error("detect timeout, delay {}ms", 100 * tries);
-	}
+  private void busyWait(final AtomicInteger num) throws InterruptedException {
+    int tries = 0;
+    while (++tries < 60) {
+      Thread.sleep(1000);
+      if (num.get() > 0) {
+        log.info("delay {} ms", 1000 * tries);
+        return;
+      }
+    }
+    log.error("detect timeout, delay {}ms", 100 * tries);
+  }
 
-	private void write(byte[] bytes, File f) throws IOException {
-		log.info("write {} bytes into {}", bytes.length, f);
-		Files.write(bytes, f);
-	}
+  private void write(byte[] bytes, File f) throws IOException {
+    log.info("write {} bytes into {}", bytes.length, f);
+    Files.write(bytes, f);
+  }
 
-	private void delete(File f) {
-		if (f == null || !f.exists()) return;
-		log.info("delete {}", f);
-		if (!f.delete()) {
-			f.deleteOnExit();
-		}
-	}
+  private void delete(File f) {
+    if (f == null || !f.exists())
+      return;
+    log.info("delete {}", f);
+    if (!f.delete()) {
+      f.deleteOnExit();
+    }
+  }
 }
