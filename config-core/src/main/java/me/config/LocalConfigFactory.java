@@ -1,6 +1,5 @@
 package me.config;
 
-import com.google.common.collect.Maps;
 import me.config.api.IChangeableConfig;
 import me.config.api.IFileListener;
 import me.config.base.AbstractConfigFactory;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 本地配置工厂
@@ -18,7 +16,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class LocalConfigFactory extends AbstractConfigFactory {
 	private final Logger log = LoggerFactory.getLogger(getClass());
-	private final ConcurrentMap<String, IChangeableConfig> m = Maps.newConcurrentMap();
 	private final Path basePath;
 
 	public LocalConfigFactory(Path basePath) {
