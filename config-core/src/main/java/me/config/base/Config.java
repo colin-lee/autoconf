@@ -27,10 +27,10 @@ public class Config extends Properties {
                 StringBuilder sbd = new StringBuilder();
                 for (Map.Entry<String, String> i : m.entrySet()) {
                     sbd.append(i.getKey()).append('=').append(i.getValue()).append('\n');
-                }
+        }
                 content = sbd.toString().getBytes(UTF8);
             }
-        }
+    }
         return content;
     }
 
@@ -63,18 +63,18 @@ public class Config extends Properties {
                         String v = i.substring(pos + 1).trim();
                         m.put(k, v);
                     }
-                }
+        }
                 copyOf(m);
             }
             parsed = true;
-        }
+    }
     }
 
     @Override
     public String get(String key) {
         if (!parsed) {
             parse();
-        }
+    }
         return super.get(key);
     }
 
@@ -82,7 +82,7 @@ public class Config extends Properties {
     public Map<String, String> getAll() {
         if (!parsed) {
             parse();
-        }
+    }
         return super.getAll();
     }
 
@@ -116,7 +116,7 @@ public class Config extends Properties {
             if (i.charAt(0) == '#' || i.startsWith("//"))
                 continue;
             clean.add(i);
-        }
+    }
         return clean;
     }
 }

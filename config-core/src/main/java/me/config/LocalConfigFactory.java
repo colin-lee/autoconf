@@ -1,7 +1,6 @@
 package me.config;
 
 import me.config.api.IChangeableConfig;
-import me.config.api.IConfigFactory;
 import me.config.api.IFileListener;
 import me.config.base.AbstractConfigFactory;
 import me.config.helper.Helper;
@@ -21,7 +20,7 @@ public class LocalConfigFactory extends AbstractConfigFactory {
     this.basePath = localConfigPath;
   }
 
-  public static IConfigFactory getInstance() {
+  public static LocalConfigFactory getInstance() {
     return LazyHolder.instance;
   }
 
@@ -47,6 +46,7 @@ public class LocalConfigFactory extends AbstractConfigFactory {
   }
 
   private static class LazyHolder {
-    private static final IConfigFactory instance = new LocalConfigFactory(Helper.localConfigPath());
+    private static final LocalConfigFactory instance =
+      new LocalConfigFactory(Helper.localConfigPath());
   }
 }

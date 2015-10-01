@@ -1,12 +1,12 @@
 package me.config;
 
 import me.config.api.IChangeableConfig;
-import me.config.api.IConfigFactory;
 import me.config.base.AbstractConfigFactory;
 import me.config.base.ProcessInfo;
 import me.config.helper.Helper;
 import me.config.impl.ZookeeperConfig;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.utils.ZKPaths;
 
 /**
  * 只拉取zookeeper配置的工厂类
@@ -21,8 +21,16 @@ public class ZookeeperConfigFactory extends AbstractConfigFactory {
     this.client = client;
   }
 
-  public static IConfigFactory getInstance() {
+  public static ZookeeperConfigFactory getInstance() {
     return LazyHolder.instance;
+  }
+
+  public ProcessInfo getInfo() {
+    return info;
+  }
+
+  public CuratorFramework getClient() {
+    return client;
   }
 
   /**
@@ -33,11 +41,14 @@ public class ZookeeperConfigFactory extends AbstractConfigFactory {
    */
   @Override
   protected IChangeableConfig doCreate(String name) {
-    return new ZookeeperConfig(name, info.getPath(), info.orderedPath(), client);
+    String path = ZKPaths.makePath(info.getPath(), name);
+    ZookeeperConfig c = new ZookeeperConfig(name, path, info.orderedPath(), client);
+    c.start();
+    return c;
   }
 
   private static class LazyHolder {
-    private static final IConfigFactory instance =
-      new ZookeeperConfigFactory(Helper.scanProcessInfo(), Helper.createDefaultClient());
+    private static final ZookeeperConfigFactory instance =
+      new ZookeeperConfigFactory(Helper.getProcessInfo(), Helper.createDefaultClient());
   }
 }

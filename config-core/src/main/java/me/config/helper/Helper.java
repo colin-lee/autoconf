@@ -41,6 +41,10 @@ public class Helper {
     return LazyHolder.INNER_IP;
   }
 
+  public static ProcessInfo getProcessInfo() {
+    return LazyHolder.PROCESS_INFO;
+  }
+
   /**
    * 1.扫描配置参数 CONFIG_PATH <br/>
    * 2.扫描类路径下的 autoconf 目录 <br/>
@@ -113,6 +117,7 @@ public class Helper {
 
   /**
    * 扫描配置根目录或者类路径下的application.properties文件并解析
+   *
    * @return 加载的配置信息
    */
   private static Config applicationConfig() {
@@ -131,6 +136,58 @@ public class Helper {
     }
     return c;
   }
+
+  private static ProcessInfo scanProcessInfo() {
+    Config c = getApplicationConfig();
+    ProcessInfo info = new ProcessInfo();
+    info.setPath(c.get("zookeeper.basePath", "/cms/config"));
+    info.setName(c.get("process.name"));
+    info.setIp(c.get("process.ip", getServerInnerIP()));
+    info.setProfile(c.get("process.profile", "test"));
+    String s = c.get("process.port");
+    if (Strings.isNullOrEmpty(s)) {
+      try {
+        Integer port = WebServer.getHttpPort();
+        if (port != null) {
+          info.setPort(port.toString());
+        }
+      } catch (Exception ignored) {
+      }
+    }
+    return info;
+  }
+
+  public static CuratorFramework newClient(String connectString) {
+    return newClient(connectString, null, null);
+  }
+
+  public static CuratorFramework newClient(String connectString, String scheme, String password) {
+    RetryPolicy policy = new BoundedExponentialBackoffRetry(1000, 60000, 10);
+    CuratorFrameworkFactory.Builder builder =
+      CuratorFrameworkFactory.builder().connectString(connectString).connectionTimeoutMs(5000).sessionTimeoutMs(30000).retryPolicy(policy);
+    if (!Strings.isNullOrEmpty(scheme)) {
+      builder.authorization(scheme, newBytes(password));
+    }
+    CuratorFramework client = builder.build();
+    client.start();
+    return client;
+  }
+
+  /**
+   * 首先从zookeeper.servers的系统变量,application.properties的配置
+   */
+  public static CuratorFramework createDefaultClient() {
+    Config c = getApplicationConfig();
+    String scheme = c.get("zookeeper.authenticationType", "digest");
+    String key = "zookeeper.servers";
+    String s = System.getProperty(key);
+    if (Strings.isNullOrEmpty(s)) {
+      s = c.get(s);
+    }
+    return newClient(s, scheme, c.get("zookeeper.authentication"));
+  }
+
+
 
   /**
    * 获取本机内网ip，ip会在第一次访问后缓存起来，并且不会再更新
@@ -193,47 +250,6 @@ public class Helper {
     return false;
   }
 
-  public static ProcessInfo scanProcessInfo() {
-    Config c = getApplicationConfig();
-    ProcessInfo info = new ProcessInfo();
-    info.setPath(c.get("zookeeper.basePath", "/cms/config"));
-    info.setName(c.get("process.name"));
-    info.setIp(c.get("process.ip", getServerInnerIP()));
-    info.setProfile(c.get("process.profile", "test"));
-    String s = c.get("process.port");
-    if (Strings.isNullOrEmpty(s)) {
-      try {
-        Integer port = WebServer.getHttpPort();
-        if (port != null) {
-          info.setPort(port.toString());
-        }
-      } catch (Exception ignored) {
-      }
-    }
-    return info;
-  }
-
-  public static CuratorFramework newClient(String connectString) {
-    return newClient(connectString, null, null);
-  }
-
-  public static CuratorFramework newClient(String connectString, String scheme, String password) {
-    RetryPolicy policy = new BoundedExponentialBackoffRetry(1000, 60000, 10);
-    CuratorFrameworkFactory.Builder builder =
-      CuratorFrameworkFactory.builder().connectString(connectString).connectionTimeoutMs(5000).sessionTimeoutMs(30000).retryPolicy(policy);
-    if (!Strings.isNullOrEmpty(scheme)) {
-      builder.authorization(scheme, newBytes(password));
-    }
-    return builder.build();
-  }
-
-  public static CuratorFramework createDefaultClient() {
-    Config c = getApplicationConfig();
-    String scheme = c.get("zookeeper.authenticationType", "digest");
-    return newClient(c.get("zookeeper.servers"), scheme, c.get("zookeeper.authentication"));
-  }
-
-
   /**
    * 避免过早加载,重复加载
    */
@@ -241,5 +257,6 @@ public class Helper {
     private static final String INNER_IP = scanServerInnerIP();
     private static final Path CONFIG_PATH = scanConfigPath();
     private static final Config CONFIG = applicationConfig();
+    private static final ProcessInfo PROCESS_INFO = scanProcessInfo();
   }
 }
