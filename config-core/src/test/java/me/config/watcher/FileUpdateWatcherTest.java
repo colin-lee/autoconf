@@ -26,7 +26,7 @@ public class FileUpdateWatcherTest {
 	public void testListener() throws Exception {
 		FileUpdateWatcher watcher = FileUpdateWatcher.getInstance();
 		File d1 = Files.createTempDir();
-		File f1 = d1.toPath().resolve("updateWatcher").toFile();
+		File f1 = d1.toPath().resolve("update.txt").toFile();
 		//mac系统上获取回调通知特别慢,所以通过一个计数器来做忙等待.
 		final AtomicInteger num = new AtomicInteger(0);
 		IFileListener listener = new IFileListener() {

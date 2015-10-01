@@ -50,7 +50,7 @@ public class FileUpdateWatcher implements Runnable {
 		Multimap<Path, IFileListener> files = watches.get(parent);
 		if (files == null) {
 			try {
-				WatchEvent.Kind[] events = {ENTRY_MODIFY, ENTRY_CREATE, ENTRY_DELETE};
+				WatchEvent.Kind[] events = {ENTRY_MODIFY, ENTRY_DELETE};
 				WatchKey key = parent.register(watchService, events, SensitivityWatchEventModifier.HIGH);
 				keys.put(key, parent);
 				log.info("monitor directory {}", parent);
