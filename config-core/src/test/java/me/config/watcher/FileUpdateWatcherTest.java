@@ -2,7 +2,6 @@ package me.config.watcher;
 
 import com.google.common.io.Files;
 import me.config.api.IFileListener;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,21 +20,13 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-29 15:12.
  */
 public class FileUpdateWatcherTest {
-	private static boolean isMac = false;
 	private final Logger log = LoggerFactory.getLogger(FileUpdateWatcherTest.class);
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		String os = System.getProperties().getProperty("os.name");
-		isMac = os.toLowerCase().contains("mac");
-	}
 
 	@Test
 	public void testListener() throws Exception {
-		if (isMac) return;
 		FileUpdateWatcher watcher = FileUpdateWatcher.getInstance();
 		File d1 = Files.createTempDir();
-		File f1 = File.createTempFile("conf-", ".ini", d1);
+		File f1 = d1.toPath().resolve("conf.ini").toFile();
 		//mac系统上获取回调通知特别慢,所以通过一个计数器来做忙等待.
 		final AtomicInteger num = new AtomicInteger(0);
 		IFileListener listener = new IFileListener() {
@@ -84,7 +75,7 @@ public class FileUpdateWatcherTest {
 	}
 
 	private void delete(File f) {
-		if (!f.exists()) return;
+		if (f == null || !f.exists()) return;
 		log.info("delete {}", f);
 		if (!f.delete()) {
 			f.deleteOnExit();

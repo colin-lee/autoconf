@@ -124,6 +124,12 @@ public class FileUpdateWatcher implements Runnable {
 	}
 
 	private static final class LazyHolder {
-		private static final FileUpdateWatcher instance = new FileUpdateWatcher();
+		private static final FileUpdateWatcher instance = create();
+
+		private static FileUpdateWatcher create() {
+			FileUpdateWatcher watcher = new FileUpdateWatcher();
+			watcher.start();
+			return watcher;
+		}
 	}
 }

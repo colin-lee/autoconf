@@ -35,7 +35,6 @@ public class MergedConfig extends ChangeableConfig implements IChangeableConfig 
 			@Override
 			public void changed(IConfig config) {
 				merge();
-				notifyListeners();
 			}
 		};
 
@@ -58,6 +57,7 @@ public class MergedConfig extends ChangeableConfig implements IChangeableConfig 
 			m.putAll(c.getAll());
 		}
 		copyOf(m);
+		notifyListeners();
 	}
 
 	@Override

@@ -38,19 +38,22 @@ public class ConfigFactoryTest {
 			assertThat(c1.getInt("a"), is(1));
 			assertThat(merge.getInt("a"), is(1));
 			assertThat(merge.getInt("b"), is(2));
-			//if (System.getProperty("os.name").toLowerCase().contains("mac")) return;
 			//测试本地配置修改更新
 			final AtomicInteger num = new AtomicInteger(0);
 			merge.addListener(new IChangeListener() {
 				@Override
 				public void changed(IConfig config) {
+					log.info("{} changed", config.getName());
 					num.incrementAndGet();
 				}
 			}, false);
 			write(newBytes("a=3"), f1);
-			write(newBytes("c=4"), f3);
 			busyWait(num);
 			assertThat(merge.getInt("a"), is(3));
+
+			num.set(0);
+			write(newBytes("c=4"), f3);
+			busyWait(num);
 			assertThat(merge.getInt("c"), is(4));
 		} finally {
 			delete(f1);

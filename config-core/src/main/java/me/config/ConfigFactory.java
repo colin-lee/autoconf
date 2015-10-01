@@ -94,6 +94,7 @@ public class ConfigFactory implements IConfigFactory {
 			public void changed(Path path, byte[] content) {
 				log.info("{} changed", path);
 				c.copyOf(content);
+				c.notifyListeners();
 			}
 		});
 		return c;
