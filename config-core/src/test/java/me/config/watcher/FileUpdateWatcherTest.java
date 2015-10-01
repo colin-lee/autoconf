@@ -37,7 +37,6 @@ public class FileUpdateWatcherTest {
 			}
 		};
 		try {
-			watcher.start();
 			watcher.watch(f1.toPath(), listener);
 			//修改文件内容
 			num.set(0);
@@ -53,7 +52,6 @@ public class FileUpdateWatcherTest {
 		} finally {
 			delete(f1);
 			delete(d1);
-			watcher.shutdown();
 		}
 	}
 
