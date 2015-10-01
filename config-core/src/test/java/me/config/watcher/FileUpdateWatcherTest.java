@@ -26,7 +26,7 @@ public class FileUpdateWatcherTest {
 	public void testListener() throws Exception {
 		FileUpdateWatcher watcher = FileUpdateWatcher.getInstance();
 		File d1 = Files.createTempDir();
-		File f1 = d1.toPath().resolve("conf.ini").toFile();
+		File f1 = d1.toPath().resolve("updateWatcher").toFile();
 		//mac系统上获取回调通知特别慢,所以通过一个计数器来做忙等待.
 		final AtomicInteger num = new AtomicInteger(0);
 		IFileListener listener = new IFileListener() {
@@ -57,10 +57,10 @@ public class FileUpdateWatcherTest {
 
 	private void busyWait(final AtomicInteger num) throws InterruptedException {
 		int tries = 0;
-		while (++tries < 1000) {
-			Thread.sleep(100);
+		while (++tries < 60) {
+			Thread.sleep(1000);
 			if (num.get() > 0) {
-				log.info("delay {} ms", 100 * tries);
+				log.info("delay {} ms", 1000 * tries);
 				return;
 			}
 		}

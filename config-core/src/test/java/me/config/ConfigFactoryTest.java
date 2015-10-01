@@ -67,10 +67,10 @@ public class ConfigFactoryTest {
 
 	private void busyWait(final AtomicInteger num) throws InterruptedException {
 		int tries = 0;
-		while (++tries < 1000) {
-			Thread.sleep(100);
+		while (++tries < 60) {
+			Thread.sleep(1000);
 			if (num.get() > 0) {
-				log.info("delay {} ms", 100 * tries);
+				log.info("delay {} ms", 1000 * tries);
 				return;
 			}
 		}
