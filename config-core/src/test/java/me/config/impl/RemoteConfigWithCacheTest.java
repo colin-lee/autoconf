@@ -58,12 +58,12 @@ public class RemoteConfigWithCacheTest {
     write(newBytes("a=1"), cacheFile);
     RemoteConfigWithCache config =
       new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
-    config.delayMillis = 1000;
+    config.setDelaySeconds(1);
     config.start();
     assertThat(config.getInt("a"), is(1));
 
     //等待从服务端对比加载
-    Thread.sleep(config.delayMillis * 2);
+    Thread.sleep(2000);
     //这个时候远程服务上还没有,所以不会引起配置变更
     assertThat(config.getInt("a"), is(1));
     String appPath = ZKPaths.makePath(basePath, "appName");
@@ -115,7 +115,7 @@ public class RemoteConfigWithCacheTest {
     File cacheFile = new File(tempDir.getPath() + "/cache.ini");
     RemoteConfigWithCache config =
       new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
-    config.delayMillis = 1000;
+    config.setDelaySeconds(1);
     config.start();
     assertThat(config.getInt("a"), is(1));
     assertThat(newString(Files.toByteArray(cacheFile)), is(s));

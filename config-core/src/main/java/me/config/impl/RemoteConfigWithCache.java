@@ -26,11 +26,15 @@ public class RemoteConfigWithCache extends RemoteConfig {
   /**
    * 延迟加载远程配置初始值,避免加载配置影响启动
    */
-  long delayMillis = 10000;
+  private long delaySeconds = 20;
 
   public RemoteConfigWithCache(String name, String basePath, List<String> paths, CuratorFramework client, File cacheFile) {
     super(name, basePath, paths, client);
     this.cacheFile = cacheFile;
+  }
+
+  public void setDelaySeconds(long delaySeconds) {
+    this.delaySeconds = delaySeconds;
   }
 
   @Override
@@ -62,7 +66,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
       @Override
       public void run() {
         try {
-          Thread.sleep(delayMillis);
+          Thread.sleep(delaySeconds * 1000);
         } catch (InterruptedException ignored) {
         }
         for (RemoteConfig i : items) {

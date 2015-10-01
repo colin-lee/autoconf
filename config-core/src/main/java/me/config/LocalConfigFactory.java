@@ -14,14 +14,23 @@ import java.nio.file.Path;
  * Created by lirui on 2015-09-30 22:25.
  */
 public class LocalConfigFactory extends AbstractConfigFactory {
-  private final Path basePath;
+  private final Path path;
 
   public LocalConfigFactory(Path localConfigPath) {
-    this.basePath = localConfigPath;
+    this.path = localConfigPath;
   }
 
   public static LocalConfigFactory getInstance() {
     return LazyHolder.instance;
+  }
+
+  /**
+   * 本地cache根路径
+   *
+   * @return 路径
+   */
+  public Path getPath() {
+    return path;
   }
 
   /**
@@ -32,9 +41,9 @@ public class LocalConfigFactory extends AbstractConfigFactory {
    */
   @Override
   protected IChangeableConfig doCreate(String name) {
-    Path path = basePath.resolve(name);
-    final LocalConfig c = new LocalConfig(name, path);
-    FileUpdateWatcher.getInstance().watch(path, new IFileListener() {
+    Path p = path.resolve(name);
+    final LocalConfig c = new LocalConfig(name, p);
+    FileUpdateWatcher.getInstance().watch(p, new IFileListener() {
       @Override
       public void changed(Path path, byte[] content) {
         log.info("{} changed", path);

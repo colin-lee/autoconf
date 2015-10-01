@@ -15,15 +15,24 @@ import java.nio.file.Path;
  * Created by lirui on 2015-10-01 22:25.
  */
 public class ConfigFactory extends RemoteConfigFactory {
-  private final Path basePath;
+  private final Path path;
 
   public ConfigFactory(Path localConfigPath, ProcessInfo info, CuratorFramework client) {
     super(info, client);
-    this.basePath = localConfigPath;
+    this.path = localConfigPath;
   }
 
   public static ConfigFactory getInstance() {
     return LazyHolder.instance;
+  }
+
+  /**
+   * 本地cache根路径
+   *
+   * @return 路径
+   */
+  public Path getPath() {
+    return path;
   }
 
   /**
@@ -36,7 +45,7 @@ public class ConfigFactory extends RemoteConfigFactory {
   protected IChangeableConfig doCreate(String name) {
     ProcessInfo info = getInfo();
     String path = ZKPaths.makePath(info.getPath(), name);
-    File cacheFile = basePath.resolve(name).toFile();
+    File cacheFile = this.path.resolve(name).toFile();
     RemoteConfigWithCache c =
       new RemoteConfigWithCache(name, path, info.orderedPath(), getClient(), cacheFile);
     c.start();
