@@ -29,7 +29,7 @@ public class Helper {
   private Helper() {
   }
 
-  public static Path localConfigPath() {
+  public static Path getConfigPath() {
     return LazyHolder.CONFIG_PATH;
   }
 
@@ -122,7 +122,7 @@ public class Helper {
    */
   private static Config applicationConfig() {
     String name = "application.properties";
-    File f = localConfigPath().resolve(name).toFile();
+    File f = getConfigPath().resolve(name).toFile();
     if (!f.exists()) {
       String s = scanResource(name);
       if (!Strings.isNullOrEmpty(s)) {

@@ -30,10 +30,10 @@ import static org.junit.Assert.assertThat;
  * 验证本地cache等功能
  * Created by lirui on 2015-09-30 18:56.
  */
-public class ZookeeperConfigWithCacheTest {
+public class RemoteConfigWithCacheTest {
   private static TestingServer server;
   private static CuratorFramework client;
-  private final Logger log = LoggerFactory.getLogger(ZookeeperConfigWithCacheTest.class);
+  private final Logger log = LoggerFactory.getLogger(RemoteConfigWithCacheTest.class);
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -56,8 +56,8 @@ public class ZookeeperConfigWithCacheTest {
     ArrayList<String> paths = Lists.newArrayList("profile", "appName");
     File cacheFile = File.createTempFile("cache-", ".ini");
     write(newBytes("a=1"), cacheFile);
-    ZookeeperConfigWithCache config =
-      new ZookeeperConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
+    RemoteConfigWithCache config =
+      new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
     config.delayMillis = 1000;
     config.start();
     assertThat(config.getInt("a"), is(1));
@@ -113,8 +113,8 @@ public class ZookeeperConfigWithCacheTest {
     create(client, appPath, newBytes(s));
     File tempDir = Files.createTempDir();
     File cacheFile = new File(tempDir.getPath() + "/cache.ini");
-    ZookeeperConfigWithCache config =
-      new ZookeeperConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
+    RemoteConfigWithCache config =
+      new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
     config.delayMillis = 1000;
     config.start();
     assertThat(config.getInt("a"), is(1));

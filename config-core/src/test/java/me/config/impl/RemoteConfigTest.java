@@ -29,10 +29,10 @@ import static org.junit.Assert.assertThat;
  * zookeeper配置
  * Created by lirui on 2015-09-29 20:37.
  */
-public class ZookeeperConfigTest {
+public class RemoteConfigTest {
   private static TestingServer server;
   private static CuratorFramework client;
-  private final Logger log = LoggerFactory.getLogger(ZookeeperConfigTest.class);
+  private final Logger log = LoggerFactory.getLogger(RemoteConfigTest.class);
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -54,7 +54,7 @@ public class ZookeeperConfigTest {
     String basePath = "/auto/config/test";
     ArrayList<String> paths =
       Lists.newArrayList("127.0.0.1:8080", "127.0.0.1", "profile", "appName");
-    ZookeeperConfig config = new ZookeeperConfig("application.properties", basePath, paths, client);
+    RemoteConfig config = new RemoteConfig("application.properties", basePath, paths, client);
     config.start();
     assertThat(config.getInt("a"), is(0));
     //验证创建app独有配置

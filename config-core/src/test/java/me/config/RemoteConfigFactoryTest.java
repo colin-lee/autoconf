@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
  * 测试工厂类
  * Created by lirui on 2015-10-01 23:01.
  */
-public class ZookeeperConfigFactoryTest {
+public class RemoteConfigFactoryTest {
   private static TestingServer server;
   private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -41,7 +41,7 @@ public class ZookeeperConfigFactoryTest {
 
   @Test
   public void testFactory() throws Exception {
-    ZookeeperConfigFactory factory = ZookeeperConfigFactory.getInstance();
+    RemoteConfigFactory factory = RemoteConfigFactory.getInstance();
     ProcessInfo info = factory.getInfo();
     String name = "app.ini";
     String path = ZKPaths.makePath(info.getPath(), name, info.getProfile());

@@ -20,18 +20,18 @@ import static me.config.zookeeper.ZookeeperUtil.*;
  * 基于远程zookeeper文件的配置
  * Created by lirui on 2015/9/28.
  */
-public class ZookeeperConfig extends ChangeableConfig {
+public class RemoteConfig extends ChangeableConfig {
   private final String zkPath;
   private final List<String> paths;
   private final CuratorFramework client;
   protected Logger log = LoggerFactory.getLogger(getClass());
-  private final Watcher baseWatcher = new Watcher() {
+  private final Watcher leafWatcher = new Watcher() {
+    @Override
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeCreated:
-        case NodeChildrenChanged:
+        case NodeDataChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -43,13 +43,13 @@ public class ZookeeperConfig extends ChangeableConfig {
       }
     }
   };
-  private final Watcher leafWatcher = new Watcher() {
-    @Override
+  private final Watcher baseWatcher = new Watcher() {
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeDataChanged:
+        case NodeCreated:
+        case NodeChildrenChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -69,7 +69,7 @@ public class ZookeeperConfig extends ChangeableConfig {
     }
   };
 
-  public ZookeeperConfig(String name, String zkPath, List<String> paths, CuratorFramework client) {
+  public RemoteConfig(String name, String zkPath, List<String> paths, CuratorFramework client) {
     super(name);
     this.zkPath = zkPath;
     this.paths = paths;

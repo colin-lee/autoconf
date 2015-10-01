@@ -20,15 +20,15 @@ import java.util.Set;
  * 3.远程zookeeper改动内容会同步些往本地文件缓存. <br/>
  * Created by lirui on 2015/9/30.
  */
-public class ZookeeperConfigWithCache extends ZookeeperConfig {
-  private static final Set<ZookeeperConfig> items = Sets.newConcurrentHashSet();
+public class RemoteConfigWithCache extends RemoteConfig {
+  private static final Set<RemoteConfig> items = Sets.newConcurrentHashSet();
   private final File cacheFile;
   /**
    * 延迟加载远程配置初始值,避免加载配置影响启动
    */
   long delayMillis = 10000;
 
-  public ZookeeperConfigWithCache(String name, String basePath, List<String> paths, CuratorFramework client, File cacheFile) {
+  public RemoteConfigWithCache(String name, String basePath, List<String> paths, CuratorFramework client, File cacheFile) {
     super(name, basePath, paths, client);
     this.cacheFile = cacheFile;
   }
@@ -65,7 +65,7 @@ public class ZookeeperConfigWithCache extends ZookeeperConfig {
           Thread.sleep(delayMillis);
         } catch (InterruptedException ignored) {
         }
-        for (ZookeeperConfig i : items) {
+        for (RemoteConfig i : items) {
           i.initZookeeper();
         }
       }

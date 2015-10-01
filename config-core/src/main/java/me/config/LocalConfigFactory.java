@@ -47,6 +47,6 @@ public class LocalConfigFactory extends AbstractConfigFactory {
 
   private static class LazyHolder {
     private static final LocalConfigFactory instance =
-      new LocalConfigFactory(Helper.localConfigPath());
+      new LocalConfigFactory(Helper.getConfigPath());
   }
 }
