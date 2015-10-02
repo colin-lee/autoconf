@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+
+    <bean class="com.wenwen.spring.reloadable.ReloadablePropertyPostProcessor">
+        <constructor-arg ref="propertyConfigurator"/>
+    </bean>
+
+    <bean id="propertyConfigurator"
+          class="com.wenwen.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="configName" value="app.properties"/>
+        <property name="locations">
+            <list>
+                <value>classpath:j4log.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="com.wenwen.support.spring.reloadable.Article">
+        <property name="author" value="${article.author}"/>
+        <property name="content" value="${article.content}, welcome"/>
+    </bean>
+</beans>
