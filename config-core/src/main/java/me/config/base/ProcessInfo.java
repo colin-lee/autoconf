@@ -75,13 +75,7 @@ public class ProcessInfo {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("ProcessInfo{");
-    sb.append("path=").append(path);
-    sb.append(", name=").append(name);
-    sb.append(", profile=").append(profile);
-    sb.append(", ip=").append(ip);
-    sb.append(", port=").append(port);
-    sb.append('}');
-    return sb.toString();
+    return "ProcessInfo{" + "path=" + path + ", name=" + name + ", profile=" + profile + ", ip="
+      + ip + ", port=" + port + '}';
   }
 }

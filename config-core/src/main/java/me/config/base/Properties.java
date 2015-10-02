@@ -87,7 +87,7 @@ public class Properties {
    * 只有真正按照kv格式查找的时候，才进行解析对应kv内容。避免解析非KV格式的配置
    *
    * @param key 查找的key
-   * @return
+   * @return 获取对应的value
    */
   public String get(String key) {
     return m.get(key);
