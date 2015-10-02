@@ -5,10 +5,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import me.config.ConfigFactory;
-import me.config.api.IChangeListener;
-import me.config.api.IChangeableConfig;
-import me.config.api.IConfig;
-import me.config.api.IFileListener;
+import me.config.api.*;
 import me.config.impl.LocalConfig;
 import me.config.spring.properties.bean.DynamicProperty;
 import me.config.spring.properties.bean.PropertyModifiedEvent;
@@ -46,9 +43,10 @@ import java.util.Properties;
 public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer implements EventPublisher {
   private Logger log = LoggerFactory.getLogger(getClass());
   private PropertyChangedEventNotifier eventNotifier;
-  private Resource[] locations;
   private Multimap<String, DynamicProperty> placeHolders = HashMultimap.create();
   private PropertySourcesPropertyResolver propertyResolver;
+  private IConfigFactory configFactory;
+  private Resource[] locations;
   /**
    * 在cms系统中配置的名称，可以是逗号分隔的多个名字
    */
@@ -66,6 +64,10 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
     this.eventNotifier = eventNotifier;
   }
 
+  public void setConfigFactory(IConfigFactory configFactory) {
+    this.configFactory = configFactory;
+  }
+
   public void setConfigName(String configName) {
     this.configName = configName;
   }
@@ -73,15 +75,17 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
   @Override
   protected void loadProperties(final Properties props) throws IOException {
     super.loadProperties(props);
+    if (configFactory == null) {
+      configFactory = ConfigFactory.getInstance();
+    }
     if (!Strings.isNullOrEmpty(configName)) {
-      IChangeableConfig config =
-        ConfigFactory.getInstance().getConfig(configName, new IChangeListener() {
-          @Override
-          public void changed(IConfig config) {
-            log.info("CMS: {} changed", config.getName());
-            reloadCmsConfig(config);
-          }
-        }, false);
+      IChangeableConfig config = configFactory.getConfig(configName, new IChangeListener() {
+        @Override
+        public void changed(IConfig config) {
+          log.info("CMS: {} changed", config.getName());
+          reloadCmsConfig(config);
+        }
+      }, false);
       props.putAll(config.getAll());
     }
   }
