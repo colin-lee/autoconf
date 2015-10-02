@@ -10,7 +10,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>config-core</module>
-        <module>spring-reload</module>
+        <module>spring-config-support</module>
     </modules>
     <dependencies>
         <dependency>
