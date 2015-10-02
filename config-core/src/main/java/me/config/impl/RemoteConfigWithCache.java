@@ -58,7 +58,6 @@ public class RemoteConfigWithCache extends RemoteConfig {
       @Override
       public void changed(Path path, byte[] content) {
         log.info("local change: {}", path);
-        log.debug("content:\n{}", new String(content, UTF8));
         reload(content);
       }
     });
