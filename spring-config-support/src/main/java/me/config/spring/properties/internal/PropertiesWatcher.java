@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
+@Deprecated
 public class PropertiesWatcher implements Runnable {
   final ExecutorService service;
   private final Resource[] locations;

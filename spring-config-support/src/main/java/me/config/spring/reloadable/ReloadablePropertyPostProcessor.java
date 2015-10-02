@@ -46,7 +46,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
   private final PropertyChangedEventNotifier eventNotifier;
   private final PropertyConversionService propertyConversionService;
   private final ReloadablePropertySourcesPlaceholderConfigurer placeholderConfigurer;
-  private Logger log = LoggerFactory.getLogger(ReloadablePropertyPostProcessor.class);
+  private Logger log = LoggerFactory.getLogger(getClass());
   private Multimap<String, BeanPropertyHolder> beanPropertySubscriptions = HashMultimap.create();
 
   @Autowired
@@ -103,10 +103,10 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
 
     final Object convertedProperty = convertPlaceHolderForField(fieldToUpdate, rawValue);
     try {
-      log.info("Reloading property [{}] on field [{}] for class [{}]", new Object[] {event.getPropertyName(), fieldToUpdate.getName(), canonicalName});
+      log.info("Reloading property [{}] on field [{}] for class [{}]", event.getPropertyName(), fieldToUpdate.getName(), canonicalName);
       fieldToUpdate.set(beanToUpdate, convertedProperty);
     } catch (final IllegalAccessException e) {
-      log.error("Unable to reloading property [{}] on field [{}] for class [{}]\n Exception [{}]", new Object[] {event.getPropertyName(), fieldToUpdate.getName(), canonicalName, e.getMessage()});
+      log.error("Unable to reloading property [{}] on field [{}] for class [{}]\n Exception [{}]", event.getPropertyName(), fieldToUpdate.getName(), canonicalName, e.getMessage());
     }
   }
 
@@ -138,7 +138,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
               ReflectionUtils.makeAccessible(i);
               i.invoke(bean, value);
             } catch (Exception e) {
-              log.error("cannot invoke {}.{}({})", new Object[] {bean.getClass(), methodName, value});
+              log.error("cannot invoke {}.{}({})", bean.getClass(), methodName, value);
             }
             break;
           }
@@ -164,11 +164,11 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
           validatePropertyAvailableOrDefaultSet(bean, field, annotation, property);
 
           if (null != property) {
-            log.info("Attempting to convert and set property [{}] on field [{}] for class [{}] to type [{}]", new Object[] {property, field.getName(), bean.getClass().getCanonicalName(), field.getType()});
+            log.info("Attempting to convert and set property [{}] on field [{}] for class [{}] to type [{}]", property, field.getName(), bean.getClass().getCanonicalName(), field.getType());
 
             final Object convertedProperty = convertPropertyForField(field, annotation.value());
 
-            log.info("Setting field [{}] of class [{}] with value [{}]", new Object[] {field.getName(), bean.getClass().getCanonicalName(), convertedProperty});
+            log.info("Setting field [{}] of class [{}] with value [{}]", field.getName(), bean.getClass().getCanonicalName(), convertedProperty);
 
             field.set(bean, convertedProperty);
 

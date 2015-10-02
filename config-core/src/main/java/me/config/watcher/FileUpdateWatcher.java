@@ -3,7 +3,6 @@ package me.config.watcher;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import me.config.api.IFileListener;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -27,7 +25,7 @@ public class FileUpdateWatcher implements Runnable {
    */
   private final Map<Path, Multimap<Path, IFileListener>> watches = Maps.newConcurrentMap();
   private final Map<WatchKey, Path> keys = Maps.newConcurrentMap();
-  private final Set<Path> masks = Sets.newConcurrentHashSet();
+  private final Map<Path, Long> masks = Maps.newConcurrentMap();
   private Logger log = LoggerFactory.getLogger(getClass());
   private WatchService watchService;
   private boolean running = false;
@@ -49,7 +47,7 @@ public class FileUpdateWatcher implements Runnable {
   }
 
   public void mask(Path path) {
-    masks.add(path);
+    masks.put(path, System.currentTimeMillis());
   }
 
   public FileUpdateWatcher watch(Path path, IFileListener listener) {
@@ -98,12 +96,15 @@ public class FileUpdateWatcher implements Runnable {
             Path context = ev.context();
             Path child = base.resolve(context);
             log.info("{}, {}", kind, child);
-            boolean masked = masks.remove(child);
-            if (masked) {
+            //屏蔽只剩小10秒钟,避免误封禁
+            Long stamp = masks.remove(child);
+            if (stamp != null && System.currentTimeMillis() - stamp < 3000) {
               log.info("mask {}", child);
               continue;
             }
 
+            //屏蔽一会,避免频繁加载
+            mask(child);
             Collection<IFileListener> listeners = watches.get(base).get(child);
             if (listeners == null || listeners.size() == 0) {
               continue;
