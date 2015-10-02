@@ -3,6 +3,7 @@ package me.config.watcher;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import me.config.api.IFileListener;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -25,6 +27,7 @@ public class FileUpdateWatcher implements Runnable {
    */
   private final Map<Path, Multimap<Path, IFileListener>> watches = Maps.newConcurrentMap();
   private final Map<WatchKey, Path> keys = Maps.newConcurrentMap();
+  private final Set<Path> masks = Sets.newConcurrentHashSet();
   private Logger log = LoggerFactory.getLogger(getClass());
   private WatchService watchService;
   private boolean running = false;
@@ -43,6 +46,10 @@ public class FileUpdateWatcher implements Runnable {
 
   public void shutdown() {
     running = false;
+  }
+
+  public void mask(Path path) {
+    masks.add(path);
   }
 
   public FileUpdateWatcher watch(Path path, IFileListener listener) {
@@ -84,16 +91,23 @@ public class FileUpdateWatcher implements Runnable {
           Path base = keys.get(key);
           for (WatchEvent<?> event : key.pollEvents()) {
             WatchEvent.Kind kind = event.kind();
-            if (kind == OVERFLOW)
+            if (kind == OVERFLOW) {
               continue;
+            }
             WatchEvent<Path> ev = cast(event);
             Path context = ev.context();
             Path child = base.resolve(context);
             log.info("{}, {}", kind, child);
+            boolean masked = masks.remove(child);
+            if (masked) {
+              log.info("mask {}", child);
+              continue;
+            }
 
             Collection<IFileListener> listeners = watches.get(base).get(child);
-            if (listeners == null || listeners.size() == 0)
+            if (listeners == null || listeners.size() == 0) {
               continue;
+            }
             //配置文件内容都不大,所以这里就读出来,不用每个listener再分别读取了
             byte[] content = new byte[0];
             if (child.toFile().exists()) {

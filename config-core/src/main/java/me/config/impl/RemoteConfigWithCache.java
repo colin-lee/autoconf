@@ -84,6 +84,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
       copyOf(content);
       notifyListeners();
       try {
+        FileUpdateWatcher.getInstance().mask(cacheFile.toPath());
         Files.write(content, cacheFile);
       } catch (IOException e) {
         log.error("cannot write {}", cacheFile);
