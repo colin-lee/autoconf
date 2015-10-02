@@ -60,6 +60,7 @@ public class ConfigFactoryTest {
       }
     }, false);
     assertThat(c.getInt("b"), is(1));
+    Thread.sleep(2000);
     create(factory.getClient(), path, newBytes("a=1"));
     busyWait(num);
     assertThat(c.getInt("a"), is(1));
