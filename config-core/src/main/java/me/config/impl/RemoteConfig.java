@@ -25,13 +25,13 @@ public class RemoteConfig extends ChangeableConfig {
   private final List<String> paths;
   private final CuratorFramework client;
   protected Logger log = LoggerFactory.getLogger(getClass());
-  private final Watcher baseWatcher = new Watcher() {
+  private final Watcher leafWatcher = new Watcher() {
+    @Override
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeCreated:
-        case NodeChildrenChanged:
+        case NodeDataChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -43,13 +43,13 @@ public class RemoteConfig extends ChangeableConfig {
       }
     }
   };
-  private final Watcher leafWatcher = new Watcher() {
-    @Override
+  private final Watcher baseWatcher = new Watcher() {
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeDataChanged:
+        case NodeCreated:
+        case NodeChildrenChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -137,7 +137,7 @@ public class RemoteConfig extends ChangeableConfig {
       return true;
     }
     byte[] old = getContent();
-    log.debug("before:\n{}\n\nafter:{}\n", newString(old), newString(now));
+    log.debug("change detecting\nbefore:\n{}\n\nafter:\n{}\n", newString(old), newString(now));
     return !Arrays.equals(now, old);
   }
 
