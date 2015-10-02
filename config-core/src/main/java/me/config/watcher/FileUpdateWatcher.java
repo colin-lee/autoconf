@@ -24,7 +24,6 @@ public class FileUpdateWatcher implements Runnable {
    * 同一个目录下会包含多个文件,每个文件又有多个listener
    */
   private final Map<Path, Multimap<Path, IFileListener>> watches = Maps.newConcurrentMap();
-  private final Map<WatchKey, Path> keys = Maps.newConcurrentMap();
   private final Map<Path, Long> masks = Maps.newConcurrentMap();
   private Logger log = LoggerFactory.getLogger(getClass());
   private WatchService watchService;
@@ -56,8 +55,7 @@ public class FileUpdateWatcher implements Runnable {
     if (files == null) {
       try {
         WatchEvent.Kind[] events = {ENTRY_MODIFY, ENTRY_DELETE};
-        WatchKey key = parent.register(watchService, events, SensitivityWatchEventModifier.HIGH);
-        keys.put(key, parent);
+        parent.register(watchService, events, SensitivityWatchEventModifier.HIGH);
         log.info("monitor directory {}", parent);
       } catch (IOException e) {
         log.error("cannot register path:{}", parent, e);
@@ -86,12 +84,12 @@ public class FileUpdateWatcher implements Runnable {
       try {
         key = watchService.take();
         if (key != null) {
-          Path base = keys.get(key);
           for (WatchEvent<?> event : key.pollEvents()) {
             WatchEvent.Kind kind = event.kind();
             if (kind == OVERFLOW) {
               continue;
             }
+            Path base = (Path) key.watchable();
             WatchEvent<Path> ev = cast(event);
             Path context = ev.context();
             Path child = base.resolve(context);

@@ -8,10 +8,12 @@ import me.config.ConfigFactory;
 import me.config.api.IChangeListener;
 import me.config.api.IChangeableConfig;
 import me.config.api.IConfig;
+import me.config.api.IFileListener;
 import me.config.spring.properties.bean.DynamicProperty;
 import me.config.spring.properties.bean.PropertyModifiedEvent;
 import me.config.spring.properties.event.PropertyChangedEventNotifier;
 import me.config.spring.properties.internal.EventPublisher;
+import me.config.watcher.FileUpdateWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
@@ -30,6 +32,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringValueResolver;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 
@@ -144,16 +147,21 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
     if (null == this.eventNotifier) {
       throw new BeanInitializationException("Event bus not setup, you should not be calling this method...!");
     }
-    /*
     if (this.locations != null) {
       try {
         // Here we actually create and set a FileWatcher to monitor the given locations
-        Executors.newSingleThreadExecutor().execute(new PropertiesWatcher(this.locations, this););
+        for (Resource i : locations) {
+          FileUpdateWatcher.getInstance().watch(i.getFile().toPath(), new IFileListener() {
+            @Override
+            public void changed(Path path, byte[] content) {
+            }
+          });
+        }
+        // Executors.newSingleThreadExecutor().execute(new PropertiesWatcher(this.locations, this););
       } catch (Exception e) {
         log.error("Unable to start properties file watcher", e);
       }
     }
-    */
   }
 
   public PropertySourcesPropertyResolver getPropertyResolver() {
