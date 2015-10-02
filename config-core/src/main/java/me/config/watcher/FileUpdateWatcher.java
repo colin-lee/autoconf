@@ -98,7 +98,7 @@ public class FileUpdateWatcher implements Runnable {
             log.info("{}, {}", kind, child);
             //屏蔽只剩小10秒钟,避免误封禁
             Long stamp = masks.remove(child);
-            if (stamp != null && System.currentTimeMillis() - stamp < 3000) {
+            if (stamp != null && System.currentTimeMillis() - stamp < 1000) {
               log.info("mask {}", child);
               continue;
             }
