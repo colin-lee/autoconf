@@ -2,8 +2,13 @@ package me.config.spring;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.io.Closeables;
+import org.apache.curator.test.TestingServer;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,8 +32,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 public class ReloadableTest {
+  private static TestingServer server;
+  private Logger log = LoggerFactory.getLogger(getClass());
+
   @Autowired
   private Article article;
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    server = new TestingServer();
+    //设置环境变量,覆盖application.properties配置
+    System.setProperty("zookeeper.servers", server.getConnectString());
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
+    Closeables.close(server, true);
+  }
 
   private void setVariable(String var) throws Exception {
     File app = ResourceUtils.getFile("classpath:autoconf/app.properties");
