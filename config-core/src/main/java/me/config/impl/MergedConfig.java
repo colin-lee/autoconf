@@ -21,47 +21,47 @@ import java.util.Map;
  * Created by lirui on 15/9/24.
  */
 public class MergedConfig extends ChangeableConfig implements IChangeableConfig {
-	private final List<IChangeableConfig> configs;
+  private final List<IChangeableConfig> configs;
 
-	public MergedConfig(List<IChangeableConfig> configs) {
-		super(Joiner.on(',').join(Collections2.transform(configs, new Function<IChangeableConfig, String>() {
-			@Override
-			public String apply(IChangeableConfig input) {
-				return input.getName();
-			}
-		})));
+  public MergedConfig(List<IChangeableConfig> configs) {
+    super(Joiner.on(',').join(Collections2.transform(configs, new Function<IChangeableConfig, String>() {
+      @Override
+      public String apply(IChangeableConfig input) {
+        return input.getName();
+      }
+    })));
 
-		IChangeListener listener = new IChangeListener() {
-			@Override
-			public void changed(IConfig config) {
-				merge();
-			}
-		};
+    IChangeListener listener = new IChangeListener() {
+      @Override
+      public void changed(IConfig config) {
+        merge();
+      }
+    };
 
-		// 注册单个配置文件的更新回调功能
-		for (IChangeableConfig c : configs) {
-			c.addListener(listener, false);
-		}
+    // 注册单个配置文件的更新回调功能
+    for (IChangeableConfig c : configs) {
+      c.addListener(listener, false);
+    }
 
-		// 同名配置，排在前面的优先，所以按照做一次排序反转
-		this.configs = Lists.newArrayList(configs);
-		Collections.reverse(this.configs);
+    // 同名配置，排在前面的优先，所以按照做一次排序反转
+    this.configs = Lists.newArrayList(configs);
+    Collections.reverse(this.configs);
 
-		// 首次merge配置
-		merge();
-	}
+    // 首次merge配置
+    merge();
+  }
 
-	private void merge() {
-		Map<String, String> m = Maps.newHashMap();
-		for (IChangeableConfig c : this.configs) {
-			m.putAll(c.getAll());
-		}
-		copyOf(m);
-		notifyListeners();
-	}
+  private void merge() {
+    Map<String, String> m = Maps.newHashMap();
+    for (IChangeableConfig c : this.configs) {
+      m.putAll(c.getAll());
+    }
+    copyOf(m);
+    notifyListeners();
+  }
 
-	@Override
-	public String toString() {
-		return "MergedConfig{" + "name=" + getName() + '}';
-	}
+  @Override
+  public String toString() {
+    return "MergedConfig{" + "name=" + getName() + '}';
+  }
 }

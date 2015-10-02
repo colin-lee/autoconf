@@ -41,8 +41,7 @@ import java.util.concurrent.Executors;
  * @author James Morgan
  */
 public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer implements PropertiesWatcher.EventPublisher {
-  private Logger log =
-    LoggerFactory.getLogger(ReloadablePropertySourcesPlaceholderConfigurer.class);
+  private Logger log = LoggerFactory.getLogger(getClass());
   private PropertyChangedEventNotifier eventNotifier;
   private Resource[] locations;
   private Multimap<String, DynamicProperty> placeHolders = HashMultimap.create();

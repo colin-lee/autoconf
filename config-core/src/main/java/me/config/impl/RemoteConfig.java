@@ -134,8 +134,9 @@ public class RemoteConfig extends ChangeableConfig {
    * @return 逐字节对比，不一样就返回true
    */
   protected boolean hasChanged(byte[] now) {
-    if (now == null)
+    if (now == null) {
       return true;
+    }
     byte[] old = getContent();
     return !Arrays.equals(now, old);
   }
