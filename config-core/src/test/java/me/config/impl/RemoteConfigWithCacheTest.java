@@ -75,7 +75,7 @@ public class RemoteConfigWithCacheTest {
       public void changed(IConfig config) {
         num.incrementAndGet();
       }
-    });
+    }, false);
     create(client, appPath, newBytes("a=2"));
     busyWait(num);
     assertThat(config.getInt("a"), is(2));
