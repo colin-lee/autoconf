@@ -23,7 +23,6 @@ import java.util.Map;
  */
 @Component
 public class DefaultPropertyConversionService implements PropertyConversionService {
-
   private static Map<Class<? extends Object>, Function<Object, ?>> CONVERTS = Maps.newHashMap();
   private static SimpleTypeConverter DEFAULT = new SimpleTypeConverter();
 
@@ -56,14 +55,12 @@ public class DefaultPropertyConversionService implements PropertyConversionServi
     }
   }
 
-
   private static class PeriodConverter implements Function<Object, Period> {
     @Override
     public Period apply(final Object input) {
       return JodaUtils.timeStringToPeriodOrNull((String) input);
     }
   }
-
 
   private static class LocalDateTimeConverter implements Function<Object, LocalDateTime> {
     @Override
@@ -72,14 +69,12 @@ public class DefaultPropertyConversionService implements PropertyConversionServi
     }
   }
 
-
   private static class LocalDateConverter implements Function<Object, LocalDate> {
     @Override
     public LocalDate apply(final Object input) {
       return JodaUtils.dateStringToLocalDateOrNull((String) input);
     }
   }
-
 
   private static class LocalTimeConverter implements Function<Object, LocalTime> {
     @Override

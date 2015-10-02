@@ -9,6 +9,7 @@ import me.config.api.IChangeListener;
 import me.config.api.IChangeableConfig;
 import me.config.api.IConfig;
 import me.config.api.IFileListener;
+import me.config.impl.LocalConfig;
 import me.config.spring.properties.bean.DynamicProperty;
 import me.config.spring.properties.bean.PropertyModifiedEvent;
 import me.config.spring.properties.event.PropertyChangedEventNotifier;
@@ -151,13 +152,17 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
       try {
         // Here we actually create and set a FileWatcher to monitor the given locations
         for (Resource i : locations) {
-          FileUpdateWatcher.getInstance().watch(i.getFile().toPath(), new IFileListener() {
+          final LocalConfig c = new LocalConfig(i.getFilename(), i.getFile().toPath());
+          FileUpdateWatcher.getInstance().watch(c.getPath(), new IFileListener() {
             @Override
             public void changed(Path path, byte[] content) {
+              log.info("{} changed", path);
+              c.copyOf(content);
+              reloadCmsConfig(c);
             }
           });
+          reloadCmsConfig(c);
         }
-        // Executors.newSingleThreadExecutor().execute(new PropertiesWatcher(this.locations, this););
       } catch (Exception e) {
         log.error("Unable to start properties file watcher", e);
       }

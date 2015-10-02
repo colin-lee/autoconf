@@ -1,24 +1,22 @@
 package me.config.spring;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import me.config.base.Config;
 import org.apache.curator.test.TestingServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.ResourceUtils;
 
-import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -33,7 +31,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 public class ReloadableTest {
   private static TestingServer server;
-  private Logger log = LoggerFactory.getLogger(getClass());
 
   @Autowired
   private Article article;
@@ -52,20 +49,16 @@ public class ReloadableTest {
 
   private void setVariable(String var) throws Exception {
     File app = ResourceUtils.getFile("classpath:autoconf/app.properties");
-    List<String> lines = Lists.newArrayList();
-    BufferedReader reader = new BufferedReader(new FileReader(app));
-    String s;
-    while ((s = reader.readLine()) != null) {
+    List<String> lines = Files.readLines(app, Config.UTF8);
+    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(app)));
+    for (String s : lines) {
       if (s.startsWith("article.author")) {
         s = "article.author=" + var;
       }
-      lines.add(s);
+      writer.write(s);
+      writer.write('\n');
     }
-    reader.close();
-    FileOutputStream out = new FileOutputStream(app);
-    out.write(Joiner.on("\r\n").join(lines).getBytes("UTF-8"));
-    out.close();
-    LoggerFactory.getLogger("PropertiesWatcher").info("======write app.properties=====");
+    writer.close();
   }
 
   @Test
