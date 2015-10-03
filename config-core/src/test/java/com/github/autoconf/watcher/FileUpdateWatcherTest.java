@@ -44,6 +44,9 @@ public class FileUpdateWatcherTest {
       busyWait(num);
       assertThat(num.get(), is(1));
 
+      //本地修改有2s的屏蔽间隔,这里等待过期
+      Thread.sleep(2000);
+
       //删除文件
       num.set(0);
       delete(f1);
