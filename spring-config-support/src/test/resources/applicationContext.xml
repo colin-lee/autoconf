@@ -5,12 +5,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     <context:annotation-config/>
 
-    <bean class="me.config.spring.reloadable.ReloadablePropertyPostProcessor">
+    <bean class="com.github.autoconf.spring.reloadable.ReloadablePropertyPostProcessor">
         <constructor-arg ref="propertyConfigurator"/>
     </bean>
 
     <bean id="propertyConfigurator"
-          class="me.config.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer">
+          class="com.github.autoconf.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="false"/>
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="configName" value="app.properties"/>
@@ -19,7 +19,7 @@
         </property>
     </bean>
 
-    <bean class="me.config.spring.Article">
+    <bean class="com.github.autoconf.spring.Article">
         <property name="author" value="${article.author}"/>
         <property name="content" value="${article.content}, welcome"/>
     </bean>
