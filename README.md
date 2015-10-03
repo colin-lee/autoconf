@@ -1,6 +1,7 @@
 ##配置管理系统(ConfigManagerSystem)
 
 [![Build Status](https://travis-ci.org/colin-lee/autoconf.svg?branch=master)](https://travis-ci.org/colin-lee/autoconf)
+[![Coverage Status](https://coveralls.io/repos/colin-lee/autoconf/badge.svg?branch=master&service=github)](https://coveralls.io/github/colin-lee/autoconf?branch=master)
 
 ###设计理念
 - 基于Zookeeper集群实现集中式、实时更新配置
