@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.config.zookeeper.ZookeeperUtil.*;
+import static me.config.helper.ZookeeperUtil.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

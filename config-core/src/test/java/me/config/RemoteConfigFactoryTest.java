@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.config.zookeeper.ZookeeperUtil.*;
+import static me.config.helper.ZookeeperUtil.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

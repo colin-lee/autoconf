@@ -1,4 +1,4 @@
-package me.config.zookeeper;
+package me.config.helper;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
@@ -26,20 +26,23 @@ public class ZookeeperUtil {
   }
 
   public static String newString(byte[] data, Charset charset) {
-    if (data == null)
+    if (data == null) {
       return null;
+    }
     return new String(data, charset);
   }
 
   public static byte[] newBytes(String s) {
-    if (s == null)
+    if (s == null) {
       return null;
+    }
     return s.getBytes(UTF8);
   }
 
   public static byte[] newBytes(String s, Charset charset) {
-    if (s == null)
+    if (s == null) {
       return null;
+    }
     return s.getBytes(charset);
   }
 
@@ -47,7 +50,7 @@ public class ZookeeperUtil {
     try {
       client.create().creatingParentContainersIfNeeded().forPath(path);
     } catch (Exception e) {
-      throw new RuntimeException("ensure(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("ensure(" + path + ")", e);
     }
     return path;
   }
@@ -57,7 +60,7 @@ public class ZookeeperUtil {
       return client.checkExists().forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("exists(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("exists(" + path + ")", e);
     }
     return null;
   }
@@ -67,7 +70,7 @@ public class ZookeeperUtil {
       return client.checkExists().usingWatcher(watcher).forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("exists(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("exists(" + path + ")", e);
     }
     return null;
   }
@@ -76,7 +79,7 @@ public class ZookeeperUtil {
     try {
       client.create().creatingParentsIfNeeded().forPath(path);
     } catch (Exception e) {
-      throw new RuntimeException("create(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("create(" + path + ")", e);
     }
   }
 
@@ -84,7 +87,7 @@ public class ZookeeperUtil {
     try {
       client.create().creatingParentsIfNeeded().forPath(path, payload);
     } catch (Exception e) {
-      throw new RuntimeException("create(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("create(" + path + ")", e);
     }
   }
 
@@ -92,7 +95,7 @@ public class ZookeeperUtil {
     try {
       client.create().creatingParentsIfNeeded().withMode(mode).forPath(path, payload);
     } catch (Exception e) {
-      throw new RuntimeException("create(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("create(" + path + ")", e);
     }
   }
 
@@ -100,7 +103,7 @@ public class ZookeeperUtil {
     try {
       client.create().creatingParentsIfNeeded().withMode(mode).withACL(aclList).forPath(path, payload);
     } catch (Exception e) {
-      throw new RuntimeException("create(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("create(" + path + ")", e);
     }
   }
 
@@ -112,7 +115,7 @@ public class ZookeeperUtil {
       client.delete().deletingChildrenIfNeeded().forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("delete(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("delete(" + path + ")", e);
     }
   }
 
@@ -121,7 +124,7 @@ public class ZookeeperUtil {
       client.delete().guaranteed().deletingChildrenIfNeeded().forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("guaranteedDelete(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("guaranteedDelete(" + path + ")", e);
     }
   }
 
@@ -130,7 +133,7 @@ public class ZookeeperUtil {
       return client.getData().forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("getData(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("getData(" + path + ")", e);
     }
     return null;
   }
@@ -140,7 +143,7 @@ public class ZookeeperUtil {
       return client.getData().usingWatcher(watcher).forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("getData(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("getData(" + path + ")", e);
     }
     return null;
   }
@@ -150,7 +153,7 @@ public class ZookeeperUtil {
       return client.getChildren().forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("getChildren(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("getChildren(" + path + ")", e);
     }
     return null;
   }
@@ -160,7 +163,7 @@ public class ZookeeperUtil {
       return client.getChildren().usingWatcher(watcher).forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("getChildren(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("getChildren(" + path + ")", e);
     }
     return null;
   }
@@ -169,7 +172,7 @@ public class ZookeeperUtil {
     try {
       client.setData().forPath(path, payload);
     } catch (Exception e) {
-      throw new RuntimeException("setData(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("setData(" + path + ")", e);
     }
   }
 
@@ -177,7 +180,7 @@ public class ZookeeperUtil {
     try {
       client.setData().inBackground().forPath(path, payload);
     } catch (Exception e) {
-      throw new RuntimeException("setDataAsync(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("setDataAsync(" + path + ")", e);
     }
   }
 
@@ -186,7 +189,7 @@ public class ZookeeperUtil {
       return client.getACL().forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("getACL(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("getACL(" + path + ")", e);
     }
     return null;
   }
@@ -196,7 +199,7 @@ public class ZookeeperUtil {
       client.setACL().withACL(acls).forPath(path);
     } catch (KeeperException.NoNodeException ignored) {
     } catch (Exception e) {
-      throw new RuntimeException("setACL(" + path + "), reason: " + e.getMessage());
+      throw new RuntimeException("setACL(" + path + ")", e);
     }
   }
 }

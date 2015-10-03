@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.config.zookeeper.ZookeeperUtil.*;
+import static me.config.helper.ZookeeperUtil.*;
 import static org.apache.zookeeper.Watcher.Event.EventType.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

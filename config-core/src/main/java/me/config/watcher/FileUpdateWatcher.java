@@ -49,7 +49,7 @@ public class FileUpdateWatcher implements Runnable {
     masks.put(path, System.currentTimeMillis());
   }
 
-  public FileUpdateWatcher watch(Path path, IFileListener listener) {
+  public void watch(Path path, IFileListener listener) {
     Path parent = path.getParent();
     Multimap<Path, IFileListener> files = watches.get(parent);
     if (files == null) {
@@ -65,7 +65,6 @@ public class FileUpdateWatcher implements Runnable {
     }
     LOG.debug("watch {}, {}", path, listener);
     files.put(path, listener);
-    return this;
   }
 
   public void start() {

@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.List;
 
-import static me.config.zookeeper.ZookeeperUtil.newBytes;
+import static me.config.helper.ZookeeperUtil.newBytes;
 
 /**
  * 基础工具类

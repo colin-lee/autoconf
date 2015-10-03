@@ -190,7 +190,7 @@ public class JmxHelper {
    */
   public static Set<ObjectName> queryNames(final String query) throws MalformedObjectNameException {
     final ObjectName objectNameQuery = new ObjectName(query);
-    Set<ObjectName> names = new HashSet<ObjectName>();
+    Set<ObjectName> names = new HashSet<>();
 
     final List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
     for (int i = 0; names.isEmpty() && i < servers.size(); i++) {

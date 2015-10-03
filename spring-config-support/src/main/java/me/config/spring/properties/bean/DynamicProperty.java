@@ -12,7 +12,7 @@ public class DynamicProperty {
   final String beanName;
   final String propertyName;
   final String rawValue;
-  List<String> placeholders = new ArrayList<String>();
+  List<String> placeholders = new ArrayList<>();
 
   public DynamicProperty(String beanName, String propertyName, String rawValue) {
     this.beanName = beanName;
@@ -40,19 +40,25 @@ public class DynamicProperty {
     return propertyName;
   }
 
+  @SuppressWarnings("RedundantIfStatement")
   public boolean equals(Object o) {
-    if (this == o)
+    if (this == o) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
+    }
 
     final DynamicProperty that = (DynamicProperty) o;
 
-    if (beanName != null ? !beanName.equals(that.beanName) : that.beanName != null)
+    if (beanName != null ? !beanName.equals(that.beanName) : that.beanName != null) {
       return false;
-    if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null)
+    }
+    if (propertyName != null ?
+      !propertyName.equals(that.propertyName) :
+      that.propertyName != null) {
       return false;
-
+    }
     return true;
   }
 
@@ -65,12 +71,7 @@ public class DynamicProperty {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("DynamicProperty{");
-    sb.append("beanName='").append(beanName).append('\'');
-    sb.append(", propertyName='").append(propertyName).append('\'');
-    sb.append(", rawValue='").append(rawValue).append('\'');
-    sb.append(", placeholders=").append(placeholders);
-    sb.append('}');
-    return sb.toString();
+    return "DynamicProperty{" + "beanName='" + beanName + '\'' + ", propertyName='" + propertyName
+      + '\'' + ", rawValue='" + rawValue + '\'' + ", placeholders=" + placeholders + '}';
   }
 }

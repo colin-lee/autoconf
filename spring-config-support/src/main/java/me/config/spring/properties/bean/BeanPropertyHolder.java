@@ -44,11 +44,7 @@ public class BeanPropertyHolder {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("BeanPropertyHolder{");
-    sb.append("bean=").append(bean);
-    sb.append(", field=").append(field);
-    sb.append(", rawValue='").append(rawValue).append('\'');
-    sb.append('}');
-    return sb.toString();
+    return "BeanPropertyHolder{" + "bean=" + bean + ", field=" + field + ", rawValue='" + rawValue
+      + '\'' + '}';
   }
 }
