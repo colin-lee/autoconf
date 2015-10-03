@@ -27,8 +27,8 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-10-01 23:58.
  */
 public class ConfigFactoryTest {
+  private static final Logger LOG = LoggerFactory.getLogger(ConfigFactoryTest.class);
   private static TestingServer server;
-  private Logger log = LoggerFactory.getLogger(getClass());
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -77,22 +77,22 @@ public class ConfigFactoryTest {
     while (++tries < 600) {
       Thread.sleep(100);
       if (num.get() > 0) {
-        log.info("delay {} ms", 100 * tries);
+        LOG.info("delay {} ms", 100 * tries);
         return;
       }
     }
-    log.error("detect timeout, delay {}ms", 100 * tries);
+    LOG.error("detect timeout, delay {}ms", 100 * tries);
   }
 
   private void write(byte[] bytes, File f) throws IOException {
-    log.info("write {} bytes into {}", bytes.length, f);
+    LOG.info("write {} bytes into {}", bytes.length, f);
     Files.write(bytes, f);
   }
 
   private void delete(File f) {
     if (!f.exists())
       return;
-    log.info("delete {}", f);
+    LOG.info("delete {}", f);
     if (!f.delete()) {
       f.deleteOnExit();
     }

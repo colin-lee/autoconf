@@ -6,6 +6,8 @@ import me.config.base.AbstractConfigFactory;
 import me.config.helper.Helper;
 import me.config.impl.LocalConfig;
 import me.config.watcher.FileUpdateWatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
@@ -14,6 +16,8 @@ import java.nio.file.Path;
  * Created by lirui on 2015-09-30 22:25.
  */
 public class LocalConfigFactory extends AbstractConfigFactory {
+  private static final Logger LOG = LoggerFactory.getLogger(LocalConfigFactory.class);
+
   private final Path path;
 
   public LocalConfigFactory(Path localConfigPath) {
@@ -46,7 +50,7 @@ public class LocalConfigFactory extends AbstractConfigFactory {
     FileUpdateWatcher.getInstance().watch(p, new IFileListener() {
       @Override
       public void changed(Path path, byte[] content) {
-        log.info("{} changed", path);
+        LOG.info("{} changed", path);
         c.copyOf(content);
         c.notifyListeners();
       }

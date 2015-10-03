@@ -6,6 +6,8 @@ import com.google.common.io.Files;
 import me.config.api.IFileListener;
 import me.config.watcher.FileUpdateWatcher;
 import org.apache.curator.framework.CuratorFramework;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.Set;
  * Created by lirui on 2015/9/30.
  */
 public class RemoteConfigWithCache extends RemoteConfig {
+  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigWithCache.class);
   private static final Set<RemoteConfig> items = Sets.newConcurrentHashSet();
   private final File cacheFile;
   /**
@@ -46,7 +49,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
         //异步检查zookeeper中配置
         items.add(this);
       } catch (IOException e) {
-        log.error("cannot read {}", cacheFile);
+        LOG.error("cannot read {}", cacheFile);
         initZookeeper();
       }
     } else {
@@ -57,7 +60,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
     FileUpdateWatcher.getInstance().watch(cacheFile.toPath(), new IFileListener() {
       @Override
       public void changed(Path path, byte[] content) {
-        log.info("local change: {}", path);
+        LOG.info("local change: {}", path);
         reload(content);
       }
     });
@@ -87,7 +90,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
         FileUpdateWatcher.getInstance().mask(cacheFile.toPath());
         Files.write(content, cacheFile);
       } catch (IOException e) {
-        log.error("cannot write {}", cacheFile);
+        LOG.error("cannot write {}", cacheFile);
       }
     }
   }

@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-30 22:49.
  */
 public class LocalConfigFactoryTest {
-  private Logger log = LoggerFactory.getLogger(getClass());
+  private static final Logger LOG = LoggerFactory.getLogger(LocalConfigFactoryTest.class);
 
   @Test
   public void testFactory() throws Exception {
@@ -46,7 +46,7 @@ public class LocalConfigFactoryTest {
       merge.addListener(new IChangeListener() {
         @Override
         public void changed(IConfig config) {
-          log.info("{} changed", config.getName());
+          LOG.info("{} changed", config.getName());
           num.incrementAndGet();
         }
       }, false);
@@ -85,22 +85,22 @@ public class LocalConfigFactoryTest {
     while (++tries < 60) {
       Thread.sleep(1000);
       if (num.get() > 0) {
-        log.info("delay {} ms", 1000 * tries);
+        LOG.info("delay {} ms", 1000 * tries);
         return;
       }
     }
-    log.error("detect timeout, delay {}ms", 100 * tries);
+    LOG.error("detect timeout, delay {}ms", 100 * tries);
   }
 
   private void write(byte[] bytes, File f) throws IOException {
-    log.info("write {} bytes into {}", bytes.length, f);
+    LOG.info("write {} bytes into {}", bytes.length, f);
     Files.write(bytes, f);
   }
 
   private void delete(File f) {
     if (!f.exists())
       return;
-    log.info("delete {}", f);
+    LOG.info("delete {}", f);
     if (!f.delete()) {
       f.deleteOnExit();
     }

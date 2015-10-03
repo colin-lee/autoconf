@@ -13,8 +13,8 @@ import java.nio.file.Path;
  * Created by lirui on 2015/9/23.
  */
 public class LocalConfig extends ChangeableConfig {
+  private static final Logger LOG = LoggerFactory.getLogger(LocalConfig.class);
   private final Path path;
-  private Logger log = LoggerFactory.getLogger(getClass());
 
   public LocalConfig(String name, Path path) {
     super(name);
@@ -25,7 +25,7 @@ public class LocalConfig extends ChangeableConfig {
       }
     } catch (IOException e) {
       copyOf(new byte[0]);
-      log.error("configName={}, path={}", name, path, e);
+      LOG.error("configName={}, path={}", name, path, e);
     }
   }
 

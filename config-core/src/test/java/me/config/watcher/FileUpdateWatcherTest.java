@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-29 15:12.
  */
 public class FileUpdateWatcherTest {
-  private final Logger log = LoggerFactory.getLogger(FileUpdateWatcherTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(FileUpdateWatcherTest.class);
 
   @Test
   public void testListener() throws Exception {
@@ -32,7 +32,7 @@ public class FileUpdateWatcherTest {
     IFileListener listener = new IFileListener() {
       @Override
       public void changed(Path path, byte[] content) {
-        log.info("{} changed", path);
+        LOG.info("{} changed", path);
         num.incrementAndGet();
       }
     };
@@ -60,22 +60,22 @@ public class FileUpdateWatcherTest {
     while (++tries < 60) {
       Thread.sleep(1000);
       if (num.get() > 0) {
-        log.info("delay {} ms", 1000 * tries);
+        LOG.info("delay {} ms", 1000 * tries);
         return;
       }
     }
-    log.error("detect timeout, delay {}ms", 100 * tries);
+    LOG.error("detect timeout, delay {}ms", 100 * tries);
   }
 
   private void write(byte[] bytes, File f) throws IOException {
-    log.info("write {} bytes into {}", bytes.length, f);
+    LOG.info("write {} bytes into {}", bytes.length, f);
     Files.write(bytes, f);
   }
 
   private void delete(File f) {
     if (f == null || !f.exists())
       return;
-    log.info("delete {}", f);
+    LOG.info("delete {}", f);
     if (!f.delete()) {
       f.deleteOnExit();
     }

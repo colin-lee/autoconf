@@ -30,9 +30,9 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-29 20:37.
  */
 public class RemoteConfigTest {
+  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigTest.class);
   private static TestingServer server;
   private static CuratorFramework client;
-  private final Logger log = LoggerFactory.getLogger(RemoteConfigTest.class);
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -137,32 +137,32 @@ public class RemoteConfigTest {
         List<String> s = getChildren(client, p, this);
         getData(client, p, this);
         exists(client, p, this);
-        log.info("value={}, {}, {}, children:{}", t.getIntValue(), t, p, s);
+        LOG.info("value={}, {}, {}, children:{}", t.getIntValue(), t, p, s);
       }
     };
     exists(client, path, watcher);
-    log.info("create {}", path);
+    LOG.info("create {}", path);
     ensure(client, path);
     busyWait();
     getChildren(client, path, watcher);
     assertThat(at.get(), is(NodeCreated.getIntValue()));
-    log.info("setData {}", path);
+    LOG.info("setData {}", path);
     setData(client, path, newBytes("a=5"));
     busyWait();
     assertThat(at.get(), is(NodeDataChanged.getIntValue()));
     String child = ZKPaths.makePath(path, "child");
-    log.info("create {}", child);
+    LOG.info("create {}", child);
     create(client, child, newBytes("b=1"));
     busyWait();
     assertThat(at.get(), is(NodeChildrenChanged.getIntValue()));
-    log.info("setData {}", child);
+    LOG.info("setData {}", child);
     setData(client, child, newBytes("b=2"));
     busyWait();
-    log.info("delete {}", child);
+    LOG.info("delete {}", child);
     delete(client, child);
     busyWait();
     assertThat(at.get(), is(NodeChildrenChanged.getIntValue()));
-    log.info("delete {}", path);
+    LOG.info("delete {}", path);
     delete(client, path);
     busyWait();
     assertThat(at.get(), is(NodeDeleted.getIntValue()));

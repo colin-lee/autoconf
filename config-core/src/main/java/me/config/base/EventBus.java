@@ -14,9 +14,9 @@ import java.util.Set;
  * Created by lirui on 15/9/24.
  */
 public class EventBus implements IChangeable {
+  private static final Logger LOG = LoggerFactory.getLogger(EventBus.class);
   private final Set<IChangeListener> listeners = Sets.newConcurrentHashSet();
   private final IConfig config;
-  private Logger log = LoggerFactory.getLogger(getClass());
 
   public EventBus(IConfig config) {
     this.config = config;
@@ -33,7 +33,7 @@ public class EventBus implements IChangeable {
         try {
           listener.changed(config);
         } catch (Exception e) {
-          log.error("cannot reload " + config.getName(), e);
+          LOG.error("cannot reload " + config.getName(), e);
         }
       }
     }
@@ -47,11 +47,11 @@ public class EventBus implements IChangeable {
 
   public void notifyListeners() {
     for (IChangeListener i : listeners) {
-      log.info("{} changed, notify {}", config.getName(), i);
+      LOG.info("{} changed, notify {}", config.getName(), i);
       try {
         i.changed(config);
       } catch (Exception e) {
-        log.error("cannot reload " + config.getName(), e);
+        LOG.error("cannot reload " + config.getName(), e);
       }
     }
   }

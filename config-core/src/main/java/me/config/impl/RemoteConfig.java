@@ -21,28 +21,10 @@ import static me.config.zookeeper.ZookeeperUtil.*;
  * Created by lirui on 2015/9/28.
  */
 public class RemoteConfig extends ChangeableConfig {
+  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfig.class);
   private final String zkPath;
   private final List<String> paths;
   private final CuratorFramework client;
-  protected Logger log = LoggerFactory.getLogger(getClass());
-  private final Watcher leafWatcher = new Watcher() {
-    @Override
-    public void process(WatchedEvent event) {
-      Event.EventType t = event.getType();
-      String p = event.getPath();
-      switch (t) {
-        case NodeDataChanged:
-          loadFromZookeeper();
-          break;
-        case NodeDeleted:
-          client.clearWatcherReferences(this);
-          loadFromZookeeper();
-          break;
-        default:
-          log.warn("skip {}, {}", t, p);
-      }
-    }
-  };
   private final Watcher baseWatcher = new Watcher() {
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
@@ -57,7 +39,25 @@ public class RemoteConfig extends ChangeableConfig {
           loadFromZookeeper();
           break;
         default:
-          log.warn("skip {}, {}", t, p);
+          LOG.warn("skip {}, {}", t, p);
+      }
+    }
+  };
+  private final Watcher leafWatcher = new Watcher() {
+    @Override
+    public void process(WatchedEvent event) {
+      Event.EventType t = event.getType();
+      String p = event.getPath();
+      switch (t) {
+        case NodeDataChanged:
+          loadFromZookeeper();
+          break;
+        case NodeDeleted:
+          client.clearWatcherReferences(this);
+          loadFromZookeeper();
+          break;
+        default:
+          LOG.warn("skip {}, {}", t, p);
       }
     }
   };
@@ -88,12 +88,12 @@ public class RemoteConfig extends ChangeableConfig {
   }
 
   protected void loadFromZookeeper() {
-    log.info("{}, zkPath:{}, order:{}", getName(), zkPath, paths);
+    LOG.info("{}, zkPath:{}, order:{}", getName(), zkPath, paths);
     List<String> children = getChildren(client, zkPath, baseWatcher);
     boolean found = false;
     //按照特定顺序逐个查找配置
     if (children != null && children.size() > 0) {
-      log.info("zkPath:{}, children:{}", zkPath, children);
+      LOG.info("zkPath:{}, children:{}", zkPath, children);
       for (String i : paths) {
         if (!children.contains(i))
           continue;
@@ -101,19 +101,19 @@ public class RemoteConfig extends ChangeableConfig {
         try {
           byte[] content = getData(client, path, leafWatcher);
           if (content != null && content.length > 0) {
-            log.info("{}, zkPath:{}", getName(), path);
+            LOG.info("{}, zkPath:{}", getName(), path);
             reload(content);
             found = true;
             break;
           }
         } catch (Exception e) {
-          log.error("cannot load {} from zookeeper, zkPath{}", getName(), zkPath, e);
+          LOG.error("cannot load {} from zookeeper, zkPath{}", getName(), zkPath, e);
         }
       }
     }
     if (!found) {
       exists(client, zkPath, baseWatcher);
-      log.warn("cannot find {} in zookeeper, zkPath{}", getName(), zkPath);
+      LOG.warn("cannot find {} in zookeeper, zkPath{}", getName(), zkPath);
       reload(new byte[0]);
     }
   }
@@ -137,7 +137,7 @@ public class RemoteConfig extends ChangeableConfig {
       return true;
     }
     byte[] old = getContent();
-    log.debug("change detecting\nbefore:\n{}\n\nafter:\n{}\n", newString(old), newString(now));
+    LOG.debug("change detecting\nbefore:\n{}\n\nafter:\n{}\n", newString(old), newString(now));
     return !Arrays.equals(now, old);
   }
 

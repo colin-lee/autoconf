@@ -24,8 +24,8 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-10-01 23:01.
  */
 public class RemoteConfigFactoryTest {
+  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigFactoryTest.class);
   private static TestingServer server;
-  private Logger log = LoggerFactory.getLogger(getClass());
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -67,10 +67,10 @@ public class RemoteConfigFactoryTest {
     while (++tries < 600) {
       Thread.sleep(100);
       if (num.get() > 0) {
-        log.info("delay {} ms", 100 * tries);
+        LOG.info("delay {} ms", 100 * tries);
         return;
       }
     }
-    log.error("detect timeout, delay {}ms", 100 * tries);
+    LOG.error("detect timeout, delay {}ms", 100 * tries);
   }
 }

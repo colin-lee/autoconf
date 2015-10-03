@@ -31,9 +31,9 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-30 18:56.
  */
 public class RemoteConfigWithCacheTest {
+  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigWithCacheTest.class);
   private static TestingServer server;
   private static CuratorFramework client;
-  private final Logger log = LoggerFactory.getLogger(RemoteConfigWithCacheTest.class);
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -124,14 +124,14 @@ public class RemoteConfigWithCacheTest {
   }
 
   private void write(byte[] bytes, File f) throws IOException {
-    log.info("write {} bytes into {}", bytes.length, f);
+    LOG.info("write {} bytes into {}", bytes.length, f);
     Files.write(bytes, f);
   }
 
   private void deleteFile(File f) {
     if (!f.exists())
       return;
-    log.info("delete {}", f);
+    LOG.info("delete {}", f);
     if (!f.delete()) {
       f.deleteOnExit();
     }
@@ -142,10 +142,10 @@ public class RemoteConfigWithCacheTest {
     while (++tries < 1000) {
       Thread.sleep(100);
       if (num.get() > 0) {
-        log.info("delay {} ms", 100 * tries);
+        LOG.info("delay {} ms", 100 * tries);
         return;
       }
     }
-    log.error("detect timeout, delay {}ms", 100 * tries);
+    LOG.error("detect timeout, delay {}ms", 100 * tries);
   }
 }

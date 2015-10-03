@@ -8,8 +8,6 @@ import me.config.api.IChangeListener;
 import me.config.api.IChangeableConfig;
 import me.config.api.IConfigFactory;
 import me.config.impl.MergedConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -20,7 +18,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class AbstractConfigFactory implements IConfigFactory {
   private final ConcurrentMap<String, IChangeableConfig> m = Maps.newConcurrentMap();
-  protected Logger log = LoggerFactory.getLogger(getClass());
 
   @Override
   public IChangeableConfig getConfig(String name) {

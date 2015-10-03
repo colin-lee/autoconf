@@ -20,12 +20,12 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * Created by lirui on 2015-09-29 14:38.
  */
 public class FileUpdateWatcher implements Runnable {
+  private static final Logger LOG = LoggerFactory.getLogger(FileUpdateWatcher.class);
   /**
    * 同一个目录下会包含多个文件,每个文件又有多个listener
    */
   private final Map<Path, Multimap<Path, IFileListener>> watches = Maps.newConcurrentMap();
   private final Map<Path, Long> masks = Maps.newConcurrentMap();
-  private Logger log = LoggerFactory.getLogger(getClass());
   private WatchService watchService;
   private boolean running = false;
 
@@ -33,7 +33,7 @@ public class FileUpdateWatcher implements Runnable {
     try {
       watchService = FileSystems.getDefault().newWatchService();
     } catch (IOException e) {
-      log.error("cannot build watchService", e);
+      LOG.error("cannot build watchService", e);
     }
   }
 
@@ -56,14 +56,14 @@ public class FileUpdateWatcher implements Runnable {
       try {
         WatchEvent.Kind[] events = {ENTRY_MODIFY, ENTRY_DELETE};
         parent.register(watchService, events, SensitivityWatchEventModifier.HIGH);
-        log.info("monitor directory {}", parent);
+        LOG.info("monitor directory {}", parent);
       } catch (IOException e) {
-        log.error("cannot register path:{}", parent, e);
+        LOG.error("cannot register path:{}", parent, e);
       }
       files = ArrayListMultimap.create();
       watches.put(parent, files);
     }
-    log.debug("watch {}, {}", path, listener);
+    LOG.debug("watch {}, {}", path, listener);
     files.put(path, listener);
     return this;
   }
@@ -93,11 +93,11 @@ public class FileUpdateWatcher implements Runnable {
             WatchEvent<Path> ev = cast(event);
             Path context = ev.context();
             Path child = base.resolve(context);
-            log.info("{}, {}", kind, child);
+            LOG.info("{}, {}", kind, child);
             //屏蔽只剩小10秒钟,避免误封禁
             Long stamp = masks.remove(child);
             if (stamp != null && System.currentTimeMillis() - stamp < 1000) {
-              log.info("mask {}", child);
+              LOG.info("mask {}", child);
               continue;
             }
 
@@ -110,6 +110,7 @@ public class FileUpdateWatcher implements Runnable {
             //配置文件内容都不大,所以这里就读出来,不用每个listener再分别读取了
             byte[] content = new byte[0];
             if (child.toFile().exists()) {
+              //在linux环境下修改文件会触发多次,而且首次可能读取不到文件内容,所以等待一段时间再读数据
               Thread.sleep(200);
               content = Files.readAllBytes(child);
             }
@@ -119,10 +120,10 @@ public class FileUpdateWatcher implements Runnable {
           }
         }
       } catch (InterruptedException x) {
-        log.error("{} was interrupted, now EXIT", Thread.currentThread().getName());
+        LOG.error("{} was interrupted, now EXIT", Thread.currentThread().getName());
         break;
       } catch (Exception e) {
-        log.error("watches: {}", watches.keySet(), e);
+        LOG.error("watches: {}", watches.keySet(), e);
       } finally {
         if (key != null) {
           key.reset();
