@@ -5,7 +5,6 @@ import com.github.autoconf.api.IConfig;
 import com.github.autoconf.base.ProcessInfo;
 import com.github.autoconf.helper.ZookeeperUtil;
 import com.github.autoconf.impl.RemoteConfigWithCache;
-import com.github.autoconf.watcher.FileUpdateWatcher;
 import com.google.common.io.Closeables;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.utils.ZKPaths;
@@ -40,7 +39,6 @@ public class ConfigFactoryTest {
 
   @AfterClass
   public static void afterClass() throws Exception {
-    FileUpdateWatcher.getInstance().shutdown();
     Closeables.close(factory.getClient(), true);
     Closeables.close(server, true);
   }
