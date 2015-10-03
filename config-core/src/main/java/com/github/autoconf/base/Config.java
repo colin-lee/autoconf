@@ -53,7 +53,7 @@ public class Config extends Properties {
 
   private synchronized void parse() {
     if (!parsed) {
-      Map<String, String> m = Maps.newHashMap();
+      Map<String, String> m = Maps.newLinkedHashMap();
       final byte[] bytes = content;
       if (bytes != null) {
         String txt = new String(bytes, UTF8);
