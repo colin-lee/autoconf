@@ -20,12 +20,12 @@ public class TestHelper {
     int millis = 1000;
     while (++tries < 60) {
       Thread.sleep(millis);
-      LOG.info("delay {} ms", millis * tries);
+      LOG.info("delay {}s", tries);
       if (num.get() > 0) {
         return;
       }
     }
-    LOG.error("detect timeout, delay {}ms", 100 * tries);
+    LOG.error("detect timeout, delay {}s", tries);
   }
 
   public static void writeFile(byte[] bytes, File f) throws IOException {

@@ -16,8 +16,6 @@ import org.apache.curator.utils.ZKPaths;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +29,6 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-09-30 18:56.
  */
 public class RemoteConfigWithCacheTest {
-  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigWithCacheTest.class);
   private static TestingServer server;
   private static CuratorFramework client;
 
