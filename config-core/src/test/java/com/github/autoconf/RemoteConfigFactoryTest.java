@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.autoconf.helper.ZookeeperUtil.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,22 +26,24 @@ import static org.junit.Assert.assertThat;
 public class RemoteConfigFactoryTest {
   private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigFactoryTest.class);
   private static TestingServer server;
+  private static RemoteConfigFactory factory;
 
   @BeforeClass
   public static void beforeClass() throws Exception {
     server = new TestingServer();
     //设置环境变量,覆盖application.properties配置
     System.setProperty("zookeeper.servers", server.getConnectString());
+    factory = RemoteConfigFactory.getInstance();
   }
 
   @AfterClass
   public static void afterClass() throws Exception {
+    Closeables.close(factory.getClient(), true);
     Closeables.close(server, true);
   }
 
   @Test
   public void testFactory() throws Exception {
-    RemoteConfigFactory factory = RemoteConfigFactory.getInstance();
     ProcessInfo info = factory.getInfo();
     String name = "app.ini";
     String path = ZKPaths.makePath(info.getPath(), name, info.getProfile());
@@ -52,24 +55,12 @@ public class RemoteConfigFactoryTest {
       }
     });
     create(factory.getClient(), path, newBytes("a=1"));
-    busyWait(num);
+    TestHelper.busyWait(num);
     assertThat(c.getInt("a"), is(1));
 
     num.set(0);
     setData(factory.getClient(), path, newBytes("a=2"));
-    busyWait(num);
+    TestHelper.busyWait(num);
     assertThat(c.getInt("a"), is(2));
-  }
-
-  private void busyWait(final AtomicInteger num) throws InterruptedException {
-    int tries = 0;
-    while (++tries < 600) {
-      Thread.sleep(100);
-      if (num.get() > 0) {
-        LOG.info("delay {} ms", 100 * tries);
-        return;
-      }
-    }
-    LOG.error("detect timeout, delay {}ms", 100 * tries);
   }
 }

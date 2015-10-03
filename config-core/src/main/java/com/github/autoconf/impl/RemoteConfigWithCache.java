@@ -71,10 +71,17 @@ public class RemoteConfigWithCache extends RemoteConfig {
         try {
           Thread.sleep(delaySeconds * 1000);
         } catch (InterruptedException ignored) {
+          return;
         }
         for (RemoteConfig i : items) {
           i.initZookeeper();
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ignored) {
+            return;
+          }
         }
+        LOG.info("async load from zookeeper, DONE");
       }
     }, "asyncLoadFromZookeeper");
     zkThread.setDaemon(true);

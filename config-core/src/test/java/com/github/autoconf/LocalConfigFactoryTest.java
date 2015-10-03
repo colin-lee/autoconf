@@ -11,11 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.autoconf.helper.ZookeeperUtil.newBytes;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -27,14 +27,17 @@ public class LocalConfigFactoryTest {
 
   @Test
   public void testFactory() throws Exception {
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+      return;
+    }
     File dir = Files.createTempDir();
     File f1 = dir.toPath().resolve("f1").toFile();
     File f2 = dir.toPath().resolve("f2").toFile();
     File f3 = dir.toPath().resolve("f3").toFile();
     try {
       FileUpdateWatcher.getInstance().start();
-      write(newBytes("a=1"), f1);
-      write(newBytes("a=2\nb=2"), f2);
+      TestHelper.writeFile(newBytes("a=1"), f1);
+      TestHelper.writeFile(newBytes("a=2\nb=2"), f2);
       LocalConfigFactory factory = new LocalConfigFactory(dir.toPath());
       IChangeableConfig c1 = factory.getConfig("f1");
       IChangeableConfig merge = factory.getConfig("f1,f2,f3");
@@ -50,19 +53,21 @@ public class LocalConfigFactoryTest {
           num.incrementAndGet();
         }
       }, false);
-      write(newBytes("a=3"), f1);
-      busyWait(num);
+      byte[] bytes = newBytes("a=3");
+      TestHelper.writeFile(bytes, f1);
+      assertArrayEquals(bytes, Files.toByteArray(f1));
+      TestHelper.busyWait(num);
       assertThat(merge.getInt("a"), is(3));
 
       num.set(0);
-      write(newBytes("c=4"), f3);
-      busyWait(num);
+      TestHelper.writeFile(newBytes("c=4"), f3);
+      TestHelper.busyWait(num);
       assertThat(merge.getInt("c"), is(4));
     } finally {
-      delete(f1);
-      delete(f2);
-      delete(f3);
-      delete(dir);
+      TestHelper.deleteFile(f1);
+      TestHelper.deleteFile(f2);
+      TestHelper.deleteFile(f3);
+      TestHelper.deleteFile(dir);
     }
   }
 
@@ -78,31 +83,5 @@ public class LocalConfigFactoryTest {
     });
     assertThat(c.getInt("a"), is(1));
     assertThat(num.get(), is(1));
-  }
-
-  private void busyWait(final AtomicInteger num) throws InterruptedException {
-    int tries = 0;
-    while (++tries < 60) {
-      Thread.sleep(1000);
-      if (num.get() > 0) {
-        LOG.info("delay {} ms", 1000 * tries);
-        return;
-      }
-    }
-    LOG.error("detect timeout, delay {}ms", 100 * tries);
-  }
-
-  private void write(byte[] bytes, File f) throws IOException {
-    LOG.info("write {} bytes into {}", bytes.length, f);
-    Files.write(bytes, f);
-  }
-
-  private void delete(File f) {
-    if (!f.exists())
-      return;
-    LOG.info("delete {}", f);
-    if (!f.delete()) {
-      f.deleteOnExit();
-    }
   }
 }

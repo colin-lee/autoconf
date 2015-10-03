@@ -1,5 +1,6 @@
 package com.github.autoconf.impl;
 
+import com.github.autoconf.TestHelper;
 import com.github.autoconf.api.IChangeListener;
 import com.github.autoconf.api.IConfig;
 import com.github.autoconf.helper.ZookeeperUtil;
@@ -19,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,7 +55,7 @@ public class RemoteConfigWithCacheTest {
     String basePath = "/auto/config/testCache";
     ArrayList<String> paths = Lists.newArrayList("profile", "appName");
     File cacheFile = File.createTempFile("cache-", ".ini");
-    write(ZookeeperUtil.newBytes("a=1"), cacheFile);
+    TestHelper.writeFile(ZookeeperUtil.newBytes("a=1"), cacheFile);
     RemoteConfigWithCache config =
       new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
     config.setDelaySeconds(1);
@@ -77,26 +77,26 @@ public class RemoteConfigWithCacheTest {
       }
     }, false);
     ZookeeperUtil.create(client, appPath, ZookeeperUtil.newBytes("a=2"));
-    busyWait(num);
+    TestHelper.busyWait(num);
     assertThat(config.getInt("a"), is(2));
     Thread.sleep(100);
     assertThat(ZookeeperUtil.newString(Files.toByteArray(cacheFile)), is("a=2"));
 
     //服务变更,收到通知
     ZookeeperUtil.setData(client, appPath, ZookeeperUtil.newBytes("a=3"));
-    busyWait(num);
+    TestHelper.busyWait(num);
     assertThat(config.getInt("a"), is(3));
     assertThat(ZookeeperUtil.newString(Files.toByteArray(cacheFile)), is("a=3"));
 
     //删除zookeeper配置,本地配置也要对应变更
     num.set(0);
     ZookeeperUtil.delete(client, appPath);
-    busyWait(num);
+    TestHelper.busyWait(num);
     assertThat(config.getInt("a"), is(0));
     Thread.sleep(100);
     assertThat(ZookeeperUtil.newString(Files.toByteArray(cacheFile)), is(""));
 
-    deleteFile(cacheFile);
+    TestHelper.deleteFile(cacheFile);
   }
 
   /**
@@ -119,33 +119,7 @@ public class RemoteConfigWithCacheTest {
     config.start();
     assertThat(config.getInt("a"), is(1));
     assertThat(ZookeeperUtil.newString(Files.toByteArray(cacheFile)), is(s));
-    deleteFile(cacheFile);
-    deleteFile(tempDir);
-  }
-
-  private void write(byte[] bytes, File f) throws IOException {
-    LOG.info("write {} bytes into {}", bytes.length, f);
-    Files.write(bytes, f);
-  }
-
-  private void deleteFile(File f) {
-    if (!f.exists())
-      return;
-    LOG.info("delete {}", f);
-    if (!f.delete()) {
-      f.deleteOnExit();
-    }
-  }
-
-  private void busyWait(final AtomicInteger num) throws InterruptedException {
-    int tries = 0;
-    while (++tries < 1000) {
-      Thread.sleep(100);
-      if (num.get() > 0) {
-        LOG.info("delay {} ms", 100 * tries);
-        return;
-      }
-    }
-    LOG.error("detect timeout, delay {}ms", 100 * tries);
+    TestHelper.deleteFile(cacheFile);
+    TestHelper.deleteFile(tempDir);
   }
 }
