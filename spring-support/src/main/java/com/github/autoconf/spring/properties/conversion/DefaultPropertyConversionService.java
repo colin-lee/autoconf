@@ -36,8 +36,12 @@ public class DefaultPropertyConversionService implements PropertyConversionServi
   @Override
   public Object convertPropertyForField(final Field field, final Object property) {
     try {
-      //noinspection ConstantConditions
-      return Functions.forMap(CONVERTS, new DefaultConverter(field.getType())).apply(field.getType()).apply(property);
+      Function<Object, ?> f =
+        Functions.forMap(CONVERTS, new DefaultConverter(field.getType())).apply(field.getType());
+      if (f == null) {
+        return null;
+      }
+      return f.apply(property);
     } catch (final Throwable e) {
       throw new BeanInitializationException(String.format("Unable to convert property for field [%s].  Value [%s] cannot be converted to [%s]", field.getName(), property, field.getType()), e);
     }

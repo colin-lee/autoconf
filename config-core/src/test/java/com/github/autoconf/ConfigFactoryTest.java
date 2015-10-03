@@ -42,13 +42,14 @@ public class ConfigFactoryTest {
 
   @Test
   public void testFactory() throws Exception {
-    String name = "app.txt";
+    String name = "factory.ini";
     File f = factory.getPath().resolve(name).toFile();
-    TestHelper.writeFile(ZookeeperUtil.newBytes("b=1"), f);
+    TestHelper.writeFile(ZookeeperUtil.newBytes("a=-1"), f);
     ProcessInfo info = factory.getInfo();
     String path = ZKPaths.makePath(info.getPath(), name, info.getProfile());
     final AtomicInteger num = new AtomicInteger(0);
     RemoteConfigWithCache c = (RemoteConfigWithCache) factory.getConfig(name);
+    //设定延迟1s启动zkClient
     c.setDelaySeconds(1);
     c.addListener(new IChangeListener() {
       @Override
@@ -56,7 +57,7 @@ public class ConfigFactoryTest {
         num.incrementAndGet();
       }
     }, false);
-    assertThat(c.getInt("b"), is(1));
+    assertThat(c.getInt("a"), is(-1));
     Thread.sleep(2000);
     ZookeeperUtil.create(factory.getClient(), path, ZookeeperUtil.newBytes("a=1"));
     TestHelper.busyWait(num);

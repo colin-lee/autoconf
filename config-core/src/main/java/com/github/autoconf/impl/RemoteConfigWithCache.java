@@ -24,7 +24,6 @@ import java.util.Set;
  */
 public class RemoteConfigWithCache extends RemoteConfig {
   private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigWithCache.class);
-  private static final Set<RemoteConfig> items = Sets.newConcurrentHashSet();
   private final File cacheFile;
   /**
    * 延迟加载远程配置初始值,避免加载配置影响启动
@@ -36,18 +35,23 @@ public class RemoteConfigWithCache extends RemoteConfig {
     this.cacheFile = cacheFile;
   }
 
+  public File getCacheFile() {
+    return cacheFile;
+  }
+
   public void setDelaySeconds(long delaySeconds) {
     this.delaySeconds = delaySeconds;
   }
 
   @Override
   public void start() {
+    Set<RemoteConfig> checking = Sets.newConcurrentHashSet();
     //有本地配置就先从本地加载
     if (cacheFile.exists()) {
       try {
         copyOf(Files.toByteArray(cacheFile));
         //异步检查zookeeper中配置
-        items.add(this);
+        checking.add(this);
       } catch (IOException e) {
         LOG.error("cannot read {}", cacheFile);
         initZookeeper();
@@ -65,6 +69,10 @@ public class RemoteConfigWithCache extends RemoteConfig {
       }
     });
     //延迟加载zookeeper上的配置,避免服务启动过慢
+    asyncCheckZookeeper(checking);
+  }
+
+  private void asyncCheckZookeeper(final Set<RemoteConfig> asyncCheck) {
     Thread zkThread = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -73,14 +81,14 @@ public class RemoteConfigWithCache extends RemoteConfig {
         } catch (InterruptedException ignored) {
           return;
         }
-        for (RemoteConfig i : items) {
-          i.initZookeeper();
+        for (RemoteConfig i : asyncCheck) {
           try {
-            Thread.sleep(1000);
-          } catch (InterruptedException ignored) {
-            return;
+            i.initZookeeper();
+          } catch (Exception e) {
+            LOG.error("cannot init {}, cacheFile={}", i.getName(), getCacheFile(), e);
           }
         }
+        asyncCheck.clear();
         LOG.info("async load from zookeeper, DONE");
       }
     }, "asyncLoadFromZookeeper");
@@ -104,6 +112,6 @@ public class RemoteConfigWithCache extends RemoteConfig {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("name", getName()).add("cacheFile", cacheFile).add("zkPath", getZkPath()).toString();
+    return MoreObjects.toStringHelper(this).add("name", getName()).add("cacheFile", cacheFile).add("zkPath", getPath()).toString();
   }
 }

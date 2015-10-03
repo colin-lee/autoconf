@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 基于远程zookeeper文件的配置
@@ -21,16 +22,16 @@ import java.util.List;
  */
 public class RemoteConfig extends ChangeableConfig {
   private static final Logger LOG = LoggerFactory.getLogger(RemoteConfig.class);
-  private final String zkPath;
+  private final String path;
   private final List<String> paths;
   private final CuratorFramework client;
-  private final Watcher baseWatcher = new Watcher() {
+  private final Watcher leafWatcher = new Watcher() {
+    @Override
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeCreated:
-        case NodeChildrenChanged:
+        case NodeDataChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -42,13 +43,13 @@ public class RemoteConfig extends ChangeableConfig {
       }
     }
   };
-  private final Watcher leafWatcher = new Watcher() {
-    @Override
+  private final Watcher baseWatcher = new Watcher() {
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeDataChanged:
+        case NodeCreated:
+        case NodeChildrenChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -68,17 +69,24 @@ public class RemoteConfig extends ChangeableConfig {
     }
   };
 
-  public RemoteConfig(String name, String zkPath, List<String> paths, CuratorFramework client) {
+  public RemoteConfig(String name, String path, List<String> paths, CuratorFramework client) {
     super(name);
-    this.zkPath = zkPath;
+    this.path = path;
     this.paths = paths;
     this.client = client;
   }
 
   protected void initZookeeper() {
-    client.getConnectionStateListenable().addListener(stateListener);
-    if (ZookeeperUtil.exists(client, zkPath, baseWatcher) != null) {
-      loadFromZookeeper();
+    try {
+      client.getConnectionStateListenable().addListener(stateListener);
+      if (!client.getZookeeperClient().isConnected()) {
+        client.blockUntilConnected(10, TimeUnit.SECONDS);
+      }
+      if (ZookeeperUtil.exists(client, path, baseWatcher) != null) {
+        loadFromZookeeper();
+      }
+    } catch (InterruptedException e) {
+      LOG.error("cannot init '{}', path:{}", getName(), path, e);
     }
   }
 
@@ -87,32 +95,32 @@ public class RemoteConfig extends ChangeableConfig {
   }
 
   protected void loadFromZookeeper() {
-    LOG.info("{}, zkPath:{}, order:{}", getName(), zkPath, paths);
-    List<String> children = ZookeeperUtil.getChildren(client, zkPath, baseWatcher);
+    LOG.info("{}, path:{}, order:{}", getName(), path, paths);
+    List<String> children = ZookeeperUtil.getChildren(client, path, baseWatcher);
     boolean found = false;
     //按照特定顺序逐个查找配置
     if (children != null && children.size() > 0) {
-      LOG.info("zkPath:{}, children:{}", zkPath, children);
+      LOG.info("path:{}, children:{}", path, children);
       for (String i : paths) {
         if (!children.contains(i))
           continue;
-        String path = ZKPaths.makePath(zkPath, i);
+        String p = ZKPaths.makePath(path, i);
         try {
-          byte[] content = ZookeeperUtil.getData(client, path, leafWatcher);
+          byte[] content = ZookeeperUtil.getData(client, p, leafWatcher);
           if (content != null && content.length > 0) {
-            LOG.info("{}, zkPath:{}", getName(), path);
+            LOG.info("{}, path:{}", getName(), p);
             reload(content);
             found = true;
             break;
           }
         } catch (Exception e) {
-          LOG.error("cannot load {} from zookeeper, zkPath{}", getName(), zkPath, e);
+          LOG.error("cannot load {} from zookeeper, path{}", getName(), path, e);
         }
       }
     }
     if (!found) {
-      ZookeeperUtil.exists(client, zkPath, baseWatcher);
-      LOG.warn("cannot find {} in zookeeper, zkPath{}", getName(), zkPath);
+      ZookeeperUtil.exists(client, path, baseWatcher);
+      LOG.warn("cannot find {} in zookeeper, path{}", getName(), path);
       reload(new byte[0]);
     }
   }
@@ -140,12 +148,16 @@ public class RemoteConfig extends ChangeableConfig {
     return !Arrays.equals(now, old);
   }
 
-  public String getZkPath() {
-    return zkPath;
+  public String getPath() {
+    return path;
+  }
+
+  public CuratorFramework getClient() {
+    return client;
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("name", getName()).add("zkPath", zkPath).toString();
+    return MoreObjects.toStringHelper(this).add("name", getName()).add("path", path).toString();
   }
 }

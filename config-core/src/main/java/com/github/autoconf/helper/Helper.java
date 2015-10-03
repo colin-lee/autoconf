@@ -201,8 +201,7 @@ public class Helper {
         NetworkInterface ni = e.nextElement();
         Enumeration<InetAddress> en = ni.getInetAddresses();
         while (en.hasMoreElements()) {
-          InetAddress addr = en.nextElement();
-          String ip = addr.getHostAddress();
+          String ip = en.nextElement().getHostAddress();
           if (isInnerIP(ip)) {
             if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
               return ip;
@@ -210,8 +209,7 @@ public class Helper {
           }
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Exception ignored) {
     }
     return null;
   }
