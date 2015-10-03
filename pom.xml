@@ -13,6 +13,9 @@
         <module>spring-support</module>
     </modules>
     <properties>
+        <encoding>UTF-8</encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <jdk.version>1.7</jdk.version>
     </properties>
     <dependencies>
@@ -111,7 +114,11 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>cobertura-maven-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
@@ -144,10 +151,6 @@
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>4.0.0</version>
-                    <configuration>
-                        <sourceEncoding>UTF-8</sourceEncoding>
-                        <repoToken>${repoToken}</repoToken>
-                    </configuration>
                 </plugin>
 
                 <!-- resource插件 -->
@@ -247,7 +250,7 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <aggregate>true</aggregate>
                     <check/>
                     <formats>
                         <format>xml</format>
