@@ -193,11 +193,11 @@ public class JmxHelper {
     Set<ObjectName> names = new HashSet<ObjectName>();
 
     final List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
-    for (int i = 0; names.size() == 0 && i < servers.size(); i++) {
+    for (int i = 0; names.isEmpty() && i < servers.size(); i++) {
       names = servers.get(i).queryNames(objectNameQuery, null);
     }
 
-    if (names.size() == 0) {
+    if (names.isEmpty()) {
       names = getPlatformMBeanServer().queryNames(objectNameQuery, null);
     }
 

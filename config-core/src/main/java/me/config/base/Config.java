@@ -21,7 +21,7 @@ public class Config extends Properties {
   public synchronized byte[] getContent() {
     if (content == null) {
       Map<String, String> m = getAll();
-      if (m.size() == 0) {
+      if (m.isEmpty()) {
         content = new byte[0];
       } else {
         StringBuilder sbd = new StringBuilder();

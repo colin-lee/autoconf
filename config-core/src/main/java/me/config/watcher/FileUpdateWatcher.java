@@ -104,7 +104,7 @@ public class FileUpdateWatcher implements Runnable {
             //屏蔽一会,避免频繁加载
             mask(child);
             Collection<IFileListener> listeners = watches.get(base).get(child);
-            if (listeners == null || listeners.size() == 0) {
+            if (listeners == null || listeners.isEmpty()) {
               continue;
             }
             //配置文件内容都不大,所以这里就读出来,不用每个listener再分别读取了
