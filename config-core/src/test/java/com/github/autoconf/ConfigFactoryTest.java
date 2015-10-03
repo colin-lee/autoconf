@@ -11,8 +11,6 @@ import org.apache.curator.utils.ZKPaths;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,7 +23,6 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-10-01 23:58.
  */
 public class ConfigFactoryTest {
-  private static final Logger LOG = LoggerFactory.getLogger(ConfigFactoryTest.class);
   private static TestingServer server;
   private static ConfigFactory factory;
 

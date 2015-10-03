@@ -6,6 +6,7 @@
         <artifactId>auto-config</artifactId>
         <groupId>com.github.autoconf</groupId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,8 +14,8 @@
 
     <properties>
         <!-- 主要依赖库的版本定义 -->
-        <spring.version>4.1.4.RELEASE</spring.version>
-        <joda-time.version>2.3</joda-time.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
+        <joda-time.version>2.8.2</joda-time.version>
     </properties>
 
     <dependencies>

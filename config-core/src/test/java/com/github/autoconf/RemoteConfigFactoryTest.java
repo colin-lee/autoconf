@@ -4,14 +4,13 @@ import com.github.autoconf.api.IChangeListener;
 import com.github.autoconf.api.IChangeableConfig;
 import com.github.autoconf.api.IConfig;
 import com.github.autoconf.base.ProcessInfo;
+import com.github.autoconf.helper.Helper;
 import com.google.common.io.Closeables;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.utils.ZKPaths;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,16 +23,14 @@ import static org.junit.Assert.assertThat;
  * Created by lirui on 2015-10-01 23:01.
  */
 public class RemoteConfigFactoryTest {
-  private static final Logger LOG = LoggerFactory.getLogger(RemoteConfigFactoryTest.class);
   private static TestingServer server;
   private static RemoteConfigFactory factory;
 
   @BeforeClass
   public static void beforeClass() throws Exception {
     server = new TestingServer(55531);
-    //设置环境变量,覆盖application.properties配置
-    System.setProperty("zookeeper.servers", server.getConnectString());
-    factory = RemoteConfigFactory.getInstance();
+    factory =
+      new RemoteConfigFactory(Helper.getProcessInfo(), Helper.newClient(server.getConnectString()));
   }
 
   @AfterClass
