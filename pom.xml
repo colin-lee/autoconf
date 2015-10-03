@@ -146,7 +146,7 @@
                     <version>4.0.0</version>
                     <configuration>
                         <sourceEncoding>UTF-8</sourceEncoding>
-                        <repoToken>${coveralls.autoconf.repoToken}</repoToken>
+                        <repoToken>${repoToken}</repoToken>
                     </configuration>
                 </plugin>
 
@@ -247,16 +247,19 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <check/>
+                    <formats>
+                        <format>xml</format>
+                        <format>html</format>
+                    </formats>
                     <instrumentation>
                         <excludes>
+                            <exclude>**/api/*.class</exclude>
                             <exclude>**/entity/**/*.class</exclude>
                             <exclude>**/*Controller.class</exclude>
                         </excludes>
                     </instrumentation>
-                    <formats>
-                        <format>xml</format>
-                    </formats>
                 </configuration>
             </plugin>
 
