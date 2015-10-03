@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="me.config" level="debug"/>
+    <logger name="com.github.autoconf" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

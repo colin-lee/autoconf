@@ -31,7 +31,7 @@ public class ConfigFactoryTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    server = new TestingServer();
+    server = new TestingServer(55530);
     //设置环境变量,覆盖application.properties配置
     System.setProperty("zookeeper.servers", server.getConnectString());
     factory = ConfigFactory.getInstance();
