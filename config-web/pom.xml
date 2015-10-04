@@ -17,19 +17,19 @@
     <properties>
         <!-- 主要依赖库的版本定义 -->
         <spring.version>4.2.1.RELEASE</spring.version>
-        <joda-time.version>2.8.2</joda-time.version>
+        <aspectj.version>1.8.7</aspectj.version>
     </properties>
 
     <dependencies>
         <dependency>
             <artifactId>config-core</artifactId>
             <groupId>com.github.autoconf</groupId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${autoconf.version}</version>
         </dependency>
         <dependency>
-            <artifactId>auto-config</artifactId>
+            <artifactId>spring-support</artifactId>
             <groupId>com.github.autoconf</groupId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${autoconf.version}</version>
         </dependency>
         <!-- Spring core & mvc -->
         <dependency>
@@ -50,11 +50,62 @@
         </dependency>
         <!-- spring end -->
 
+        <!-- aspectj相关jar包-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <!-- store & cache -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.36</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>1.6.0.RELEASE</version>
+        </dependency>
+
         <!-- shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
             <version>1.2.4</version>
+        </dependency>
+
+        <!-- view template -->
+        <dependency>
+            <groupId>com.github.subchen</groupId>
+            <artifactId>jetbrick-template-springmvc</artifactId>
+            <version>2.0.12</version>
         </dependency>
 
         <!-- Servlet Spec -->

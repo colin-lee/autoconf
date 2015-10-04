@@ -75,10 +75,10 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
   @Override
   protected void loadProperties(final Properties props) throws IOException {
     super.loadProperties(props);
-    if (configFactory == null) {
-      configFactory = ConfigFactory.getInstance();
-    }
     if (!Strings.isNullOrEmpty(configName)) {
+      if (configFactory == null) {
+        configFactory = ConfigFactory.getInstance();
+      }
       IChangeableConfig config = configFactory.getConfig(configName, new IChangeListener() {
         @Override
         public void changed(IConfig config) {

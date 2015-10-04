@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <bean class="com.github.autoconf.spring.reloadable.ReloadablePropertyPostProcessor">
+        <constructor-arg ref="autoConfig"/>
+    </bean>
+
+    <!-- 支持本地以及从远程加载 -->
+    <bean id="autoConfig"
+          class="com.github.autoconf.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <!-- 可以是逗号分隔的多个配置文件名 -->
+        <property name="configName" value="cas.properties, zookeeper.cfg, process.properties"/>
+        <property name="location" value="application.properties"/>
+    </bean>
+
+    <import resource="spring/spring-shiro.xml"/>
+    <import resource="spring/spring-guava.xml"/>
+    <import resource="spring/spring-db.xml"/>
+
+    <context:component-scan base-package="com.github.autoconf.service"/>
 </beans>

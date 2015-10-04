@@ -14,6 +14,7 @@
         <module>config-web</module>
     </modules>
     <properties>
+        <autoconf.version>1.0.0-SNAPSHOT</autoconf.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <encoding>UTF-8</encoding>
@@ -84,7 +85,7 @@
                     <configuration>
                         <source>${jdk.version}</source>
                         <target>${jdk.version}</target>
-                        <showWarnings>true</showWarnings>
+                        <showWarnings>false</showWarnings>
                     </configuration>
                 </plugin>
                 <!-- enforcer插件, 设定环境与依赖的规则 -->
@@ -149,6 +150,7 @@
                         <instrumentation>
                             <ignores>
                                 <ignore>**/api/*.class</ignore>
+                                <ignore>**/mapper/*.class</ignore>
                             </ignores>
                             <excludes>
                                 <exclude>**/entity/**/*.class</exclude>
@@ -297,9 +299,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.2</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
             </plugin>
 
             <plugin>

@@ -22,7 +22,7 @@
         <dependency>
             <artifactId>config-core</artifactId>
             <groupId>com.github.autoconf</groupId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${autoconf.version}</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
