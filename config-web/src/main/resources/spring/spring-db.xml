@@ -15,6 +15,7 @@
           p:filters="wall,stat"/>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:configLocation="mybatis/mybatis-config.xml"
           p:dataSource-ref="dataSource"
           p:typeAliasesPackage="com.github.autoconf.entity"/>
 
@@ -22,5 +23,7 @@
           c:sqlSessionFactory-ref="sqlSessionFactory"/>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
-          p:sqlSessionFactory-ref="sqlSessionFactory" p:basePackage="com.github.autoconf.mapper"/>
+          p:annotationClass="org.springframework.stereotype.Repository"
+          p:sqlSessionFactory-ref="sqlSessionFactory"
+          p:basePackage="com.github.autoconf.mapper"/>
 </beans>
