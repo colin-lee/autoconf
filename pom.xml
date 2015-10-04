@@ -13,8 +13,9 @@
         <module>spring-support</module>
     </modules>
     <properties>
-        <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <encoding>UTF-8</encoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <jdk.version>1.7</jdk.version>
     </properties>
@@ -118,6 +119,25 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
                     <version>2.7</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <check/>
+                        <formats>
+                            <format>xml</format>
+                            <format>html</format>
+                        </formats>
+                        <check/>
+                        <instrumentation>
+                            <ignores>
+                                <ignore>**/api/*.class</ignore>
+                            </ignores>
+                            <excludes>
+                                <exclude>**/entity/**/*.class</exclude>
+                                <exclude>**/*Controller.class</exclude>
+                                <exclude>**/*Test.class</exclude>
+                            </excludes>
+                        </instrumentation>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -151,6 +171,9 @@
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>4.0.0</version>
+                    <configuration>
+                        <sourceEncoding>UTF-8</sourceEncoding>
+                    </configuration>
                 </plugin>
 
                 <!-- resource插件 -->
@@ -244,26 +267,11 @@
             </plugin>
 
 
-            <!-- cobertura插件, 设置不需要计算覆盖率的类 -->
+            <!-- cobertura插件 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.7</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <check/>
-                    <formats>
-                        <format>xml</format>
-                        <format>html</format>
-                    </formats>
-                    <instrumentation>
-                        <excludes>
-                            <exclude>**/api/*.class</exclude>
-                            <exclude>**/entity/**/*.class</exclude>
-                            <exclude>**/*Controller.class</exclude>
-                        </excludes>
-                    </instrumentation>
-                </configuration>
             </plugin>
 
             <!-- findbugs -->
