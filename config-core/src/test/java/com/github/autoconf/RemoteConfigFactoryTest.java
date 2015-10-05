@@ -28,7 +28,7 @@ public class RemoteConfigFactoryTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    server = new TestingServer(55531);
+    server = new TestingServer();
     factory =
       new RemoteConfigFactory(Helper.getProcessInfo(), Helper.newClient(server.getConnectString()));
   }

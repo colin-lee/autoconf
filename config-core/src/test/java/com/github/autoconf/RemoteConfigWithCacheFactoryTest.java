@@ -22,16 +22,16 @@ import static org.junit.Assert.assertThat;
  * 测试工厂类
  * Created by lirui on 2015-10-01 23:58.
  */
-public class ConfigFactoryTest {
+public class RemoteConfigWithCacheFactoryTest {
   private static TestingServer server;
-  private static ConfigFactory factory;
+  private static RemoteConfigWithCacheFactory factory;
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    server = new TestingServer(55530);
+    server = new TestingServer();
     //设置环境变量,覆盖application.properties配置
     System.setProperty("zookeeper.servers", server.getConnectString());
-    factory = ConfigFactory.getInstance();
+    factory = RemoteConfigWithCacheFactory.getInstance();
   }
 
   @AfterClass

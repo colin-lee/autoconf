@@ -34,7 +34,7 @@ public class RemoteConfigWithCacheTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    server = new TestingServer(55533);
+    server = new TestingServer();
     String servers = server.getConnectString();
     RetryPolicy policy = new BoundedExponentialBackoffRetry(1000, 60000, 10);
     client = CuratorFrameworkFactory.newClient(servers, policy);
