@@ -198,16 +198,16 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
     String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
     String selfName = (String) getFieldValue("beanName");
     BeanFactory selfFactory = (BeanFactory) getFieldValue("beanFactory");
-    for (String curName : beanNames) {
+    for (String name : beanNames) {
       // Check that we're not parsing our own bean definition,
       // to avoid failing on unresolvable placeholders in properties file locations.
-      if (!(curName.equals(selfName) && beanFactoryToProcess.equals(selfFactory))) {
-        BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(curName);
+      if (!(name.equals(selfName) && beanFactoryToProcess.equals(selfFactory))) {
+        BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(name);
         try {
-          findDynamicProperties(curName, bd);
+          findDynamicProperties(name, bd);
           visitor.visitBeanDefinition(bd);
         } catch (Exception ex) {
-          throw new BeanDefinitionStoreException(bd.getResourceDescription(), curName, ex.getMessage(), ex);
+          throw new BeanDefinitionStoreException(bd.getResourceDescription(), name, ex.getMessage(), ex);
         }
       }
     }
@@ -224,8 +224,13 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
     PropertyValue[] pvArray = pvs.getPropertyValues();
     for (PropertyValue pv : pvArray) {
       Object value = pv.getValue();
+      String rawValue = null;
       if (value instanceof TypedStringValue) {
-        String rawValue = ((TypedStringValue) value).getValue();
+        rawValue = ((TypedStringValue) value).getValue();
+      } else if (value instanceof String) {
+        rawValue = (String) value;
+      }
+      if (rawValue != null) {
         List<String> holders = findHolders(rawValue);
         if (holders != null && holders.size() > 0) {
           DynamicProperty p = new DynamicProperty(beanName, pv.getName(), rawValue);

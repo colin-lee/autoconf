@@ -16,8 +16,8 @@
           p:location="log4j.properties"
           p:configName="app.properties"/>
 
-    <bean class="com.github.autoconf.spring.Article">
-        <property name="author" value="${article.author}"/>
+    <bean class="com.github.autoconf.spring.Article"
+          p:author="${article.author}">
         <property name="content" value="${article.content}, welcome"/>
     </bean>
 </beans>
