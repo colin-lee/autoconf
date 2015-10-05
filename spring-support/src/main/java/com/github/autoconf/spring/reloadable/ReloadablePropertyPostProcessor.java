@@ -43,10 +43,10 @@ import java.util.Collection;
  */
 @Component
 public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
+  private static final Logger LOG = LoggerFactory.getLogger(ReloadablePropertyPostProcessor.class);
   private final PropertyChangedEventNotifier eventNotifier;
   private final PropertyConversionService propertyConversionService;
   private final ReloadablePropertySourcesPlaceholderConfigurer placeholderConfigurer;
-  private Logger log = LoggerFactory.getLogger(getClass());
   private Multimap<String, BeanPropertyHolder> beanPropertySubscriptions = HashMultimap.create();
 
   @Autowired
@@ -59,7 +59,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
 
   @PostConstruct
   protected void init() {
-    log.info("Registering ReloadablePropertyProcessor for properties file changes");
+    LOG.info("Registering ReloadablePropertyProcessor for properties file changes");
     registerPropertyReloader();
   }
 
@@ -67,7 +67,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
    * Utility method to unregister the class from receiving events about property files being changed.
    */
   public final void unregisterPropertyReloader() {
-    log.info("Unregistering ReloadablePropertyProcessor from property file changes");
+    LOG.info("Unregistering ReloadablePropertyProcessor from property file changes");
     this.eventNotifier.unregister(this);
   }
 
@@ -88,9 +88,9 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
    */
   @Subscribe
   public void handlePropertyChange(final PropertyModifiedEvent event) {
-    Collection<BeanPropertyHolder> holders =
-      this.beanPropertySubscriptions.get(event.getPropertyName());
-    for (final BeanPropertyHolder bean : holders) {
+    Collection<BeanPropertyHolder> c = beanPropertySubscriptions.get(event.getPropertyName());
+    System.err.println("====================" + event + ", holders:" + c);
+    for (final BeanPropertyHolder bean : c) {
       updateField(bean, event);
     }
   }
@@ -103,29 +103,28 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
 
     final Object convertedProperty = convertPlaceHolderForField(fieldToUpdate, rawValue);
     try {
-      log.info("Reloading property [{}] on field [{}] for class [{}]", event.getPropertyName(), fieldToUpdate.getName(), canonicalName);
+      LOG.info("Reloading property [{}] on field [{}] for class [{}]", event.getPropertyName(), fieldToUpdate.getName(), canonicalName);
       fieldToUpdate.set(beanToUpdate, convertedProperty);
     } catch (final IllegalAccessException e) {
-      log.error("Unable to reloading property [{}] on field [{}] for class [{}]\n Exception [{}]", event.getPropertyName(), fieldToUpdate.getName(), canonicalName, e.getMessage());
+      LOG.error("Unable to reloading property [{}] on field [{}] for class [{}]\n Exception [{}]", event.getPropertyName(), fieldToUpdate.getName(), canonicalName, e.getMessage());
     }
   }
 
   @Override
   public boolean postProcessAfterInstantiation(final Object bean, final String beanName) throws BeansException {
-    if (log.isDebugEnabled()) {
-      log.debug("Setting Reloadable Properties on [{}]", beanName);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Setting Reloadable Properties on [{}]", beanName);
     }
     setPropertiesOnBean(bean);
-    Collection<DynamicProperty> dynamicProperties =
-      placeholderConfigurer.getPlaceHolders().get(beanName);
-    for (DynamicProperty property : dynamicProperties) {
+    for (DynamicProperty property : placeholderConfigurer.getPlaceHolders().get(beanName)) {
       String name = property.getPropertyName();
       Field field = ReflectionUtils.findField(bean.getClass(), name);
       if (field != null) {
         ReflectionUtils.makeAccessible(field);
         validateFieldNotFinal(bean, field);
         for (String holder : property.getPlaceholders()) {
-          subscribeBeanToPropertyChangedEvent(holder, new BeanPropertyHolder(bean, field, property.getRawValue()));
+          BeanPropertyHolder bp = new BeanPropertyHolder(bean, field, property.getRawValue());
+          subscribeBeanToPropertyChangedEvent(holder, bp);
         }
       } else {
         String methodName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
@@ -138,13 +137,13 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
               ReflectionUtils.makeAccessible(i);
               i.invoke(bean, value);
             } catch (Exception e) {
-              log.error("cannot invoke {}.{}({})", bean.getClass(), methodName, value);
+              LOG.error("cannot invoke {}.{}({})", bean.getClass(), methodName, value);
             }
             break;
           }
         }
         if (!found) {
-          log.error("cannot find {} in class: {}", methodName, bean.getClass());
+          LOG.error("cannot find {} in class: {}", methodName, bean.getClass());
         }
       }
     }
@@ -164,17 +163,17 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
           validatePropertyAvailableOrDefaultSet(bean, field, annotation, property);
 
           if (null != property) {
-            log.info("Attempting to convert and set property [{}] on field [{}] for class [{}] to type [{}]", property, field.getName(), bean.getClass().getCanonicalName(), field.getType());
+            LOG.info("Attempting to convert and set property [{}] on field [{}] for class [{}] to type [{}]", property, field.getName(), bean.getClass().getCanonicalName(), field.getType());
 
             final Object convertedProperty = convertPropertyForField(field, annotation.value());
 
-            log.info("Setting field [{}] of class [{}] with value [{}]", field.getName(), bean.getClass().getCanonicalName(), convertedProperty);
+            LOG.info("Setting field [{}] of class [{}] with value [{}]", field.getName(), bean.getClass().getCanonicalName(), convertedProperty);
 
             field.set(bean, convertedProperty);
 
             subscribeBeanToPropertyChangedEvent(annotation.value(), new BeanPropertyHolder(bean, field, annotation.value()));
           } else {
-            log.info("Leaving field [{}] of class [{}] with default value", field.getName(), bean.getClass().getCanonicalName());
+            LOG.info("Leaving field [{}] of class [{}] with default value", field.getName(), bean.getClass().getCanonicalName());
           }
         }
       }
@@ -204,6 +203,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
   }
 
   private void subscribeBeanToPropertyChangedEvent(final String property, final BeanPropertyHolder fieldProperty) {
+    System.err.println("-------------property:" + property + ", bp: " + fieldProperty);
     this.beanPropertySubscriptions.put(property, fieldProperty);
   }
 

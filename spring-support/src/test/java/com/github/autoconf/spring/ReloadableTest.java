@@ -1,11 +1,8 @@
 package com.github.autoconf.spring;
 
 import com.github.autoconf.base.Config;
-import com.google.common.io.Closeables;
+import com.github.autoconf.spring.reloadable.ReloadableProperty;
 import com.google.common.io.Files;
-import org.apache.curator.test.TestingServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +27,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 public class ReloadableTest {
-  private static TestingServer server;
+  @ReloadableProperty("log4j.appender.Console")
+  private String appender;
 
   @Autowired
   private Article article;
-
-  @BeforeClass
-  public static void beforeClass() throws Exception {
-    server = new TestingServer();
-    //设置环境变量,覆盖application.properties配置
-    System.setProperty("zookeeper.servers", server.getConnectString());
-  }
-
-  @AfterClass
-  public static void afterClass() throws Exception {
-    Closeables.close(server, true);
-  }
 
   private void setVariable(String var) throws Exception {
     File app = ResourceUtils.getFile("classpath:autoconf/app.properties");
@@ -63,15 +49,17 @@ public class ReloadableTest {
 
   @Test
   public void testPlaceHolder() throws Exception {
+    assertThat(appender, is("org.apache.log4j.ConsoleAppender"));
+
     setVariable("colinli");
-    Thread.sleep(1000);
+    Thread.sleep(3000);
     assertThat(article.getAuthor(), is("colinli"));
     assertThat(article.getContent(), is("hello colinli, welcome"));
     assertThat(article.getTitle(), is("config title"));
     assertThat(article.getDynamic(), is("dynamicContent"));
 
     setVariable("lirui");
-    Thread.sleep(10000);
+    Thread.sleep(3000);
 
     assertThat(article.getAuthor(), is("lirui"));
     assertThat(article.getContent(), is("hello lirui, welcome"));

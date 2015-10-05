@@ -30,6 +30,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringValueResolver;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
@@ -41,21 +42,16 @@ import java.util.Properties;
  * @author James Morgan
  */
 public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer implements EventPublisher {
-  private Logger log = LoggerFactory.getLogger(getClass());
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ReloadablePropertySourcesPlaceholderConfigurer.class);
   private PropertyChangedEventNotifier eventNotifier;
   private Multimap<String, DynamicProperty> placeHolders = HashMultimap.create();
   private PropertySourcesPropertyResolver propertyResolver;
   private IConfigFactory configFactory;
-  private Resource[] locations;
   /**
    * 在cms系统中配置的名称，可以是逗号分隔的多个名字
    */
   private String configName;
-  /**
-   * the application context is needed to find the beans again during reconfiguration
-   */
-  private BeanFactory beanFactory;
-  private String beanName;
 
   public ReloadablePropertySourcesPlaceholderConfigurer() {
   }
@@ -82,7 +78,6 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
       IChangeableConfig config = configFactory.getConfig(configName, new IChangeListener() {
         @Override
         public void changed(IConfig config) {
-          log.info("CMS: {} changed", config.getName());
           reloadCmsConfig(config);
         }
       }, false);
@@ -91,9 +86,9 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
   }
 
   private void reloadCmsConfig(IConfig config) {
-    final Properties reloadedProperties = new Properties();
-    reloadedProperties.putAll(config.getAll());
-    updateProperty(reloadedProperties);
+    final Properties p = new Properties();
+    p.putAll(config.getAll());
+    updateProperty(p);
   }
 
   private void updateProperty(Properties reloadedProperties) {
@@ -134,17 +129,12 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
   }
 
   @Override
-  public void setLocations(final Resource[] locations) {
-    super.setLocations(locations);
-    this.locations = locations;
-  }
-
-  @Override
   public void onResourceChanged(final Resource resource) {
     try {
+      LOG.info("{} changed", resource);
       updateProperty(PropertiesLoaderUtils.loadProperties(resource));
     } catch (final IOException e) {
-      log.error("Failed to reload properties file once change", e);
+      LOG.error("Failed to reload properties file once change", e);
     }
   }
 
@@ -152,25 +142,44 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
     if (null == this.eventNotifier) {
       throw new BeanInitializationException("Event bus not setup, you should not be calling this method...!");
     }
-    if (this.locations != null) {
+    Resource[] resources = (Resource[]) getFieldValue("locations");
+    if (resources == null) {
+      return;
+    }
+    try {
+      // Here we actually create and set a FileWatcher to monitor the given locations
+      for (Resource i : resources) {
+        final LocalConfig c = new LocalConfig(i.getFilename(), i.getFile().toPath());
+        FileUpdateWatcher.getInstance().watch(c.getPath(), new IFileListener() {
+          @Override
+          public void changed(Path path, byte[] content) {
+            LOG.info("{} changed", path);
+            c.copyOf(content);
+            reloadCmsConfig(c);
+          }
+        });
+      }
+    } catch (Exception e) {
+      LOG.error("Unable to start properties file watcher", e);
+    }
+  }
+
+  private Object getFieldValue(String name) {
+    Class<?> clz = super.getClass();
+    while (clz != Object.class) {
       try {
-        // Here we actually create and set a FileWatcher to monitor the given locations
-        for (Resource i : locations) {
-          final LocalConfig c = new LocalConfig(i.getFilename(), i.getFile().toPath());
-          FileUpdateWatcher.getInstance().watch(c.getPath(), new IFileListener() {
-            @Override
-            public void changed(Path path, byte[] content) {
-              log.info("{} changed", path);
-              c.copyOf(content);
-              reloadCmsConfig(c);
-            }
-          });
-          reloadCmsConfig(c);
+        Field f = clz.getDeclaredField(name);
+        if (!f.isAccessible()) {
+          f.setAccessible(true);
         }
-      } catch (Exception e) {
-        log.error("Unable to start properties file watcher", e);
+        return f.get(this);
+      } catch (NoSuchFieldException ignored) {
+        clz = clz.getSuperclass();
+      } catch (IllegalAccessException e) {
+        LOG.error("cannot getFieldValue('{}')", name, e);
       }
     }
+    return null;
   }
 
   public PropertySourcesPropertyResolver getPropertyResolver() {
@@ -188,36 +197,6 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
     return getPropertyResolver().getProperty(property.toString());
   }
 
-  /**
-   * Only necessary to check that we're not parsing our own bean definition,
-   * to avoid failing on unresolvable placeholders in properties file locations.
-   * The latter case can happen with placeholders for system properties in
-   * resource locations.
-   *
-   * @see #setLocations
-   * @see org.springframework.core.io.ResourceEditor
-   */
-  @Override
-  public void setBeanName(String beanName) {
-    super.setBeanName(beanName);
-    this.beanName = beanName;
-  }
-
-  /**
-   * Only necessary to check that we're not parsing our own bean definition,
-   * to avoid failing on unresolvable placeholders in properties file locations.
-   * The latter case can happen with placeholders for system properties in
-   * resource locations.
-   *
-   * @see #setLocations
-   * @see org.springframework.core.io.ResourceEditor
-   */
-  @Override
-  public void setBeanFactory(BeanFactory beanFactory) {
-    super.setBeanFactory(beanFactory);
-    this.beanFactory = beanFactory;
-  }
-
   private PropertySourcesPropertyResolver buildPropertyResolver(PropertySources sources) {
     PropertySourcesPropertyResolver propertyResolver = new PropertySourcesPropertyResolver(sources);
     propertyResolver.setPlaceholderPrefix(this.placeholderPrefix);
@@ -229,10 +208,12 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
   protected void doProcessProperties(ConfigurableListableBeanFactory beanFactoryToProcess, StringValueResolver valueResolver) {
     BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
     String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
+    String selfName = (String) getFieldValue("beanName");
+    BeanFactory selfFactory = (BeanFactory) getFieldValue("beanFactory");
     for (String curName : beanNames) {
       // Check that we're not parsing our own bean definition,
       // to avoid failing on unresolvable placeholders in properties file locations.
-      if (!(curName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
+      if (!(curName.equals(selfName) && beanFactoryToProcess.equals(selfFactory))) {
         BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(curName);
         try {
           findDynamicProperties(curName, bd);
