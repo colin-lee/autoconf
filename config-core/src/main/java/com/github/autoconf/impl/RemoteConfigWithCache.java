@@ -98,10 +98,11 @@ public class RemoteConfigWithCache extends RemoteConfig {
 
   @Override
   protected void reload(byte[] content) {
-    if (hasChanged(content)) {
+    if (isChanged(content)) {
       copyOf(content);
       notifyListeners();
       try {
+        //已经加载过,就不要再通过本地文件修改通知再加载1次了
         FileUpdateWatcher.getInstance().mask(cacheFile.toPath());
         Files.write(content, cacheFile);
       } catch (IOException e) {

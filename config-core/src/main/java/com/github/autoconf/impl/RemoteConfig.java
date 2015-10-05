@@ -12,7 +12,6 @@ import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,13 +24,13 @@ public class RemoteConfig extends ChangeableConfig {
   private final String path;
   private final List<String> paths;
   private final CuratorFramework client;
-  private final Watcher leafWatcher = new Watcher() {
-    @Override
+  private final Watcher baseWatcher = new Watcher() {
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeDataChanged:
+        case NodeCreated:
+        case NodeChildrenChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -43,13 +42,13 @@ public class RemoteConfig extends ChangeableConfig {
       }
     }
   };
-  private final Watcher baseWatcher = new Watcher() {
+  private final Watcher leafWatcher = new Watcher() {
+    @Override
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
       String p = event.getPath();
       switch (t) {
-        case NodeCreated:
-        case NodeChildrenChanged:
+        case NodeDataChanged:
           loadFromZookeeper();
           break;
         case NodeDeleted:
@@ -127,25 +126,10 @@ public class RemoteConfig extends ChangeableConfig {
 
   protected void reload(byte[] content) {
     //只有真正发生变化的时候才触发重新加载
-    if (hasChanged(content)) {
+    if (isChanged(content)) {
       copyOf(content);
       notifyListeners();
     }
-  }
-
-  /**
-   * 判断新接收到的数据和以前相比是否发生了变化
-   *
-   * @param now 新数据
-   * @return 逐字节对比，不一样就返回true
-   */
-  protected boolean hasChanged(byte[] now) {
-    if (now == null) {
-      return true;
-    }
-    byte[] old = getContent();
-    LOG.debug("change detecting\nbefore:\n{}\n\nafter:\n{}\n", ZookeeperUtil.newString(old), ZookeeperUtil.newString(now));
-    return !Arrays.equals(now, old);
   }
 
   public String getPath() {

@@ -3,6 +3,10 @@ package com.github.autoconf.base;
 import com.github.autoconf.api.IChangeListener;
 import com.github.autoconf.api.IChangeable;
 import com.github.autoconf.api.IChangeableConfig;
+import com.github.autoconf.helper.ZookeeperUtil;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  * 配置基类
@@ -36,5 +40,21 @@ public class ChangeableConfig extends Config implements IChangeableConfig {
 
   public void notifyListeners() {
     eventBus.notifyListeners();
+  }
+
+
+  /**
+   * 判断新接收到的数据和以前相比是否发生了变化
+   *
+   * @param now 新数据
+   * @return 逐字节对比，不一样就返回true
+   */
+  public boolean isChanged(byte[] now) {
+    if (now == null) {
+      return true;
+    }
+    byte[] old = getContent();
+    LoggerFactory.getLogger(getClass()).debug("change detecting\nbefore:\n{}\n\nafter:\n{}\n", ZookeeperUtil.newString(old), ZookeeperUtil.newString(now));
+    return !Arrays.equals(now, old);
   }
 }

@@ -50,9 +50,11 @@ public class LocalConfigFactory extends AbstractConfigFactory {
     FileUpdateWatcher.getInstance().watch(p, new IFileListener() {
       @Override
       public void changed(Path path, byte[] content) {
-        LOG.info("{} changed", path);
-        c.copyOf(content);
-        c.notifyListeners();
+        if (c.isChanged(content)) {
+          LOG.info("{} changed", path);
+          c.copyOf(content);
+          c.notifyListeners();
+        }
       }
     });
     return c;
