@@ -47,4 +47,14 @@ public class Article {
   public void setDynamic(String dynamic) {
     this.dynamic = dynamic;
   }
+
+  @Override
+  public String toString() {
+    return "Article{" +
+      "author='" + author + '\'' +
+      ", content='" + content + '\'' +
+      ", title='" + title + '\'' +
+      ", dynamic='" + dynamic + '\'' +
+      '}';
+  }
 }

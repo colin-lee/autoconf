@@ -1,6 +1,5 @@
 package com.github.autoconf.spring.properties.bean;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 public class PropertyModifiedEvent {
@@ -45,7 +44,10 @@ public class PropertyModifiedEvent {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("propertyName", this.propertyName).add("oldValue", this.oldValue).add("newValue", this.newValue).toString();
+    return "PropertyModifiedEvent{" +
+      "propertyName='" + propertyName + '\'' +
+      ", oldValue=" + oldValue +
+      ", newValue=" + newValue +
+      '}';
   }
-
 }

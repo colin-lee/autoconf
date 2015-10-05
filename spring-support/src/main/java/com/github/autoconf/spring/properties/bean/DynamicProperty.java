@@ -1,6 +1,7 @@
 package com.github.autoconf.spring.properties.bean;
 
-import java.util.ArrayList;
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ public class DynamicProperty {
   final String beanName;
   final String propertyName;
   final String rawValue;
-  List<String> placeholders = new ArrayList<>();
+  List<String> placeholders = Lists.newArrayList();
 
   public DynamicProperty(String beanName, String propertyName, String rawValue) {
     this.beanName = beanName;

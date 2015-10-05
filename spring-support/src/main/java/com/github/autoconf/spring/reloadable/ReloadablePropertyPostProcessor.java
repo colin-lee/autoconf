@@ -89,7 +89,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
   @Subscribe
   public void handlePropertyChange(final PropertyModifiedEvent event) {
     Collection<BeanPropertyHolder> c = beanPropertySubscriptions.get(event.getPropertyName());
-    System.err.println("====================" + event + ", holders:" + c);
+    LOG.error("====================" + event + ", holders:" + c);
     for (final BeanPropertyHolder bean : c) {
       updateField(bean, event);
     }
@@ -111,7 +111,16 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
   }
 
   @Override
+  public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    LOG.error(">>>>>>>>>>postProcessBeforeInitialization {}, {}", beanName, bean);
+    Object o = super.postProcessBeforeInitialization(bean, beanName);
+    LOG.error("<<<<<<<<<<postProcessBeforeInitialization {}, {}", beanName, bean);
+    return o;
+  }
+
+  @Override
   public boolean postProcessAfterInstantiation(final Object bean, final String beanName) throws BeansException {
+    LOG.error(">>>>>>>>>>postProcessAfterInstantiation {}, {}", beanName, bean);
     if (LOG.isDebugEnabled()) {
       LOG.debug("Setting Reloadable Properties on [{}]", beanName);
     }
@@ -147,6 +156,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
         }
       }
     }
+    LOG.error("<<<<<<<<<<postProcessAfterInstantiation {}, {}", beanName, bean);
     return true;
   }
 
@@ -203,7 +213,7 @@ public class ReloadablePropertyPostProcessor extends InstantiationAwareBeanPostP
   }
 
   private void subscribeBeanToPropertyChangedEvent(final String property, final BeanPropertyHolder fieldProperty) {
-    System.err.println("-------------property:" + property + ", bp: " + fieldProperty);
+    LOG.error("-------------property:" + property + ", bp: " + fieldProperty);
     this.beanPropertySubscriptions.put(property, fieldProperty);
   }
 

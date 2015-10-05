@@ -6,7 +6,6 @@ import com.github.autoconf.impl.LocalConfig;
 import com.github.autoconf.spring.properties.bean.DynamicProperty;
 import com.github.autoconf.spring.properties.bean.PropertyModifiedEvent;
 import com.github.autoconf.spring.properties.event.PropertyChangedEventNotifier;
-import com.github.autoconf.spring.properties.internal.EventPublisher;
 import com.github.autoconf.watcher.FileUpdateWatcher;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.*;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringValueResolver;
 
 import java.io.IOException;
@@ -41,7 +39,7 @@ import java.util.Properties;
  *
  * @author James Morgan
  */
-public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer implements EventPublisher {
+public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
   private static final Logger LOG =
     LoggerFactory.getLogger(ReloadablePropertySourcesPlaceholderConfigurer.class);
   private PropertyChangedEventNotifier eventNotifier;
@@ -125,16 +123,6 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
           this.eventNotifier.post(new PropertyModifiedEvent(property, oldValue, newValue));
         }
       }
-    }
-  }
-
-  @Override
-  public void onResourceChanged(final Resource resource) {
-    try {
-      LOG.info("{} changed", resource);
-      updateProperty(PropertiesLoaderUtils.loadProperties(resource));
-    } catch (final IOException e) {
-      LOG.error("Failed to reload properties file once change", e);
     }
   }
 
@@ -249,11 +237,13 @@ public class ReloadablePropertySourcesPlaceholderConfigurer extends PropertySour
   }
 
   private List<String> findHolders(String rawValue) {
-    if (Strings.isNullOrEmpty(rawValue))
+    if (Strings.isNullOrEmpty(rawValue)) {
       return null;
+    }
     int start = rawValue.indexOf(this.placeholderPrefix);
-    if (start == -1)
+    if (start == -1) {
       return null;
+    }
     List<String> holders = Lists.newArrayList();
     while (start != -1) {
       start += this.placeholderPrefix.length();
