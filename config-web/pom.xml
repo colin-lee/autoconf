@@ -173,6 +173,14 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- JSON begin -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
