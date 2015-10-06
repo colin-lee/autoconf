@@ -10,6 +10,7 @@
     </appender>
 
     <logger name="com.github.autoconf" level="debug"/>
+    <logger name="druid.sql" level="INFO"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

@@ -7,10 +7,10 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <import resource="spring/spring-cms.xml"/>
-    <import resource="spring/spring-shiro.xml"/>
-    <import resource="spring/spring-guava.xml"/>
-    <import resource="spring/spring-db.xml"/>
+    <import resource="classpath:spring/spring-cms.xml"/>
+    <import resource="classpath:spring/spring-guava.xml"/>
+    <import resource="classpath:spring/spring-db.xml"/>
+    <import resource="classpath:spring/spring-shiro.xml"/>
 
     <context:component-scan base-package="com.github.autoconf.service"/>
 </beans>

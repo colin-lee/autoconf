@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="com.github.autoconf.spring.reloadable.ReloadablePropertyPostProcessor"
+          c:placeholderConfigurer-ref="autoConfig"/>
+
+    <bean id="autoConfig"
+          class="com.github.autoconf.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer"
+          p:ignoreResourceNotFound="true"
+          p:ignoreUnresolvablePlaceholders="false"
+          p:location="classpath:application.properties"/>
+
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
           destroy-method="close"
           p:url="${mysql.url}"
@@ -12,9 +23,7 @@
           p:filters="slf4j,wall,stat"/>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
-          p:dataSource-ref="dataSource"
-          p:configLocation="classpath:mybatis/mybatis-config.xml"
-          p:typeAliasesPackage="com.github.autoconf.entity"/>
+          p:dataSource-ref="dataSource"/>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
           p:basePackage="com.github.autoconf.mapper"/>
