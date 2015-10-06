@@ -19,6 +19,7 @@
         <spring.version>4.2.1.RELEASE</spring.version>
         <aspectj.version>1.8.7</aspectj.version>
         <jackson.version>2.2.0</jackson.version>
+        <jetty.version>9.0.1.v20130408</jetty.version>
     </properties>
 
     <dependencies>
@@ -174,11 +175,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- JSR303  BeanValidator -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.0</version>
-            <scope>compile</scope>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.3.0.Final</version>
         </dependency>
 
         <!-- JSON begin -->
@@ -227,6 +228,24 @@
                 <configuration>
                     <skip>true</skip>
                     <check/>
+                </configuration>
+            </plugin>
+            <!-- jetty插件, 设定context path与spring profile -->
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>spring.profiles.active</name>
+                            <value>development</value>
+                        </systemProperty>
+                    </systemProperties>
+                    <useTestClasspath>true</useTestClasspath>
+                    <webAppConfig>
+                        <contextPath>/${project.artifactId}</contextPath>
+                    </webAppConfig>
                 </configuration>
             </plugin>
         </plugins>

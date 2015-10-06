@@ -2,35 +2,29 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
-       default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd"
+       default-lazy-init="true">
 
     <mvc:annotation-driven/>
+    <mvc:resources mapping="/static/**" location="/WEB-INF/static/" cache-period="0"/>
+    <!-- 将无法mapping到Controller的path交给default servlet handler处理 -->
+    <mvc:default-servlet-handler/>
 
     <context:component-scan base-package="com.github.autoconf.web"/>
 
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
     <!-- 模板引擎配置 -->
-    <bean id="viewResolver" class="jetbrick.template.web.springmvc.JetTemplateViewResolver">
-        <property name="order" value="1"/>
-        <property name="contentType" value="text/html; charset=UTF-8"/>
-        <property name="suffix" value=".jetx"/>
-
-        <!-- 指定配置文件 -->
-        <property name="configLocation" value="classpath:jetbrick-template.properties"/>
-
-        <!-- 直接配置属性 -->
-        <property name="configProperties">
-            <props>
-                <prop key="jetx.input.encoding">UTF-8</prop>
-                <prop key="jetx.output.encoding">UTF-8</prop>
-            </props>
-        </property>
-    </bean>
-
-    <!-- 将无法mapping到Controller的path交给default servlet handler处理 -->
-    <mvc:default-servlet-handler/>
+    <bean id="viewResolver" class="jetbrick.template.web.springmvc.JetTemplateViewResolver"
+          p:order="1"
+          p:contentType="text/html; charset=UTF-8"
+          p:configLocation="classpath:jetbrick-template.properties"/>
 
     <!-- 控制器异常处理 -->
     <bean id="exceptionHandlerExceptionResolver"

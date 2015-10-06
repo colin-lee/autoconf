@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${title}</title>
+    <link href="${CONTEXT_PATH}/static/datatables.min.css" rel="stylesheet" type="text/css"/>
+    #tag layout_block_default("headContent")#end
+    <style>
+        body {
+            font-size: 12px
+        }
+
+        .navbar-inverse {
+            border-radius: 0 0 6px 6px
+        }
+
+        .font12 {
+            font-size: 14px
+        }
+
+        .font14 {
+            font-size: 14px
+        }
+
+        .fixedHeader {
+            background-color: rgb(229, 229, 229);
+            height: 15px;
+        }
+
+        .table th {
+            text-align: center
+        }
+
+        .table td {
+            text-align: left
+        }
+
+        td.highlight {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+  #set(User currentUser=principal())
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation"><!--导航-->
+    <div class="container-fluid">
+        <div class="navbar-header"><a class="navbar-brand" href="${CONTEXT_PATH}/">配置管理系统</a></div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="${CONTEXT_PATH}/">首页</a></li>
+                <li><a href="${CONTEXT_PATH}/history">修改历史</a></li>
+                <li><a href="${CONTEXT_PATH}/create/config/">新建配置</a></li>
+                <li><a href="${CONTEXT_PATH}/replace/form/">批量修改</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/login/profile/">$!{currentUser.name}</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+      #include("alert.inc.jetx")
+        #tag layout_block_default("bodyContent")#end
+    </div>
+</div>
+<script src="${CONTEXT_PATH}/static/datatables.min.js"></script>
+#tag layout_block_default("scriptContent")#end
+</body>
+</html>

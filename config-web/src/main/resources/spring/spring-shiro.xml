@@ -12,6 +12,7 @@
           p:securityManager-ref="securityManager">
         <property name="filterChainDefinitions">
             <value>
+                /static/** = anon
                 /login = authc
                 /logout = logout
                 /unauthorized = anon
