@@ -33,10 +33,6 @@
         <appender-ref ref="RollingFile"/>
     </appender>
 
-    <root level="trace">
-        <appender-ref ref="ASYNC"/>
-    </root>
-
     <logger name="com.github.autoconf" level="debug"/>
     <logger name="druid.sql" level="INFO"/>
 
