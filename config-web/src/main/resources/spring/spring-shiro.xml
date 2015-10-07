@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
@@ -24,11 +25,74 @@
     </bean>
 
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager"
+          p:sessionManager-ref="sessionManager"
+          p:rememberMeManager-ref="rememberMeManager"
           p:realm-ref="myRealm"/>
     <bean id="lifecycleBeanPostProcessor"
           class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
-    <bean id="myRealm" class="com.github.autoconf.shiro.UserRealm"/>
+    <bean id="credentialsMatcher" class="com.github.autoconf.shiro.RetryLimitCredentialsMatcher"/>
+
+    <bean id="myRealm" class="com.github.autoconf.shiro.UserRealm"
+          p:credentialsMatcher-ref="credentialsMatcher"
+          p:cachingEnabled="true"
+          p:authenticationCachingEnabled="true"
+          p:authorizationCachingEnabled="true"/>
+
+    <!-- 会话ID生成器 -->
+    <bean id="sessionIdGenerator"
+          class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+
+    <!-- 会话Cookie模板 -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie" c:name="sid"
+          p:httpOnly="true"
+          p:maxAge="180000"/>
+
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie"
+          c:name="rememberMe"
+          p:httpOnly="true"
+          p:maxAge="2592000"/>
+
+    <!-- rememberMe管理器 -->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <!-- rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位）-->
+        <property name="cipherKey"
+                  value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}"/>
+        <property name="cookie" ref="rememberMeCookie"/>
+    </bean>
+
+    <!-- 会话DAO -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO"
+          p:activeSessionsCacheName="shiro-activeSessionCache"
+          p:sessionIdGenerator-ref="sessionIdGenerator"/>
+
+    <!-- 会话验证调度器 -->
+    <bean id="sessionValidationScheduler"
+          class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler"
+          p:sessionValidationInterval="1800000"
+          p:sessionManager-ref="sessionManager"/>
+
+    <!-- 会话管理器 -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager"
+          p:globalSessionTimeout="1800000"
+          p:deleteInvalidSessions="true"
+          p:sessionIdCookieEnabled="true"
+          p:sessionIdCookie-ref="sessionIdCookie"
+          p:sessionValidationSchedulerEnabled="true"
+          p:sessionValidationScheduler-ref="sessionValidationScheduler"
+          p:sessionDAO-ref="sessionDAO"/>
+
+    <!-- 相当于调用SecurityUtils.setSecurityManager(securityManager) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+          p:staticMethod="org.apache.shiro.SecurityUtils.setSecurityManager"
+          p:arguments-ref="securityManager"/>
+
+    <!-- 基于Form表单的身份验证过滤器 -->
+    <bean id="formAuthenticationFilter"
+          class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter"
+          p:usernameParam="username"
+          p:passwordParam="password"
+          p:loginUrl="/login"/>
 
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
           depends-on="lifecycleBeanPostProcessor"/>
