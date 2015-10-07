@@ -2,24 +2,32 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"
           p:loginUrl="/login"
           p:successUrl="/home"
           p:unauthorizedUrl="/unauthorized"
           p:securityManager-ref="securityManager">
+        <property name="filters">
+            <util:map>
+                <entry key="authc" value-ref="formAuthenticationFilter"/>
+            </util:map>
+        </property>
         <property name="filterChainDefinitions">
             <value>
                 /static/** = anon
                 /unauthorized = anon
+                /register = anon
                 /login = authc
                 /logout = logout
                 /admin/** = authc, roles[admin]
-                /docs/** = authc, perms[document:read]
-                /** = authc,user
+                /** = anon
             </value>
         </property>
     </bean>
@@ -31,7 +39,11 @@
     <bean id="lifecycleBeanPostProcessor"
           class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
-    <bean id="credentialsMatcher" class="com.github.autoconf.shiro.RetryLimitCredentialsMatcher"/>
+    <bean class="com.github.autoconf.shiro.PasswordHelper"/>
+    <bean id="credentialsMatcher" class="com.github.autoconf.shiro.RetryLimitCredentialsMatcher"
+          p:hashAlgorithmName="${shiro.password.algorithmName}"
+          p:hashIterations="${shiro.password.hashIterations}"
+          p:storedCredentialsHexEncoded="true"/>
 
     <bean id="myRealm" class="com.github.autoconf.shiro.UserRealm"
           p:credentialsMatcher-ref="credentialsMatcher"

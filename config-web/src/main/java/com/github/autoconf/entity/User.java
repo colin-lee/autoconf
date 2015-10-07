@@ -3,6 +3,8 @@ package com.github.autoconf.entity;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.Set;
 
@@ -13,7 +15,10 @@ import java.util.Set;
 public class User {
   private static final Splitter SPLITTER = Splitter.on(',').trimResults().omitEmptyStrings();
   private Long id;
+  @NotNull
+  @Pattern(regexp = "[0-9a-zA-Z_-]+")
   private String username;
+  @NotNull
   private String password;
   private String salt;
   private String roles;

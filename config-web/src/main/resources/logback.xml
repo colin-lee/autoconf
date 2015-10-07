@@ -41,7 +41,6 @@
     <logger name="com.opensymphony" level="WARN"/>
     <logger name="org.apache" level="WARN"/>
 
-    <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
     <logger name="org.hibernate.SQL" level="DEBUG"/>

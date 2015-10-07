@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>登录界面</title>
+    <title>注册新用户</title>
     <link href="${CONTEXT_PATH}/static/datatables.min.css" rel="stylesheet" type="text/css"/>
     <style type="text/css">
         html, body {
@@ -41,7 +41,7 @@
             .login-box {
                 left: 50%;
                 /*设置负值，为要定位子盒子的一半宽度*/
-                margin-left: -210px;
+                margin-left: -260px;
             }
         }
 
@@ -54,7 +54,7 @@
         }
 
         .login-content {
-            height: 240px;
+            height: 320px;
             width: 100%;
             max-width: 500px;
             background-color: rgba(255, 250, 2550, .6);
@@ -104,32 +104,41 @@
     <div class="login-box">
         <div class="login-title text-center">
             <h1>
-                <small>登录</small>
+                <small>注册新用户</small>
             </h1>
         </div>
         <div class="login-content ">
             <div class="form">
-                <form id="loginForm" method="post">
+                <form id="registerForm" method="post">
                     <div class="form-group">
                         <div>
                             <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                                <input type="text" id="username" name="username" value="${user.username}" class="form-control requried" placeholder="用户名">
+                                <div class="input-group-addon">用户</div>
+                                <input type="text" id="username" name="username" value="${user.username}" class="form-control required"/>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div>
                             <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-                                <input type="password" id="password" name="password" value="${user.password}" class="form-control required" placeholder="密码">
+                                <div class="input-group-addon">密码</div>
+                                <input type="password" id="password" name="password" class="form-control required"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <div class="input-group">
+                                <div class="input-group-addon">确认</div>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control required" equalTo="#password"/>
                             </div>
                         </div>
                     </div>
                     <div class="form-group form-actions">
                         <div class="col-xs-offset-4">
                             <button type="submit" class="btn btn-sm btn-info">
-                                <span class="glyphicon glyphicon-off"></span> 登录
+                                <div class="glyphicon glyphicon-off"></div>
+                                注册新用户
                             </button>
                         </div>
                     </div>
@@ -146,7 +155,18 @@
     $(function () {
         $("#username").focus();
     });
-    $("#registerForm").validate();
+    $("#registerForm").validate({
+        rules: {
+            username: {
+                remote: "${CONTEXT_PATH}/ajax/checkLoginName"
+            }
+        },
+        messages: {
+            username: {
+                remote: "用户名已存在"
+            }
+        }
+    });
 </script>
 </body>
 </html>
