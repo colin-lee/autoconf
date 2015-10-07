@@ -13,9 +13,9 @@
         <property name="filterChainDefinitions">
             <value>
                 /static/** = anon
+                /unauthorized = anon
                 /login = authc
                 /logout = logout
-                /unauthorized = anon
                 /admin/** = authc, roles[admin]
                 /docs/** = authc, perms[document:read]
                 /** = authc,user

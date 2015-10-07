@@ -18,7 +18,7 @@ import javax.validation.Valid;
  * Created by lirui on 2015-10-04 13:35.
  */
 @Controller
-public class HomeController {
+public class UserController {
   @RequestMapping("/login")
   public String login(Model model) {
     if (!model.containsAttribute("user")) {
@@ -50,7 +50,7 @@ public class HomeController {
     return "redirect:/login";
   }
 
-  @RequestMapping("unauthorized")
+  @RequestMapping("/unauthorized")
   public String unauthorized() {
     return "unauthorized";
   }
