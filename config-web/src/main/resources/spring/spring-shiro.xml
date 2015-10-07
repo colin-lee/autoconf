@@ -27,7 +27,7 @@
                 /login = authc
                 /logout = logout
                 /admin/** = authc, roles[admin]
-                /** = anon
+                /** = authc
             </value>
         </property>
     </bean>

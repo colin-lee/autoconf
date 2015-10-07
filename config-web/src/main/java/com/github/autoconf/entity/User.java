@@ -18,7 +18,6 @@ public class User {
   @NotNull
   @Pattern(regexp = "[0-9a-zA-Z_-]+")
   private String username;
-  @NotNull
   private String password;
   private String salt;
   private String roles;
@@ -133,8 +132,6 @@ public class User {
     return "User{" +
       "id=" + id +
       ", username='" + username + '\'' +
-      ", password='" + password + '\'' +
-      ", salt='" + salt + '\'' +
       ", locked=" + locked +
       '}';
   }

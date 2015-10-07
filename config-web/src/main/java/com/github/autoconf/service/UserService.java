@@ -23,4 +23,12 @@ public class UserService {
   public void create(User user) {
     mapper.create(user);
   }
+
+  public void updateAuthentication(User user) {
+    mapper.updateAuthentication(user);
+  }
+
+  public void updatePassword(User user) {
+    mapper.updatePassword(user);
+  }
 }

@@ -1,0 +1,63 @@
+#set(title="注册新用户")
+#tag layout_block("headContent")
+<style>
+</style>
+#end
+#tag layout_block("bodyContent")
+<div class="container">
+    <form id="registerForm" method="post" class="form-horizontal">
+        <fieldset>
+            <legend>
+                <small>新用户注册</small>
+            </legend>
+            <div class="form-group">
+                <label for="loginName" class="col-xs-2 control-label">用户:</label>
+
+                <div class="col-xs-4">
+                    <input type="text" id="loginName" name="username" class="form-control required" minlength="3"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="plainPassword" class="col-xs-2 control-label">密码:</label>
+
+                <div class="col-xs-4">
+                    <input type="password" id="plainPassword" name="password" class="form-control required"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword" class="col-xs-2 control-label">确认:</label>
+
+                <div class="col-xs-4">
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control required" equalTo="#plainPassword"/>
+                </div>
+            </div>
+            <div class="form-group well well-sm">
+                <div class="col-xs-offset-2">
+                    <input id="submit_btn" class="btn btn-primary" type="submit" value="提交"/>&nbsp;
+                    <input id="cancel_btn" class="btn" type="button" value="返回" onclick="history.back()"/>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+#end
+#tag layout_block("scriptContent")
+<script>
+    $(function () {
+        $("#loginName").focus();
+    });
+    $("#registerForm").validate({
+        rules: {
+            username: {
+                remote: "${CONTEXT_PATH}/ajax/checkLoginName"
+            }
+        },
+        messages: {
+            username: {
+                remote: "用户名已存在"
+            }
+        }
+    });
+</script>
+#end
+#include("/include/form-layout.jetx")

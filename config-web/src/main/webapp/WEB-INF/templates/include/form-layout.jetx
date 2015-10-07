@@ -9,38 +9,28 @@
     <link href="${CONTEXT_PATH}/static/datatables.min.css" rel="stylesheet" type="text/css"/>
     #tag layout_block_default("headContent")#end
     <style>
-        body {
-            font-size: 12px
-        }
-
         .navbar-inverse {
             border-radius: 0 0 6px 6px
         }
 
-        .font12 {
-            font-size: 14px
+        input.error {
+            border: 1px solid red;
         }
 
-        .font14 {
-            font-size: 14px
-        }
+        label.error {
+            background: url("${CONTEXT_PATH}/static/images/unchecked.gif") no-repeat 0px 0px;
 
-        .fixedHeader {
-            background-color: rgb(229, 229, 229);
-            height: 15px;
-        }
+            padding-left: 16px;
 
-        .table th {
-            text-align: center
-        }
+            padding-bottom: 2px;
 
-        .table td {
-            text-align: left
-        }
-
-        td.highlight {
             font-weight: bold;
-            color: red;
+
+            color: #EA5200;
+        }
+
+        label.checked {
+            background: url("${CONTEXT_PATH}/static/images/checked.gif") no-repeat 0px 0px;
         }
     </style>
 </head>
@@ -73,6 +63,9 @@
     </div>
 </div>
 <script src="${CONTEXT_PATH}/static/datatables.min.js"></script>
+<script src="${CONTEXT_PATH}/static/jquery/jquery.validate.min.js"></script>
+<script src="${CONTEXT_PATH}/static/jquery/jquery.validate-messages_cn.js"></script>
+<script src="${CONTEXT_PATH}/static/jquery/additional-methods.min.js"></script>
 #tag layout_block_default("scriptContent")#end
 </body>
 </html>

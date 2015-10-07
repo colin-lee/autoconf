@@ -3,9 +3,11 @@ package com.github.autoconf.web;
 import com.github.autoconf.entity.User;
 import com.github.autoconf.service.UserService;
 import com.github.autoconf.shiro.PasswordHelper;
+import com.google.common.base.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +36,7 @@ public class UserController {
     if (!model.containsAttribute("user")) {
       model.addAttribute("user", new User());
     }
-    return "login";
+    return "user/login";
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -63,7 +65,7 @@ public class UserController {
 
   @RequestMapping("/unauthorized")
   public String unauthorized() {
-    return "unauthorized";
+    return "user/unauthorized";
   }
 
   @RequestMapping("/ajax/checkLoginName")
@@ -73,16 +75,16 @@ public class UserController {
     return u == null ? "true" : "false";
   }
 
-  //@RequiresRoles("admin")
+  @RequiresRoles("admin")
   @RequestMapping("/register")
   public String register(Model model) {
     if (!model.containsAttribute("user")) {
       model.addAttribute("user", new User());
     }
-    return "register";
+    return "user/register";
   }
 
-  //@RequiresRoles("admin")
+  @RequiresRoles("admin")
   @RequestMapping(value = "register", method = RequestMethod.POST)
   public String registerAction(@Valid User user, BindingResult result, RedirectAttributes r) {
     if (result.hasErrors()) {
@@ -92,6 +94,46 @@ public class UserController {
     }
     passwordHelper.encryptPassword(user);
     userService.create(user);
+    return "redirect:/profile/?username=" + user.getUsername();
+  }
+
+  @RequestMapping("/profile")
+  public String profile(@RequestParam(required = false) String username, Model model) {
+    if (!model.containsAttribute("user")) {
+      if (Strings.isNullOrEmpty(username)) {
+        username = SecurityUtils.getSubject().getPrincipal().toString();
+      }
+      User user = userService.findByUsername(username);
+      model.addAttribute("user", user);
+    }
+    return "user/profile";
+  }
+
+  @RequiresRoles("admin")
+  @RequestMapping(value = "/profile", method = RequestMethod.POST)
+  public String profileAction(@Valid User user, RedirectAttributes r) {
+    userService.updateAuthentication(user);
+    r.addFlashAttribute("message", "更新用户权限成功");
+    return "redirect:/profile/?username=" + user.getUsername();
+  }
+
+  @RequestMapping("/password")
+  public String password(@RequestParam(required = false) String username, Model model) {
+    if (!model.containsAttribute("user")) {
+      if (Strings.isNullOrEmpty(username)) {
+        username = SecurityUtils.getSubject().getPrincipal().toString();
+      }
+      User user = userService.findByUsername(username);
+      model.addAttribute("user", user);
+    }
+    return "user/password";
+  }
+
+  @RequestMapping(value = "/password", method = RequestMethod.POST)
+  public String passwordAction(User user, RedirectAttributes r) {
+    passwordHelper.encryptPassword(user);
+    userService.updatePassword(user);
+    r.addFlashAttribute("message", "修改用户密码成功");
     return "redirect:/profile/?username=" + user.getUsername();
   }
 }
