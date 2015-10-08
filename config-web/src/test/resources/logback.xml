@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.github.autoconf" level="debug"/>
+    <logger name="com.github.autoconf" level="info"/>
     <logger name="druid.sql" level="INFO"/>
 
     <logger name="org.hibernate" level="WARN"/>

@@ -146,7 +146,7 @@
     $(function () {
         $("#username").focus();
     });
-    $("#registerForm").validate();
+    $("#loginForm").validate();
 </script>
 </body>
 </html>
