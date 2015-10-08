@@ -42,8 +42,7 @@ public class WebServer {
   }
 
   public static boolean isGlassfish() {
-    return JmxHelper.mbeanExists("amx:pp=,type=domain-root")
-      || JmxHelper.mbeanExists("com.sun.appserv:j2eeType=J2EEServer,category=runtime,*");
+    return JmxHelper.mbeanExists("amx:pp=,type=domain-root") || JmxHelper.mbeanExists("com.sun.appserv:j2eeType=J2EEServer,category=runtime,*");
   }
 
   public static Integer getTomcatHttpPort() throws Exception {
@@ -111,8 +110,7 @@ public class WebServer {
   }
 
   public static Integer getJettyHttpPort() throws Exception {
-    Collection<ObjectName> selectors =
-      getSelectors("org.mortbay.jetty.nio:type=selectchannelconnector,*");
+    Collection<ObjectName> selectors = getSelectors("org.mortbay.jetty.nio:type=selectchannelconnector,*");
     int lowest = MAX_VALUE;
     for (final ObjectName selector : selectors) {
       lowest = Math.min(lowest, JmxHelper.queryInt(selector, "port"));
@@ -175,8 +173,7 @@ public class WebServer {
         return selectors;
       }
     }
-    throw new IllegalStateException(
-      name + ", selector MBeans were not loaded after 30 seconds, aborting");
+    throw new IllegalStateException(name + ", selector MBeans were not loaded after 30 seconds, aborting");
   }
 
   /**

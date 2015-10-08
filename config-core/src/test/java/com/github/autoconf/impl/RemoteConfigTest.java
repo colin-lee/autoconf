@@ -52,8 +52,7 @@ public class RemoteConfigTest {
   @Test
   public void testLoad() throws Exception {
     String basePath = "/auto/config/test";
-    ArrayList<String> paths =
-      Lists.newArrayList("127.0.0.1:8080", "127.0.0.1", "profile", "appName");
+    ArrayList<String> paths = Lists.newArrayList("127.0.0.1:8080", "127.0.0.1", "profile", "appName");
     RemoteConfig config = new RemoteConfig("application.properties", basePath, paths, client);
     config.start();
     assertThat(config.getInt("a"), is(0));

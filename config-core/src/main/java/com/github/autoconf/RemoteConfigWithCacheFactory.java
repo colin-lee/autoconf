@@ -2,7 +2,7 @@ package com.github.autoconf;
 
 import com.github.autoconf.api.IChangeableConfig;
 import com.github.autoconf.base.ProcessInfo;
-import com.github.autoconf.helper.Helper;
+import com.github.autoconf.helper.ConfigHelper;
 import com.github.autoconf.impl.RemoteConfigWithCache;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.utils.ZKPaths;
@@ -46,14 +46,12 @@ public class RemoteConfigWithCacheFactory extends RemoteConfigFactory {
     ProcessInfo info = getInfo();
     String path = ZKPaths.makePath(info.getPath(), name);
     File cacheFile = this.path.resolve(name).toFile();
-    RemoteConfigWithCache c =
-      new RemoteConfigWithCache(name, path, info.orderedPath(), getClient(), cacheFile);
+    RemoteConfigWithCache c = new RemoteConfigWithCache(name, path, info.orderedPath(), getClient(), cacheFile);
     c.start();
     return c;
   }
 
   private static class LazyHolder {
-    private static final RemoteConfigWithCacheFactory instance =
-      new RemoteConfigWithCacheFactory(Helper.getConfigPath(), Helper.getProcessInfo(), Helper.createDefaultClient());
+    private static final RemoteConfigWithCacheFactory instance = new RemoteConfigWithCacheFactory(ConfigHelper.getConfigPath(), ConfigHelper.getProcessInfo(), ConfigHelper.getDefaultClient());
   }
 }

@@ -53,8 +53,7 @@ public class RemoteConfigWithCacheTest {
     ArrayList<String> paths = Lists.newArrayList("profile", "appName");
     File cacheFile = File.createTempFile("cache-", ".ini");
     TestHelper.writeFile(ZookeeperUtil.newBytes("a=1"), cacheFile);
-    RemoteConfigWithCache config =
-      new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
+    RemoteConfigWithCache config = new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
     config.setDelaySeconds(1);
     config.start();
     assertThat(config.getInt("a"), is(1));
@@ -110,8 +109,7 @@ public class RemoteConfigWithCacheTest {
     ZookeeperUtil.create(client, appPath, ZookeeperUtil.newBytes(s));
     File tempDir = Files.createTempDir();
     File cacheFile = new File(tempDir.getPath() + "/cache.ini");
-    RemoteConfigWithCache config =
-      new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
+    RemoteConfigWithCache config = new RemoteConfigWithCache("cache.ini", basePath, paths, client, cacheFile);
     config.setDelaySeconds(1);
     config.start();
     assertThat(config.getInt("a"), is(1));

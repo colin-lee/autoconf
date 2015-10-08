@@ -3,7 +3,7 @@ package com.github.autoconf;
 import com.github.autoconf.api.IChangeableConfig;
 import com.github.autoconf.base.AbstractConfigFactory;
 import com.github.autoconf.base.ProcessInfo;
-import com.github.autoconf.helper.Helper;
+import com.github.autoconf.helper.ConfigHelper;
 import com.github.autoconf.impl.RemoteConfig;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.utils.ZKPaths;
@@ -48,7 +48,6 @@ public class RemoteConfigFactory extends AbstractConfigFactory {
   }
 
   private static class LazyHolder {
-    private static final RemoteConfigFactory instance =
-      new RemoteConfigFactory(Helper.getProcessInfo(), Helper.createDefaultClient());
+    private static final RemoteConfigFactory instance = new RemoteConfigFactory(ConfigHelper.getProcessInfo(), ConfigHelper.getDefaultClient());
   }
 }

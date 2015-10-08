@@ -166,8 +166,7 @@ public class JmxHelper {
       return findMBeanServer(objectName).getAttribute(objectName, attribute);
     }
 
-    return resolveFields((CompositeData) findMBeanServer(objectName).getAttribute(objectName, attribute.substring(0, dot)), attribute.substring(
-      dot + 1));
+    return resolveFields((CompositeData) findMBeanServer(objectName).getAttribute(objectName, attribute.substring(0, dot)), attribute.substring(dot + 1));
   }
 
   private static Object resolveFields(final CompositeData attribute, final String field) {
@@ -177,8 +176,7 @@ public class JmxHelper {
       return ret == null ? null : ret;
     }
 
-    return resolveFields((CompositeData) attribute.get(field.substring(0, dot)), field.substring(
-      dot + 1));
+    return resolveFields((CompositeData) attribute.get(field.substring(0, dot)), field.substring(dot + 1));
   }
 
   /**

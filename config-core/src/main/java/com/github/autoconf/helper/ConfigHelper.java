@@ -25,24 +25,28 @@ import static com.github.autoconf.helper.ZookeeperUtil.newBytes;
  * 基础工具类
  * Created by lirui on 2015-10-01 19:38.
  */
-public class Helper {
-  private Helper() {
+public class ConfigHelper {
+  private ConfigHelper() {
   }
 
   public static Path getConfigPath() {
-    return LazyHolder.CONFIG_PATH;
+    return LazyHolder2.CONFIG_PATH;
   }
 
   public static Config getApplicationConfig() {
-    return LazyHolder.CONFIG;
+    return LazyHolder3.CONFIG;
   }
 
   public static String getServerInnerIP() {
-    return LazyHolder.INNER_IP;
+    return LazyHolder1.INNER_IP;
   }
 
   public static ProcessInfo getProcessInfo() {
-    return LazyHolder.PROCESS_INFO;
+    return LazyHolder4.PROCESS_INFO;
+  }
+
+  public static CuratorFramework getDefaultClient() {
+    return LazyHolder5.DEFAULT_CLIENT;
   }
 
   /**
@@ -163,8 +167,7 @@ public class Helper {
 
   public static CuratorFramework newClient(String connectString, String scheme, String password) {
     RetryPolicy policy = new BoundedExponentialBackoffRetry(1000, 60000, 10);
-    CuratorFrameworkFactory.Builder builder =
-      CuratorFrameworkFactory.builder().connectString(connectString).connectionTimeoutMs(5000).sessionTimeoutMs(30000).retryPolicy(policy);
+    CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder().connectString(connectString).connectionTimeoutMs(5000).sessionTimeoutMs(30000).retryPolicy(policy);
     if (!Strings.isNullOrEmpty(scheme)) {
       builder.authorization(scheme, newBytes(password));
     }
@@ -176,18 +179,16 @@ public class Helper {
   /**
    * 首先从zookeeper.servers的系统变量,application.properties的配置
    */
-  public static CuratorFramework createDefaultClient() {
+  private static CuratorFramework createDefaultClient() {
     Config c = getApplicationConfig();
     String scheme = c.get("zookeeper.authenticationType", "digest");
     String key = "zookeeper.servers";
     String s = System.getProperty(key);
     if (Strings.isNullOrEmpty(s)) {
-      s = c.get(s);
+      s = c.get(key);
     }
     return newClient(s, scheme, c.get("zookeeper.authentication"));
   }
-
-
 
   /**
    * 获取本机内网ip，ip会在第一次访问后缓存起来，并且不会再更新
@@ -248,13 +249,27 @@ public class Helper {
     return false;
   }
 
-  /**
-   * 避免过早加载,重复加载
-   */
-  private static class LazyHolder {
+  private static class LazyHolder1 {
     private static final String INNER_IP = scanServerInnerIP();
+  }
+
+
+  private static class LazyHolder2 {
     private static final Path CONFIG_PATH = scanConfigPath();
+  }
+
+
+  private static class LazyHolder3 {
     private static final Config CONFIG = applicationConfig();
+  }
+
+
+  private static class LazyHolder4 {
     private static final ProcessInfo PROCESS_INFO = scanProcessInfo();
+  }
+
+
+  private static class LazyHolder5 {
+    private static final CuratorFramework DEFAULT_CLIENT = createDefaultClient();
   }
 }

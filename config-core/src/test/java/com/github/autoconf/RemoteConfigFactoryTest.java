@@ -4,7 +4,7 @@ import com.github.autoconf.api.IChangeListener;
 import com.github.autoconf.api.IChangeableConfig;
 import com.github.autoconf.api.IConfig;
 import com.github.autoconf.base.ProcessInfo;
-import com.github.autoconf.helper.Helper;
+import com.github.autoconf.helper.ConfigHelper;
 import com.google.common.io.Closeables;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.utils.ZKPaths;
@@ -29,8 +29,7 @@ public class RemoteConfigFactoryTest {
   @BeforeClass
   public static void beforeClass() throws Exception {
     server = new TestingServer();
-    factory =
-      new RemoteConfigFactory(Helper.getProcessInfo(), Helper.newClient(server.getConnectString()));
+    factory = new RemoteConfigFactory(ConfigHelper.getProcessInfo(), ConfigHelper.newClient(server.getConnectString()));
   }
 
   @AfterClass

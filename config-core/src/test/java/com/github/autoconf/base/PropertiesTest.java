@@ -38,8 +38,7 @@ public class PropertiesTest {
   @Test
   public void testGetType() throws Exception {
     Properties m = new Properties();
-    Map<String, String> raw =
-      ImmutableMap.of("int", "1", "long", "2", "bool", "TRUE", "double", "3.6", "s", "a string");
+    Map<String, String> raw = ImmutableMap.of("int", "1", "long", "2", "bool", "TRUE", "double", "3.6", "s", "a string");
     m.copyOf(raw);
     assertThat(m.has("_"), is(false));
     assertThat(m.get("s"), is("a string"));
@@ -53,8 +52,7 @@ public class PropertiesTest {
   @Test
   public void testParseException() throws Exception {
     Properties m = new Properties();
-    Map<String, String> raw =
-      ImmutableMap.of("int", "s1", "long", "s2", "bool", "sTRUE", "double", "s3.6");
+    Map<String, String> raw = ImmutableMap.of("int", "s1", "long", "s2", "bool", "sTRUE", "double", "s3.6");
     m.copyOf(raw);
     assertThat(m.getInt("int"), is(0));
     assertThat(m.getLong("long"), is(0L));

@@ -3,7 +3,7 @@ package com.github.autoconf;
 import com.github.autoconf.api.IChangeableConfig;
 import com.github.autoconf.api.IFileListener;
 import com.github.autoconf.base.AbstractConfigFactory;
-import com.github.autoconf.helper.Helper;
+import com.github.autoconf.helper.ConfigHelper;
 import com.github.autoconf.impl.LocalConfig;
 import com.github.autoconf.watcher.FileUpdateWatcher;
 import org.slf4j.Logger;
@@ -61,7 +61,6 @@ public class LocalConfigFactory extends AbstractConfigFactory {
   }
 
   private static class LazyHolder {
-    private static final LocalConfigFactory instance =
-      new LocalConfigFactory(Helper.getConfigPath());
+    private static final LocalConfigFactory instance = new LocalConfigFactory(ConfigHelper.getConfigPath());
   }
 }

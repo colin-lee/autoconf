@@ -75,7 +75,6 @@ public class ProcessInfo {
 
   @Override
   public String toString() {
-    return "ProcessInfo{" + "path=" + path + ", name=" + name + ", profile=" + profile + ", ip="
-      + ip + ", port=" + port + '}';
+    return "ProcessInfo{" + "path=" + path + ", name=" + name + ", profile=" + profile + ", ip=" + ip + ", port=" + port + '}';
   }
 }
