@@ -35,24 +35,31 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-static-top" role="navigation"><!--导航-->
-    <div class="container-fluid">
-        <div class="navbar-header"><a class="navbar-brand" href="${CONTEXT_PATH}/">配置管理系统</a></div>
-
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-left">
-                <li><a href="${CONTEXT_PATH}/">首页</a></li>
-                <li><a href="${CONTEXT_PATH}/history">修改历史</a></li>
-                <li><a href="${CONTEXT_PATH}/create/config/">新建配置</a></li>
-                <li><a href="${CONTEXT_PATH}/replace/form/">批量修改</a></li>
-              #if(hasRole("admin"))
-                  <li><a href="${CONTEXT_PATH}/user">用户管理</a></li>
-              #end
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="${CONTEXT_PATH}/profile/">$!{principal()}</a></li>
-            </ul>
-        </div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="${CONTEXT_PATH}/">配置中心</a>
+    </div>
+    <div>
+        <ul class="nav navbar-nav">
+            <li><a href="${CONTEXT_PATH}/">首页</a></li>
+            <li><a href="${CONTEXT_PATH}/history">修改历史</a></li>
+            <li><a href="${CONTEXT_PATH}/create/config/">新建配置</a></li>
+            <li><a href="${CONTEXT_PATH}/replace/form/">批量修改</a></li>
+            #if(hasRole("admin"))
+                <li><a href="${CONTEXT_PATH}/admin/user">用户管理</a></li>
+            #end
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    ${principal()} <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="${CONTEXT_PATH}/logout">退出</a></li>
+                    <li><a href="${CONTEXT_PATH}/password">修改密码</a></li>
+                </ul>
+            </li>
+        </ul>
     </div>
 </nav>
 

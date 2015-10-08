@@ -9,6 +9,9 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean id="shiroCache" class="com.github.autoconf.shiro.SpringCacheManagerWrapper"
+          p:cacheManager-ref="cacheManager"/>
+
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"
           p:loginUrl="/login"
           p:successUrl="/home"
@@ -33,6 +36,7 @@
     </bean>
 
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager"
+          p:cacheManager-ref="shiroCache"
           p:sessionManager-ref="sessionManager"
           p:rememberMeManager-ref="rememberMeManager"
           p:realm-ref="myRealm"/>
@@ -40,12 +44,14 @@
           class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
     <bean class="com.github.autoconf.shiro.PasswordHelper"/>
+
     <bean id="credentialsMatcher" class="com.github.autoconf.shiro.RetryLimitCredentialsMatcher"
           p:hashAlgorithmName="${shiro.password.algorithmName}"
           p:hashIterations="${shiro.password.hashIterations}"
           p:storedCredentialsHexEncoded="true"/>
 
     <bean id="myRealm" class="com.github.autoconf.shiro.UserRealm"
+          p:cacheManager-ref="shiroCache"
           p:credentialsMatcher-ref="credentialsMatcher"
           p:cachingEnabled="true"
           p:authenticationCachingEnabled="true"
@@ -75,6 +81,7 @@
 
     <!-- 会话DAO -->
     <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO"
+          p:cacheManager-ref="shiroCache"
           p:activeSessionsCacheName="shiro-activeSessionCache"
           p:sessionIdGenerator-ref="sessionIdGenerator"/>
 
@@ -86,6 +93,7 @@
 
     <!-- 会话管理器 -->
     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager"
+          p:cacheManager-ref="shiroCache"
           p:globalSessionTimeout="1800000"
           p:deleteInvalidSessions="true"
           p:sessionIdCookieEnabled="true"

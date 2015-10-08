@@ -3,11 +3,13 @@ package com.github.autoconf.web;
 import com.github.autoconf.entity.User;
 import com.github.autoconf.service.UserService;
 import com.github.autoconf.shiro.PasswordHelper;
+import com.github.jetbrick.functions.ShiroFunctions;
 import com.google.common.base.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 业务主程
@@ -75,8 +78,7 @@ public class UserController {
     return u == null ? "true" : "false";
   }
 
-  @RequiresRoles("admin")
-  @RequestMapping("/register")
+  @RequestMapping("/admin/register")
   public String register(Model model) {
     if (!model.containsAttribute("user")) {
       model.addAttribute("user", new User());
@@ -84,20 +86,19 @@ public class UserController {
     return "user/register";
   }
 
-  @RequiresRoles("admin")
-  @RequestMapping(value = "register", method = RequestMethod.POST)
+  @RequestMapping(value = "/admin/register", method = RequestMethod.POST)
   public String registerAction(@Valid User user, BindingResult result, RedirectAttributes r) {
     if (result.hasErrors()) {
       r.addFlashAttribute("message", "用户名或者密码不符合规则");
       r.addFlashAttribute("user", user);
-      return "redirect:/register";
+      return "redirect:/admin/register";
     }
     passwordHelper.encryptPassword(user);
     userService.create(user);
-    return "redirect:/profile/?username=" + user.getUsername();
+    return "redirect:/admin/profile/?username=" + user.getUsername();
   }
 
-  @RequestMapping("/profile")
+  @RequestMapping("/admin/profile")
   public String profile(@RequestParam(required = false) String username, Model model) {
     if (!model.containsAttribute("user")) {
       if (Strings.isNullOrEmpty(username)) {
@@ -109,12 +110,11 @@ public class UserController {
     return "user/profile";
   }
 
-  @RequiresRoles("admin")
-  @RequestMapping(value = "/profile", method = RequestMethod.POST)
+  @RequestMapping(value = "/admin/profile", method = RequestMethod.POST)
   public String profileAction(@Valid User user, RedirectAttributes r) {
     userService.updateAuthentication(user);
     r.addFlashAttribute("message", "更新用户权限成功");
-    return "redirect:/profile/?username=" + user.getUsername();
+    return "redirect:/admin/profile/?username=" + user.getUsername();
   }
 
   @RequestMapping("/password")
@@ -131,9 +131,42 @@ public class UserController {
 
   @RequestMapping(value = "/password", method = RequestMethod.POST)
   public String passwordAction(User user, RedirectAttributes r) {
-    passwordHelper.encryptPassword(user);
-    userService.updatePassword(user);
-    r.addFlashAttribute("message", "修改用户密码成功");
-    return "redirect:/profile/?username=" + user.getUsername();
+    String username = user.getUsername();
+    //只有自己和管理员能修改密码
+    if (ShiroFunctions.hasRole("admin") || username.equals(ShiroFunctions.principal())) {
+      passwordHelper.encryptPassword(user);
+      userService.updatePassword(user);
+      r.addFlashAttribute("message", "修改用户密码成功");
+    } else {
+      r.addFlashAttribute("message", "抱歉,您没有权限");
+    }
+    return "redirect:/admin/profile/?username=" + username;
+  }
+
+  @RequestMapping("/admin/user")
+  public String userList(Model model) {
+    DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    List<User> users = userService.findAll();
+    StringBuilder sbd = new StringBuilder(1024);
+    sbd.append('[');
+    for (User u : users) {
+      sbd.append('[');
+      sbd.append('"').append(u.getUsername()).append('"').append(',');
+      sbd.append('"').append(u.getRoles()).append('"').append(',');
+      sbd.append('"').append(u.getPermissions()).append('"').append(',');
+      sbd.append('"').append(u.isLocked() ? "是" : "否").append('"').append(',');
+      sbd.append('"').append(df.print(u.getLastLogin().getTime())).append('"');
+      sbd.append(']').append(',');
+    }
+    sbd.append(']');
+    model.addAttribute("data", sbd.toString());
+    return "user/list";
+  }
+
+  @RequestMapping("/admin/lock")
+  public String lock(@RequestParam String username, RedirectAttributes r) {
+    userService.lock(username);
+    r.addFlashAttribute("message", "锁定" + username + "成功");
+    return "redirect:/admin/user";
   }
 }

@@ -5,7 +5,7 @@
 #end
 #tag layout_block("bodyContent")
 <div class="container">
-    <form id="profileForm" method="post" class="form-horizontal">
+    <form id="profileForm" action="${CONTEXT_PATH}/admin/profile" method="post" class="form-horizontal">
         <input type="hidden" name="username" value="${user.username}"/>
         <fieldset>
             <legend>
@@ -15,7 +15,7 @@
                 <label for="loginName" class="col-xs-2 control-label">用户:</label>
 
                 <div class="col-xs-6">
-                    <input type="text" id="loginName" name="username" value="${user.username}" class="form-control required" disabled="disabled"/>
+                    <p class="form-control-static">${user.username}</p>
                 </div>
             </div>
             <div class="form-group">
@@ -30,6 +30,15 @@
 
                 <div class="col-xs-6">
                     <input type="text" id="permissions" name="permissions" value="${user.permissions}" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="locked" class="col-xs-2 control-label">锁定:</label>
+
+                <div class="col-xs-6 checkbox">
+                    <label>
+                        <input type="checkbox" value="true" #if(user.locked)checked="checked"#end>
+                    </label>
                 </div>
             </div>
             <div class="form-group well well-sm">

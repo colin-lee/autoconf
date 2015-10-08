@@ -5,7 +5,7 @@
 #end
 #tag layout_block("bodyContent")
 <div class="container">
-    <form id="registerForm" method="post" class="form-horizontal">
+    <form id="registerForm" action="${CONTEXT_PATH}/admin/register" method="post" class="form-horizontal">
         <fieldset>
             <legend>
                 <small>新用户注册</small>
