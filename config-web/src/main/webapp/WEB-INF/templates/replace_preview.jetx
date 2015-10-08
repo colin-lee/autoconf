@@ -1,0 +1,125 @@
+#set(title="预览配置修改")
+#tag layout_block("headContent")
+<style>
+  .table td:nth-child(n+4) {
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+
+  .table td:nth-child(1) {
+    width: 35px;
+  }
+
+  .table td:nth-child(2) {
+    width: 150px;
+  }
+
+  .table td:nth-child(3) {
+    width: 150px;
+  }
+
+  .table td:nth-child(4) {
+    min-width: 200px;
+  }
+
+  .table td:nth-child(5) {
+    min-width: 200px;
+  }
+
+  .text-blue {
+    color: blue
+  }
+</style>
+#end
+
+#tag layout_block("bodyContent")
+<div class="container-fluid">
+  <div>
+    <h4>${title}</h4>
+
+    <form class="form-horizontal" role="form" action="${CONTEXT_PATH}/replace/content/" method="POST">
+      <div class="form-group">
+        <label for="src" class="col-md-2 control-label">查找它</label>
+
+        <div class="col-md-3 col-lg-3">
+          <input readonly="readonly" type="text" class="form-control focused" name="src" id="src"
+                 placeholder="必填" value="${replace.src}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="dst" class="col-md-2 control-label">替换为</label>
+
+        <div class="col-md-3 col-lg-3">
+          <input readonly="readonly" type="text" class="form-control" name="dst" id="dst" placeholder="必填"
+                 value="${replace.dst}">
+        </div>
+      </div>
+      <!-- 表格开始 -->
+      <table id="dataTable" class="table">
+        <thead>
+        <tr>
+          <td>选择</td>
+          <th>文件名</th>
+          <th>配置组</th>
+          <th>修改前</th>
+          <th>修改后</th>
+        </tr>
+        </thead>
+        <tbody>
+          #for(req: affected)
+        <tr>
+          <td><input type="checkbox" name="configIds" value="${req.config.id}" checked="checked"/></td>
+          <td>$!{req.config.name}</td>
+          <td>$!{req.config.profile}</td>
+          <td>${req.oldLines}</td>
+          <td>${req.newLines}</td>
+        </tr>
+        #end
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="5">
+            <button type="submit" class="btn btn-primary">提交修改</button>
+          </td>
+        </tr>
+        </tfoot>
+      </table>
+    </form>
+    <!-- 表格结束 -->
+  </div>
+</div>
+#end
+
+#tag layout_block("scriptContent")
+<script type="text/javascript">
+  $(document).ready(function () {
+    var contextPath = '${CONTEXT_PATH}';
+    $(document).ready(function () {
+      var table = $("#dataTable").DataTable({
+        "processing": false,
+        "paging": false,
+        "language": {
+          "processing": "加载中...",
+          "lengthMenu": "显示 _MENU_ 项结果",
+          "zeroRecords": "没有匹配结果",
+          "emptyTable": "没有数据",
+          "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+          "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
+          "infoFiltered": "(由 _MAX_ 项结果过滤)",
+          "infoPostFix": "",
+          "search": "搜索:",
+          "url": "",
+          "paginate": {
+            "first": "首页",
+            "previous": "上页",
+            "next": "下页",
+            "last": "末页"
+          }
+        }
+      });
+    });
+  });
+</script>
+#end
+
+#include("/include/layout.jetx")

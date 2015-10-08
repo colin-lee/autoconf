@@ -1,0 +1,57 @@
+#set(title="修改配置")
+#define(Config config)
+#tag layout_block("bodyContent")
+<div class="main col-md-offset-1 col-md-10">
+  #include("/include/alert.inc.jetx")
+  <h4>${title}</h4>
+  <table class="table table-bordered">
+    <tr>
+      <td>名称：<a href="${CONTEXT_PATH}/?search=${config.name}">${config.name}</a></td>
+      <td>配置组：${config.profile}</td>
+      <td><a href="${CONTEXT_PATH}/history/?configId=${config.id}">修改历史</a></td>
+    </tr>
+  </table>
+  <form class="form-horizontal" role="form" action="${CONTEXT_PATH}/edit/config/" method="POST">
+    <fieldset>
+      <input type="hidden" name="id" value="${config.id}"/>
+
+      <div class="lead">编辑内容</div>
+      <div class="form-group">
+        <div class="col-md-12 col-lg-12">
+					<textarea rows="15" class="form-control" name="content" id="content"
+                    placeholder="选填">${config.content}</textarea>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-4">
+          <button type="submit" class="btn btn-primary">更新</button>
+        </div>
+        <div class="pull-right col-md-3">
+          <a href="${CONTEXT_PATH}/edit/copy/${config.id}" class="btn btn-success btn-xs">复制新建</a>
+          <a class="btn btn-danger btn-xs col-md-offset-2" data-toggle="modal" data-target="#myModal">删除它？</a>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">危险</h4>
+      </div>
+      <div class="modal-body">
+        删除之后不可恢复
+      </div>
+      <div class="modal-footer">
+        <a type="button" class="btn btn-default" data-dismiss="modal">取消</a>
+        <a type="button" class="btn btn-danger" href="${CONTEXT_PATH}/delete/config/${config.id}">确认删除</a>
+      </div>
+    </div>
+  </div>
+</div>
+#end
+#include("/include/layout.jetx")

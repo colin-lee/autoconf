@@ -1,7 +1,10 @@
-#set(title="首页")
-#set(navbar="home")
+#set(title="配置历史-cms")
 #tag layout_block("headContent")
 <style>
+  .table thead td {
+    background-color: lightgray
+  }
+
   .table td:nth-child(-n+3) {
     word-break: break-all;
     word-wrap: break-word;
@@ -17,7 +20,6 @@
 
   .table td:nth-child(3) {
     min-width: 200px;
-    max-width: 600px;
   }
 
   .table td:nth-child(4) {
@@ -37,11 +39,12 @@
   }
 </style>
 #end
+
 #tag layout_block("bodyContent")
 <div class="container-fluid">
   <div>
     <!-- 表格开始 -->
-    <table class="table" id="dataTable">
+    <table id="dataTable" class="table">
       <thead>
       <tr id="advanced">
         <td><input placeholder="搜索文件名"/></td>
@@ -50,34 +53,43 @@
         </td>
       </tr>
       <tr>
-        <th>名称</th>
+        <th>文件名</th>
         <th>配置组</th>
-        <th>摘要</th>
+        <th>内容</th>
         <th>版本</th>
-        <th>修改人</th>
+        <th>编辑</th>
         <th>时间</th>
       </tr>
       </thead>
+
+      <tbody>
+      </tbody>
     </table>
+
+    <!-- 表格结束 -->
   </div>
 </div>
 #end
+
+
 #tag layout_block("scriptContent")
-<script>
+<script type="text/javascript">
+  var contextPath = '${CONTEXT_PATH}';
   $(document).ready(function () {
     var table = $("#dataTable").DataTable({
+      "dom": "l<\"#caption\">frtip",
       "processing": false,
       "serverSide": true,
       "search": {
         "regex": true
       },
       "order": [[5, 'desc'], [3, 'desc'], [0, 'asc']],
-      "ajax": "${CONTEXT_PATH}/ajax/config/",
+      "ajax": "${CONTEXT_PATH}/${ajax}",
       columns: [
         {
           data: 'name', render: function (data, type, row, meta) {
           if (type == 'display') {
-            return "<a href=\"${CONTEXT_PATH}/edit/config/" + row.id + "\">" + data + "</a>";
+            return "<a href=\"" + contextPath + "/view/history/" + row.id + "\">" + data + "</a>";
           } else {
             return data;
           }
@@ -89,7 +101,7 @@
         {
           data: 'editor', render: function (data, type, row, meta) {
           if (type == 'display') {
-            return "<a href=\"${CONTEXT_PATH}/history/?editor=" + encodeURIComponent(data) + "\">" + data + "</a>";
+            return "<a href=\"" + contextPath + "/history/?editor=" + encodeURIComponent(data) + "\">" + data + "</a>";
           } else {
             return data;
           }
@@ -118,10 +130,6 @@
       }
     });
 
-    #if (param.search)
-      table.search("${param.search.escapeJavaScript()}").draw();
-    #end
-
     var words = {}, draw = false;
     $("#advanced input").on("keyup change", function () {
       $("#advanced input").each(function (index) {
@@ -141,7 +149,10 @@
         table.draw();
       }
     });
+
+    $("#caption").html("<h4 class=\"pull-left col-md-offset-4 text-blue\">最近修改历史</h4>");
   });
 </script>
+
 #end
 #include("/include/layout.jetx")
