@@ -1,82 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="renderer" content="webkit">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${title}</title>
-    <link href="${CONTEXT_PATH}/static/datatables.min.css" rel="stylesheet" type="text/css"/>
-    #tag layout_block_default("headContent")#end
-    <style>
-        body {
-            font-size: 12px
-        }
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+  <link href="${CONTEXT_PATH}/static/datatables.min.css" rel="stylesheet" type="text/css"/>
+  #tag layout_block_default("headContent")#end
+  <style>
+    body {
+      font-size: 12px
+    }
 
-        .navbar-inverse {
-            border-radius: 0 0 6px 6px
-        }
+    .navbar-inverse {
+      border-radius: 0 0 6px 6px
+    }
 
-        .font12 {
-            font-size: 14px
-        }
+    .font12 {
+      font-size: 14px
+    }
 
-        .font14 {
-            font-size: 14px
-        }
+    .font14 {
+      font-size: 14px
+    }
 
-        .fixedHeader {
-            background-color: rgb(229, 229, 229);
-            height: 15px;
-        }
+    .fixedHeader {
+      background-color: rgb(229, 229, 229);
+      height: 15px;
+    }
 
-        .table th {
-            text-align: center
-        }
+    .table th {
+      text-align: center
+    }
 
-        .table td {
-            text-align: left
-        }
+    .table td {
+      text-align: left
+    }
 
-        td.highlight {
-            font-weight: bold;
-            color: red;
-        }
-    </style>
+    td.highlight {
+      font-weight: bold;
+      color: red;
+    }
+  </style>
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="${CONTEXT_PATH}/">配置中心</a>
-    </div>
-    <div>
-        <ul class="nav navbar-nav">
-            <li><a href="${CONTEXT_PATH}/">首页</a></li>
-            <li><a href="${CONTEXT_PATH}/history">修改历史</a></li>
-            <li><a href="${CONTEXT_PATH}/create/config/">新建配置</a></li>
-            <li><a href="${CONTEXT_PATH}/replace/form/">批量修改</a></li>
-            #if(hasRole("admin"))
-                <li><a href="${CONTEXT_PATH}/admin/user">用户管理</a></li>
-            #end
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    ${principal()} <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="${CONTEXT_PATH}/logout">退出</a></li>
-                    <li><a href="${CONTEXT_PATH}/password">修改密码</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</nav>
+  #include("nav.inc.jetx")
 <div class="container-fluid">
-    <div class="row">
-      #include("alert.inc.jetx")
-        #tag layout_block_default("bodyContent")#end
-    </div>
+  <div class="row">
+    #include("alert.inc.jetx")
+    #tag layout_block_default("bodyContent")#end
+  </div>
 </div>
 <script src="${CONTEXT_PATH}/static/datatables.min.js"></script>
 #tag layout_block_default("scriptContent")#end

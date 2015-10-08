@@ -1,11 +1,12 @@
 #set(title="首页")
+#set(navbar="home")
 #tag layout_block("headContent")
 <style>
 </style>
 #end
 #tag layout_block("bodyContent")
 <div class="container-fluid">
-    <h1> home page </h1>
+  <h1> home page </h1>
 </div>
 #end
 #tag layout_block("scriptContent")

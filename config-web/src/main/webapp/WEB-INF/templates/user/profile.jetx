@@ -1,62 +1,63 @@
 #set(title="修改用户信息")
+#set(navbar="adminUser")
 #tag layout_block("headContent")
 <style>
 </style>
 #end
 #tag layout_block("bodyContent")
 <div class="container">
-    <form id="profileForm" action="${CONTEXT_PATH}/admin/profile" method="post" class="form-horizontal">
-        <input type="hidden" name="username" value="${user.username}"/>
-        <fieldset>
-            <legend>
-                <small>编辑用户信息</small>
-            </legend>
-            <div class="form-group">
-                <label for="loginName" class="col-xs-2 control-label">用户:</label>
+  <form id="profileForm" action="${CONTEXT_PATH}/admin/profile" method="post" class="form-horizontal">
+    <input type="hidden" name="username" value="${user.username}"/>
+    <fieldset>
+      <legend>
+        <small>编辑用户信息</small>
+      </legend>
+      <div class="form-group">
+        <label for="loginName" class="col-xs-2 control-label">用户:</label>
 
-                <div class="col-xs-6">
-                    <p class="form-control-static">${user.username}</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="roles" class="col-xs-2 control-label">分组:</label>
+        <div class="col-xs-6">
+          <p class="form-control-static">${user.username}</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="roles" class="col-xs-2 control-label">分组:</label>
 
-                <div class="col-xs-6">
-                    <input type="text" id="roles" name="roles" value="${user.roles}" class="form-control"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="permissions" class="col-xs-2 control-label">权限:</label>
+        <div class="col-xs-6">
+          <input type="text" id="roles" name="roles" value="${user.roles}" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="permissions" class="col-xs-2 control-label">权限:</label>
 
-                <div class="col-xs-6">
-                    <input type="text" id="permissions" name="permissions" value="${user.permissions}" class="form-control"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="locked" class="col-xs-2 control-label">锁定:</label>
+        <div class="col-xs-6">
+          <input type="text" id="permissions" name="permissions" value="${user.permissions}" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="locked" class="col-xs-2 control-label">锁定:</label>
 
-                <div class="col-xs-6 checkbox">
-                    <label>
-                        <input type="checkbox" value="true" #if(user.locked)checked="checked"#end>
-                    </label>
-                </div>
-            </div>
-            <div class="form-group well well-sm">
-                <div class="col-xs-offset-2">
-                    <input id="submit_btn" class="btn btn-primary" type="submit" value="提交"/>&nbsp;
-                    <input id="cancel_btn" class="btn" type="button" value="返回" onclick="history.back()"/>
-                    <span class="pull-right"><a href="${CONTEXT_PATH}/password?username=${user.username}">修改密码</a></span>
-                </div>
-            </div>
-        </fieldset>
-    </form>
+        <div class="col-xs-6 checkbox">
+          <label>
+            <input type="checkbox" value="true" #if(user.locked)checked="checked"#end>
+          </label>
+        </div>
+      </div>
+      <div class="form-group well well-sm">
+        <div class="col-xs-offset-2">
+          <input id="submit_btn" class="btn btn-primary" type="submit" value="提交"/>&nbsp;
+          <input id="cancel_btn" class="btn" type="button" value="返回" onclick="history.back()"/>
+          <span class="pull-right"><a href="${CONTEXT_PATH}/password?username=${user.username}">修改密码</a></span>
+        </div>
+      </div>
+    </fieldset>
+  </form>
 </div>
 #end
 #tag layout_block("scriptContent")
 <script>
-    $(function () {
-        $("#roles").focus();
-    });
+  $(function () {
+    $("#roles").focus();
+  });
 </script>
 #end
 #include("/include/form-layout.jetx")
