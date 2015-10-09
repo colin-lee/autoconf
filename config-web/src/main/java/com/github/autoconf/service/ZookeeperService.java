@@ -32,8 +32,8 @@ import java.util.List;
  * Created by lirui on 15/2/9.
  */
 @Service
-public class PublishService {
-  private Logger log = LoggerFactory.getLogger(PublishService.class);
+public class ZookeeperService {
+  private Logger log = LoggerFactory.getLogger(ZookeeperService.class);
   @Autowired
   private ConfigService configService;
   @Autowired

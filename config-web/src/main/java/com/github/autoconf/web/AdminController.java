@@ -5,7 +5,7 @@ import com.github.autoconf.entity.ConfigHistory;
 import com.github.autoconf.entity.ReplaceRequest;
 import com.github.autoconf.service.ConfigHistoryService;
 import com.github.autoconf.service.ConfigService;
-import com.github.autoconf.service.PublishService;
+import com.github.autoconf.service.ZookeeperService;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -42,11 +42,11 @@ public class AdminController {
   private Logger log = LoggerFactory.getLogger(AdminController.class);
 
   @Autowired
-  private ConfigService config;
+  private ConfigService configService;
   @Autowired
-  private ConfigHistoryService history;
+  private ConfigHistoryService historyService;
   @Autowired
-  private PublishService publish;
+  private ZookeeperService zookeeperService;
 
   @RequestMapping(value = "/create/config/", method = RequestMethod.GET)
   public String createConfig() {
@@ -74,12 +74,12 @@ public class AdminController {
           one.setName(c.getName());
           one.setProfile(i);
           one.setContent(c.getContent());
-          config.save(one);
-          publish.cpZookeeper(one);
+          configService.save(one);
+          zookeeperService.cpZookeeper(one);
         }
       } else {
-        config.save(c);
-        publish.cpZookeeper(c);
+        configService.save(c);
+        zookeeperService.cpZookeeper(c);
       }
       return "redirect:/?search=" + encodeURL(c.getName());
     } catch (Exception e) {
@@ -93,7 +93,7 @@ public class AdminController {
   @RequestMapping(value = "/edit/config/{id}", method = RequestMethod.GET)
   public String editConfig(@PathVariable long id, Model m, RedirectAttributes r) {
     if (!r.getFlashAttributes().containsKey("config")) {
-      Config c = config.findById(id);
+      Config c = configService.findById(id);
       if (c == null) {
         r.addFlashAttribute("message", "找不到id为" + id + "的配置");
         return "redirect:/";
@@ -105,13 +105,13 @@ public class AdminController {
 
   @RequestMapping(value = "/delete/config/{id}", method = RequestMethod.GET)
   public String deleteConfig(@PathVariable long id, RedirectAttributes r) {
-    Config c = config.findById(id);
+    Config c = configService.findById(id);
     String url = "/";
     try {
       if (c != null) {
         c.setEditor(getCurrentUserName());
-        config.delete(c);
-        publish.rmZookeeper(c);
+        configService.delete(c);
+        zookeeperService.rmZookeeper(c);
         r.addFlashAttribute("message", "删除id为" + id + "的配置成功！");
         url = "/?search=" + encodeURL(c.getName());
       }
@@ -125,8 +125,8 @@ public class AdminController {
   public String editConfigAction(@ModelAttribute("config") Config c, RedirectAttributes r) {
     try {
       c.setEditor(getCurrentUserName());
-      config.save(c);
-      publish.cpZookeeper(c);
+      configService.save(c);
+      zookeeperService.cpZookeeper(c);
       r.addFlashAttribute("message", "修改成功");
     } catch (Exception e) {
       log.error("/edit/config/: {}", c, e);
@@ -138,12 +138,12 @@ public class AdminController {
 
   @RequestMapping(value = "/recover/history/", method = RequestMethod.POST)
   public String recoverHistory(@RequestParam long id, RedirectAttributes r) {
-    ConfigHistory h = history.findbyId(id);
+    ConfigHistory h = historyService.findbyId(id);
     if (h == null) {
       r.addFlashAttribute("message", "找不到id为" + id + "的配置历史");
       return "redirect:/";
     }
-    Config c = config.findById(h.getConfigId());
+    Config c = configService.findById(h.getConfigId());
     if (c == null) {
       r.addFlashAttribute("message", "找不到id为" + h.getConfigId() + "的配置");
       return "redirect:/";
@@ -151,8 +151,8 @@ public class AdminController {
     try {
       c.setEditor(getCurrentUserName());
       c.setContent(h.getContent());
-      config.save(c);
-      publish.cpZookeeper(c);
+      configService.save(c);
+      zookeeperService.cpZookeeper(c);
       r.addFlashAttribute("message", "回滚版本为" + h.getVersion() + "的配置\"" + c.getName() + "\"成功");
     } catch (Exception e) {
       log.error("/recover/history/: {}", h, e);
@@ -167,7 +167,7 @@ public class AdminController {
   public Config findById(@RequestParam(required = false) Long id) {
     Config c = null;
     if (id != null && id > 0) {
-      c = config.findById(id);
+      c = configService.findById(id);
     }
     if (c == null) {
       c = new Config();
@@ -182,7 +182,7 @@ public class AdminController {
 
   @RequestMapping(value = "/edit/copy/{id}")
   public String createFromCopy(@PathVariable long id, RedirectAttributes r) {
-    Config c = config.findById(id);
+    Config c = configService.findById(id);
     c.setId(null);
     r.addFlashAttribute("config", c);
     return "redirect:/create/config/";
@@ -197,15 +197,15 @@ public class AdminController {
     }
     Set<Long> ids = Sets.newHashSet(req.getConfigIds());
     try {
-      for (Config c : config.findAll()) {
+      for (Config c : configService.findAll()) {
         if (!ids.contains(c.getId())) {
           continue;
         }
         if (c.getContent().contains(req.getSrc())) {
           c.setEditor(getCurrentUserName());
           c.setContent(StringUtils.replace(c.getContent(), req.getSrc(), req.getDst()));
-          config.save(c);
-          publish.cpZookeeper(c);
+          configService.save(c);
+          zookeeperService.cpZookeeper(c);
           log.info("{}(profile={}) replace [{}] -> [{}]", c.getName(), c.getProfile(), req.getSrc(), req.getDst());
         }
       }
@@ -229,7 +229,7 @@ public class AdminController {
       return "redirect:/replace/form/";
     }
     List<ReplaceRequest> affected = Lists.newArrayList();
-    for (Config i : config.findAll()) {
+    for (Config i : configService.findAll()) {
       if (i.getContent().contains(req.getSrc())) {
         affected.add(preview(req, i));
       }

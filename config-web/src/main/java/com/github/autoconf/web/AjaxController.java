@@ -24,20 +24,20 @@ import java.util.*;
 @RestController
 public class AjaxController {
   @Autowired
-  private ConfigService config;
+  private ConfigService configService;
   @Autowired
-  private ConfigHistoryService history;
+  private ConfigHistoryService historyService;
 
   @PostConstruct
   void fillCache() {
-    config.findAll();
+    configService.findAll();
   }
 
   @RequestMapping(value = "/ajax/diff", method = RequestMethod.POST)
   @ResponseBody
   public String historyDiff(@RequestParam long id) {
-    ConfigHistory h = history.findbyId(id);
-    Config c = config.findById(h.getConfigId());
+    ConfigHistory h = historyService.findbyId(id);
+    Config c = configService.findById(h.getConfigId());
     diff_match_patch dmp = new diff_match_patch();
     LinkedList<diff_match_patch.Diff> diffs = dmp.diff_main(c.getContent(), h.getContent(), true);
     dmp.diff_cleanupSemantic(diffs);
@@ -50,7 +50,7 @@ public class AjaxController {
     final DataRequest req = DataRequest.parse(request);
     DataResponse<Config> res = new DataResponse<>();
     res.setDraw(req.getDraw());
-    List<Config> all = config.findAll();
+    List<Config> all = configService.findAll();
     res.setRecordsTotal(all.size());
     Set<Config> filtered;
     // 全局搜索过滤
@@ -92,14 +92,14 @@ public class AjaxController {
     List<ConfigHistory> all;
     if (configId > 0) {
       if (Strings.isNullOrEmpty(editor)) {
-        all = history.findByConfigId(configId);
+        all = historyService.findByConfigId(configId);
       } else {
-        all = history.findByConfigIdAndEditor(configId, editor);
+        all = historyService.findByConfigIdAndEditor(configId, editor);
       }
     } else if (!Strings.isNullOrEmpty(editor)) {
-      all = history.findByEditor(editor);
+      all = historyService.findByEditor(editor);
     } else {
-      all = history.findRecent();
+      all = historyService.findRecent();
     }
 
     res.setRecordsTotal(all.size());

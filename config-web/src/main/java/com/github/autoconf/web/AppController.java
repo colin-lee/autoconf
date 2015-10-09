@@ -18,9 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class AppController {
   @Autowired
-  private ConfigHistoryService history;
+  private ConfigHistoryService historyService;
   @Autowired
-  private ConfigService config;
+  private ConfigService configService;
 
   @RequestMapping(value = {"/", "/home"})
   public String home() {
@@ -39,9 +39,9 @@ public class AppController {
 
   @RequestMapping("/view/history/{id}")
   public String viewHistory(@PathVariable long id, Model model) {
-    ConfigHistory h = history.findbyId(id);
+    ConfigHistory h = historyService.findbyId(id);
     model.addAttribute("history", h);
-    model.addAttribute("configExist", config.findById(h.getConfigId()) != null);
+    model.addAttribute("configExist", configService.findById(h.getConfigId()) != null);
     return "view_history";
   }
 }
