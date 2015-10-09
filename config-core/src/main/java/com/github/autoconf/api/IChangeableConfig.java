@@ -2,7 +2,6 @@ package com.github.autoconf.api;
 
 /**
  * 配置文件
- * <p/>
  * Created by lirui on 2015/09/22.
  */
 public interface IChangeableConfig extends IConfig, IChangeable {
