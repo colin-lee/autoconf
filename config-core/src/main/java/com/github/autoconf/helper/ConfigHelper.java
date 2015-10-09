@@ -50,10 +50,11 @@ public class ConfigHelper {
   }
 
   /**
-   * 1.扫描配置参数 CONFIG_PATH <br/>
-   * 2.扫描类路径下的 autoconf 目录 <br/>
-   * 3.如果找不到就用java.io.tmpdir <br/>
-   *
+   * <pre>
+   * 1.扫描配置参数 CONFIG_PATH
+   * 2.扫描类路径下的 autoconf 目录
+   * 3.如果找不到就用java.io.tmpdir
+   * </pre>
    * @return factory
    */
   private static Path scanConfigPath() {
@@ -194,6 +195,7 @@ public class ConfigHelper {
    * 获取本机内网ip，ip会在第一次访问后缓存起来，并且不会再更新
    * 所以那个模式可能不适合你的机器，本类只是方便大多数人的使用，如果你的
    * 机器不能用该模式获得ip，请使用NetworkInterfaceEx类自行获取
+   * @return 返回服务器内部IP
    */
   public static String scanServerInnerIP() {
     try {
@@ -216,11 +218,12 @@ public class ConfigHelper {
   }
 
   /**
-   * 判断一个IP是不是内网IP段的IP<br/>
-   * 10.0.0.0 – 10.255.255.255<br/>
-   * 172.16.0.0 – 172.31.255.255<br/>
-   * 192.168.0.0 – 192.168.255.255<br/>
-   *
+   * <pre>
+   * 判断一个IP是不是内网IP段的IP
+   * 10.0.0.0 – 10.255.255.255
+   * 172.16.0.0 – 172.31.255.255
+   * 192.168.0.0 – 192.168.255.255
+   * </pre>
    * @param ip ip地址
    * @return 如果是内网返回true，否则返回false
    */

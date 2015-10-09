@@ -107,9 +107,6 @@ public class ZookeeperUtil {
     }
   }
 
-  /**
-   * 删除一个目录，如果必要会删除其子目录
-   */
   public static void delete(CuratorFramework client, String path) {
     try {
       client.delete().deletingChildrenIfNeeded().forPath(path);

@@ -15,9 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 合并多个配置文件的内容为一个，同名配置，排在前面的优先。<br/>
- * 1. 仅支持kv类型的合并 <br/>
- * 2. 仅支持UTF8编码 <br/>
+ * 合并多个配置文件的内容为一个，同名配置，排在前面的优先。
+ * <pre>
+ * 1. 仅支持kv类型的合并
+ * 2. 仅支持UTF8编码
+ * </pre>
  * Created by lirui on 15/9/24.
  */
 public class MergedConfig extends ChangeableConfig implements IChangeableConfig {

@@ -179,6 +179,7 @@ public class WebServer {
   /**
    * 根据协议和scheme获取服务端口号
    *
+   * @throws Exception 识别端口过程中可能出现的异常
    * @return 端口号
    */
   public static Integer getHttpPort() throws Exception {
