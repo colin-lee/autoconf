@@ -35,4 +35,7 @@ public interface UserMapper {
 
   @Update("UPDATE user SET last_login=NOW() WHERE username=#{username}")
   void updateLoginTime(@Param("username") String username);
+
+  @Select("SELECT * FROM user WHERE last_login<#{day}")
+  List<User> findNotLoginAfter(@Param("day") String day);
 }

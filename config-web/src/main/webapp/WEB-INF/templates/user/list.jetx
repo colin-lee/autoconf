@@ -74,7 +74,7 @@
       data: data,
       columnDefs: [{
         targets: 0, render: function (data, type, full, meta) {
-          return '<a href="${CONTEXT_PATH}/admin/profile?username=' + escape(data) + '">' + data + '</a>'
+          return '<a href="${CONTEXT_PATH}/admin/profile?username=' + encodeURIComponent(data) + '">' + data + '</a>'
         }
       }, {
         targets: 5,
@@ -82,8 +82,8 @@
         sortable: false,
         render: function (data, type, full, meta) {
           var name = full[0];
-          return '<a href="${CONTEXT_PATH}/admin/lock/?username=' + escape(name) + '">锁定</a>' +
-                  '&nbsp;&nbsp;<a href="${CONTEXT_PATH}/password?username=' + escape(name) + '">修改密码</a>';
+          return '<a href="${CONTEXT_PATH}/admin/lock/?username=' + encodeURIComponent(name) + '">锁定</a>' +
+                  '&nbsp;&nbsp;<a href="${CONTEXT_PATH}/password?username=' + encodeURIComponent(name) + '">修改密码</a>';
         }
       }],
       createdRow: function (row, data, dataIndex) {

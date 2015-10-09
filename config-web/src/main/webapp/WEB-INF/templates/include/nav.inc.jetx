@@ -4,7 +4,7 @@
   </div>
   <div>
     <ul class="nav navbar-nav" id="navbar">
-      <li #if(navbar=="home")class="active"#end><a href="${CONTEXT_PATH}/">首页</a></li>
+      <li #if(navbar=="home")class="active"#end><a href="${CONTEXT_PATH}/">配置管理</a></li>
       <li #if(navbar=="history")class="active"#end><a href="${CONTEXT_PATH}/history">修改历史</a></li>
       <li #if(navbar=="createConfig")class="active"#end><a href="${CONTEXT_PATH}/create/config/">新建配置</a></li>
       <li #if(navbar=="replaceBatch")class="active"#end><a href="${CONTEXT_PATH}/replace/form/">批量修改</a></li>

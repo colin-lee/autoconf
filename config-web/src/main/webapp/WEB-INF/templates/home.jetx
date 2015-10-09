@@ -40,14 +40,12 @@
 #tag layout_block("bodyContent")
 <div class="container-fluid">
   <div>
-    <!-- 表格开始 -->
     <table class="table" id="dataTable">
       <thead>
       <tr id="advanced">
         <td><input placeholder="搜索文件名"/></td>
         <td><input placeholder="搜索配置组"/></td>
-        <td colspan="4"><input placeholder="搜索内容"/> <span class="help-inline text-info col-md-offset-1">搜索支持正则表达式</span>
-        </td>
+        <td colspan="4"><input placeholder="搜索内容"/> <span class="help-inline text-info col-md-offset-1">搜索支持正则表达式</span></td>
       </tr>
       <tr>
         <th>名称</th>
@@ -65,7 +63,11 @@
 #tag layout_block("scriptContent")
 <script>
   $(document).ready(function () {
+    var bootstrapDom = "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-5'i><'col-sm-7'p>>";
     var table = $("#dataTable").DataTable({
+      "dom": bootstrapDom,
       "processing": false,
       "serverSide": true,
       "search": {

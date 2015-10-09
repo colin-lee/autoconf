@@ -1,38 +1,34 @@
 #set(title="批量修改配置内容")
+#set(navbar="replaceBatch")
 #tag layout_block("bodyContent")
-<div class="main">
-  <h4>${title}</h4>
+
+<div class="container">
+  <legend>批量替换配置内容</legend>
 
   <form class="form-horizontal" role="form" action="${CONTEXT_PATH}/replace/preview/">
-    #if (message)
-      <div class="col-md-offset-2 bg-info alert">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <p class="bg-danger">${message} ！</p>
-      </div>
-    #end
     <fieldset>
       <div class="form-group">
         <label for="src" class="col-md-2 control-label">查找它</label>
 
         <div class="col-md-3 col-lg-3">
-          <input type="text" class="form-control focused" name="src" id="src" placeholder="必填"
-                 value="${replace.src}">
+          <input type="text" class="form-control focused" name="src" id="src" placeholder="必填" value="${replace.src}"/>
         </div>
       </div>
       <div class="form-group">
         <label for="dst" class="col-md-2 control-label">替换为</label>
 
         <div class="col-md-3 col-lg-3">
-          <input type="text" class="form-control" name="dst" id="dst" placeholder="必填" value="${replace.dst}">
+          <input type="text" class="form-control" name="dst" id="dst" placeholder="必填" value="${replace.dst}"/>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group well well-sm">
         <div class="col-md-offset-2 col-md-10 col-lg-8">
           <button type="submit" class="btn btn-primary">预览</button>
+          <input id="cancel_btn" class="btn" type="button" value="返回" onclick="history.back()"/>
         </div>
       </div>
     </fieldset>
   </form>
 </div>
 #end
-#include("/include/layout.jetx")
+#include("/include/form-layout.jetx")

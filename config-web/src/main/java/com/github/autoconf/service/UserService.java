@@ -50,4 +50,8 @@ public class UserService {
   public void updateLoginTime(String username) {
     mapper.updateLoginTime(username);
   }
+
+  public List<User> findNotLoginAfter(String day) {
+    return mapper.findNotLoginAfter(day);
+  }
 }

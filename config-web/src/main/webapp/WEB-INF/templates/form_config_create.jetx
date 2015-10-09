@@ -1,31 +1,29 @@
 #set(title="新建配置")
+#set(navbar="createConfig")
 #tag layout_block("bodyContent")
-<div class="main">
-  <h4>${title}</h4>
+<div class="container">
+  <legend>新建配置</legend>
 
   <form class="form-horizontal" role="form" action="${CONTEXT_PATH}/create/config/" method="POST">
-    #include("/include/alert.inc.jetx")
     <fieldset>
       <div class="form-group">
         <label for="name" class="col-md-2 control-label">名称</label>
 
         <div class="col-md-3 col-lg-3">
-          <input type="text" class="form-control focused" name="name" id="name" placeholder="必填"
-                 value="${config.name}">
+          <input type="text" class="form-control focused" name="name" id="name" placeholder="必填" value="${config.name}"/>
         </div>
 
-        <p class="help-block col-md-offset-2">如：db-wenwen-main</p>
+        <p class="help-block col-md-offset-2">如：db-main</p>
       </div>
       <div class="form-group">
         <label for="profile" class="col-md-2 control-label">配置组</label>
 
         <div class="col-md-3 col-lg-3">
-          <input type="text" class="form-control" name="profile" id="profile" placeholder="必填"
-                 value='${config.profile?!"test"}'>
+          <input type="text" class="form-control" name="profile" id="profile" placeholder="必填" value='${config.profile?!"test"}'/>
 
-          <p class="help-block bg-info">批量创建：逗号分隔的多个组名，如：test,deploy</p>
+          <p class="help-block bg-info">批量创建：逗号分隔的多个组名，如：test,online</p>
         </div>
-        <p class="help-block col-md-offset-2">如：deploy(正式),sogou(搜狗侧),test(测试环境)</p>
+        <p class="help-block col-md-offset-2">如：online(正式),preview(预发布),test(测试环境)</p>
       </div>
       <div class="form-group">
         <label for="content" class="col-md-2 control-label">内容</label>
@@ -35,13 +33,14 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group well well-sm">
         <div class="col-md-offset-2 col-md-10 col-lg-8">
           <button type="submit" class="btn btn-primary">创建</button>
+          <input id="cancel_btn" class="btn" type="button" value="返回" onclick="history.back()"/>
         </div>
       </div>
     </fieldset>
   </form>
 </div>
 #end
-#include("/include/layout.jetx")
+#include("/include/form-layout.jetx")

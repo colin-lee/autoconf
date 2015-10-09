@@ -1,4 +1,5 @@
 #set(title="查看配置历史")
+#set(navbar="history")
 #tag layout_block("headContent")
 <style>
   #preview {
@@ -11,7 +12,6 @@
 #define(ConfigHistory history)
 #tag layout_block("bodyContent")
 <div class="main col-md-offset-1 col-md-10">
-  #include("/include/alert.inc.jetx")
   <h4>${title}</h4>
   <table class="table table-bordered">
     <thead>
@@ -40,9 +40,7 @@
       <div class="lead">配置内容</div>
       <div class="form-group">
         <div class="col-md-12 col-lg-12">
-					<textarea disabled="disabled" readonly="readonly" rows="15" class="form-control" name="content"
-                    id="content"
-                    placeholder="选填">${history.content}</textarea>
+          <textarea disabled="disabled" readonly="readonly" rows="15" class="form-control" name="content" id="content" placeholder="选填">${history.content}</textarea>
         </div>
       </div>
 

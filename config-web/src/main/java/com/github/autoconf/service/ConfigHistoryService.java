@@ -50,6 +50,7 @@ public class ConfigHistoryService {
   public void clearCache() {
   }
 
+  @CacheEvict(value = NAME, allEntries = true)
   public void insert(ConfigHistory history) {
     mapper.insert(history);
   }

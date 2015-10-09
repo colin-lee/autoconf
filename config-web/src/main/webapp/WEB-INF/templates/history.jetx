@@ -1,4 +1,5 @@
 #set(title="配置历史-cms")
+#set(navbar="history")
 #tag layout_block("headContent")
 <style>
   .table thead td {
@@ -43,7 +44,6 @@
 #tag layout_block("bodyContent")
 <div class="container-fluid">
   <div>
-    <!-- 表格开始 -->
     <table id="dataTable" class="table">
       <thead>
       <tr id="advanced">
@@ -61,23 +61,19 @@
         <th>时间</th>
       </tr>
       </thead>
-
-      <tbody>
-      </tbody>
     </table>
-
-    <!-- 表格结束 -->
   </div>
 </div>
 #end
 
-
 #tag layout_block("scriptContent")
 <script type="text/javascript">
-  var contextPath = '${CONTEXT_PATH}';
   $(document).ready(function () {
+    var bootstrapDom = "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-5'i><'col-sm-7'p>>";
     var table = $("#dataTable").DataTable({
-      "dom": "l<\"#caption\">frtip",
+      "dom": bootstrapDom,
       "processing": false,
       "serverSide": true,
       "search": {
@@ -89,7 +85,7 @@
         {
           data: 'name', render: function (data, type, row, meta) {
           if (type == 'display') {
-            return "<a href=\"" + contextPath + "/view/history/" + row.id + "\">" + data + "</a>";
+            return "<a href=\"${CONTEXT_PATH}/view/history/" + row.id + "\">" + data + "</a>";
           } else {
             return data;
           }
@@ -101,7 +97,7 @@
         {
           data: 'editor', render: function (data, type, row, meta) {
           if (type == 'display') {
-            return "<a href=\"" + contextPath + "/history/?editor=" + encodeURIComponent(data) + "\">" + data + "</a>";
+            return "<a href=\"${CONTEXT_PATH}/history/?editor=" + encodeURIComponent(data) + "\">" + data + "</a>";
           } else {
             return data;
           }
@@ -149,8 +145,6 @@
         table.draw();
       }
     });
-
-    $("#caption").html("<h4 class=\"pull-left col-md-offset-4 text-blue\">最近修改历史</h4>");
   });
 </script>
 

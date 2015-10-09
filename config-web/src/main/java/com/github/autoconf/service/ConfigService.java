@@ -19,24 +19,14 @@ public class ConfigService {
   private static final String NAME = "ConfigCache";
   @Autowired
   private ConfigMapper mapper;
-  //TODO: 解决循环引用的问题
-  @Autowired
-  private PublishService publish;
 
+  @CacheEvict(value = NAME, allEntries = true)
   public void save(Config config) {
-    doSave(config, true);
-  }
-
-  private void doSave(Config config, boolean cpZookeeper) {
-    try {
-      if (config.isNew()) {
-        mapper.insertAndGetId(config);
-      } else {
-        config.incVersion();
-        mapper.update(config);
-      }
-    } finally {
-      publish.cpZookeeper(config, cpZookeeper);
+    if (config.isNew()) {
+      mapper.insertAndGetId(config);
+    } else {
+      config.incVersion();
+      mapper.update(config);
     }
   }
 
@@ -49,7 +39,7 @@ public class ConfigService {
     return mapper.findAll();
   }
 
-  @CacheEvict(value = NAME)
+  @CacheEvict(value = NAME, allEntries = true)
   public void clearCache() {
   }
 
@@ -58,7 +48,6 @@ public class ConfigService {
       config.setContent("#deletedBy " + config.getEditor()); //标识为被删除
       config.incVersion();
       mapper.deleteById(config.getId());
-      publish.rmZookeeper(config);
     }
   }
 }

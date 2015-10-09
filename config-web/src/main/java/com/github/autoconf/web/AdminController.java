@@ -5,6 +5,7 @@ import com.github.autoconf.entity.ConfigHistory;
 import com.github.autoconf.entity.ReplaceRequest;
 import com.github.autoconf.service.ConfigHistoryService;
 import com.github.autoconf.service.ConfigService;
+import com.github.autoconf.service.PublishService;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -44,6 +45,8 @@ public class AdminController {
   private ConfigService config;
   @Autowired
   private ConfigHistoryService history;
+  @Autowired
+  private PublishService publish;
 
   @RequestMapping(value = "/create/config/", method = RequestMethod.GET)
   public String createConfig() {
@@ -72,9 +75,11 @@ public class AdminController {
           one.setProfile(i);
           one.setContent(c.getContent());
           config.save(one);
+          publish.cpZookeeper(one, true);
         }
       } else {
         config.save(c);
+        publish.cpZookeeper(c, true);
       }
       return "redirect:/?search=" + encodeURL(c.getName());
     } catch (Exception e) {
@@ -106,6 +111,7 @@ public class AdminController {
       if (c != null) {
         c.setEditor(getCurrentUserName());
         config.delete(c);
+        publish.rmZookeeper(c);
         r.addFlashAttribute("message", "删除id为" + id + "的配置成功！");
         url = "/?search=" + encodeURL(c.getName());
       }
@@ -120,6 +126,7 @@ public class AdminController {
     try {
       c.setEditor(getCurrentUserName());
       config.save(c);
+      publish.cpZookeeper(c, true);
       r.addFlashAttribute("message", "修改成功");
     } catch (Exception e) {
       log.error("/edit/config/: {}", c, e);
@@ -145,6 +152,7 @@ public class AdminController {
       c.setEditor(getCurrentUserName());
       c.setContent(h.getContent());
       config.save(c);
+      publish.cpZookeeper(c, true);
       r.addFlashAttribute("message", "回滚版本为" + h.getVersion() + "的配置\"" + c.getName() + "\"成功");
     } catch (Exception e) {
       log.error("/recover/history/: {}", h, e);
@@ -196,6 +204,7 @@ public class AdminController {
           c.setEditor(getCurrentUserName());
           c.setContent(StringUtils.replace(c.getContent(), req.getSrc(), req.getDst()));
           config.save(c);
+          publish.cpZookeeper(c, true);
           log.info("{}(profile={}) replace [{}] -> [{}]", c.getName(), c.getProfile(), req.getSrc(), req.getDst());
         }
       }

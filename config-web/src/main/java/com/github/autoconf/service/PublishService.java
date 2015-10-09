@@ -33,9 +33,9 @@ import java.util.List;
 public class PublishService {
   private Logger log = LoggerFactory.getLogger(PublishService.class);
   @Autowired
-  private ConfigService service;
+  private ConfigService configService;
   @Autowired
-  private ConfigHistoryService history;
+  private ConfigHistoryService historyService;
   @Value("${zookeeper.authenticationType}")
   private String authType = "digest";
   @Value("${zookeeper.authentication}")
@@ -66,17 +66,18 @@ public class PublishService {
     clearCache();
 
     // 首先保存config_history备份
-    Config old = service.findById(config.getId());
+    Config old = configService.findById(config.getId());
     ConfigHistory backup = new ConfigHistory();
     backup.copy(old);
     try {
-      history.insert(backup);
+      historyService.insert(backup);
     } catch (Exception e) {
       log.error("cannot insertBackup({})", backup, e);
     }
 
-    if (!scp)
+    if (!scp) {
       return;
+    }
 
     try {
       // 发布到zookeeper中
@@ -108,7 +109,7 @@ public class PublishService {
     ConfigHistory backup = new ConfigHistory();
     backup.copy(config);
     try {
-      history.insert(backup);
+      historyService.insert(backup);
     } catch (Exception e) {
       log.error("cannot insertBackup({})", backup, e);
     }
@@ -142,7 +143,7 @@ public class PublishService {
   }
 
   private void clearCache() {
-    history.clearCache();
-    service.clearCache();
+    historyService.clearCache();
+    configService.clearCache();
   }
 }
