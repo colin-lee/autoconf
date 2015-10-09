@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sun.misc.BASE64Encoder;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -47,7 +47,7 @@ public class PublishService {
   void init() {
     client = ConfigHelper.getDefaultClient();
     HashCode hash = Hashing.sha1().newHasher().putString(auth, Charsets.UTF_8).hash();
-    String encoded = new BASE64Encoder().encode(hash.asBytes());
+    String encoded = BaseEncoding.base64().encode(hash.asBytes());
     int pos = auth.indexOf(':');
     if (pos == -1) {
       return;
