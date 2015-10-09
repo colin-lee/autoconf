@@ -65,10 +65,10 @@ CREATE TABLE IF NOT EXISTS `user` (
   `password`    VARCHAR(128)     NOT NULL DEFAULT '',
   `salt`        VARCHAR(32)      NOT NULL DEFAULT '',
   `roles`       VARCHAR(255)     NOT NULL DEFAULT '',
-  `permissions` TEXT,
-  `locked`      TINYINT(2)                DEFAULT NULL,
+  `permissions` TEXT       NOT NULL DEFAULT '',
+  `locked`      TINYINT(2) NOT NULL DEFAULT 0,
   `last_login`  TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `create_time` DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` DATETIME   NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`username`)
 )
@@ -78,9 +78,9 @@ CREATE TABLE IF NOT EXISTS `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 
-INSERT INTO `user` (`id`, `username`, `password`, `salt`, `roles`, `permissions`, `locked`)
+INSERT INTO `user` (`id`, `username`, `password`, `salt`, `roles`, `permissions`, `locked`, `create_time`)
 VALUES
-  (1, 'root', '8ca4175aa749cbb9b80d072b7f9775bc', '117f16dd8f9da43849d75f438f04eb41', 'admin', '', 0);
+  (1, 'root', '8ca4175aa749cbb9b80d072b7f9775bc', '117f16dd8f9da43849d75f438f04eb41', 'admin', '', 0, NOW());
 
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
