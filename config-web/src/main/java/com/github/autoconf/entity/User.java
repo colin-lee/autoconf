@@ -20,8 +20,8 @@ public class User {
   private String username;
   private String password;
   private String salt;
-  private String roles;
-  private String permissions;
+  private String roles = "";
+  private String permissions = "";
   private Date lastLogin;
   private boolean locked;
 
