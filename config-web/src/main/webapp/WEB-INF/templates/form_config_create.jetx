@@ -21,7 +21,7 @@
         <div class="col-md-3 col-lg-3">
           <input type="text" class="form-control" name="profile" id="profile" placeholder="必填" value='${config.profile?!"test"}'/>
 
-          <p class="help-block bg-info">批量创建：逗号分隔的多个组名，如：test,online</p>
+          <p class="help-block bg-info">批量创建：逗号分隔的多个组名</p>
         </div>
         <p class="help-block col-md-offset-2">如：online(正式),preview(预发布),test(测试环境)</p>
       </div>

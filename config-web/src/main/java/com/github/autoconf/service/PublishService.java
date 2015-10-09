@@ -5,12 +5,14 @@ import com.github.autoconf.entity.ConfigHistory;
 import com.github.autoconf.helper.ConfigHelper;
 import com.github.autoconf.helper.ZookeeperUtil;
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.ACL;
@@ -40,6 +42,8 @@ public class PublishService {
   private String authType = "digest";
   @Value("${zookeeper.authentication}")
   private String auth = "root:Password4Zookeeper";
+  @Value("${zookeeper.basePath}")
+  private String zkPath = "/cms/config";
   private CuratorFramework client;
   private List<ACL> defaultAclList = Lists.newArrayList();
 
@@ -62,7 +66,7 @@ public class PublishService {
   /**
    * 发布配置，需要：备份原配置，保存新内容，发布到zookeeper。
    */
-  public void cpZookeeper(Config config, boolean scp) {
+  public void cpZookeeper(Config config) {
     clearCache();
 
     // 首先保存config_history备份
@@ -75,10 +79,12 @@ public class PublishService {
       log.error("cannot insertBackup({})", backup, e);
     }
 
-    if (!scp) {
-      return;
+    String path = config.getPath();
+    if (Strings.isNullOrEmpty(path)) {
+      path = ZKPaths.makePath(zkPath, config.getName(), config.getProfile());
+      config.setPath(path);
+      configService.updatePath(config.getPath(), config.getId());
     }
-
     try {
       // 发布到zookeeper中
       byte[] payload;
@@ -87,15 +93,18 @@ public class PublishService {
       } else {
         payload = ZookeeperUtil.newBytes(config.getContent());
       }
-      ZookeeperUtil.ensure(client, config.getPath());
-      ZookeeperUtil.setData(client, config.getPath(), payload);
+      if (ZookeeperUtil.exists(client, path) != null) {
+        ZookeeperUtil.setData(client, path, payload);
+      } else {
+        ZookeeperUtil.create(client, path, payload);
+      }
       // 设定路径权限
       if (!Iterables.isEmpty(defaultAclList)) {
-        ZookeeperUtil.setACL(client, config.getPath(), defaultAclList);
+        ZookeeperUtil.setACL(client, path, defaultAclList);
       }
     } catch (Exception e) {
-      log.error("cannot publish to zookeeper, path={}", config.getPath(), e);
-      throw new RuntimeException("cannot publish to zookeeper, path=" + config.getPath() + ", " + e.getMessage());
+      log.error("cannot publish to zookeeper, path={}", path, e);
+      throw new RuntimeException("cannot publish to zookeeper, path=" + path + ", " + e.getMessage());
     }
   }
 

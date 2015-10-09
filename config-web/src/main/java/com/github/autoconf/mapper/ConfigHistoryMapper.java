@@ -28,7 +28,7 @@ public interface ConfigHistoryMapper {
   @Select("SELECT * FROM config_history")
   List<ConfigHistory> findAll();
 
-  @Insert("INSERT config_history SET config_id=#{configId}, version=#{version}, editor=#{editor}, name=#{name}, path=#{path}, content=#{content}")
+  @Insert("INSERT config_history SET config_id=#{configId}, version=#{version}, editor=#{editor}, name=#{name}, profile=#{profile}, path=#{path}, content=#{content}")
   void insert(ConfigHistory history);
 
   @Select("SELECT * FROM config_history WHERE id=#{id}")

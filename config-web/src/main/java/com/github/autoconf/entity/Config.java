@@ -79,8 +79,8 @@ public class Config {
 
   public Config(String name, String profile, String content) {
     this.content = content;
-    setName(name);
-    setProfile(profile);
+    this.name = name;
+    this.profile = profile;
   }
 
   public Long getId() {
@@ -97,7 +97,6 @@ public class Config {
 
   public void setName(String name) {
     this.name = name;
-    updatePath();
   }
 
   @JsonIgnore
@@ -115,12 +114,6 @@ public class Config {
 
   public void setProfile(String profile) {
     this.profile = profile;
-    updatePath();
-  }
-
-  //TODO: XXXX
-  private void updatePath() {
-    this.path = "/cms/" + name + "/" + profile;
   }
 
   public int getVersion() {

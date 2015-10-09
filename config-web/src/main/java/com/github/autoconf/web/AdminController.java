@@ -64,22 +64,22 @@ public class AdminController {
     }
     c.setModifyTime(new Date(System.currentTimeMillis()));
     c.setEditor(getCurrentUserName());
+    CharMatcher matcher = CharMatcher.anyOf(",; |");
     try {
-      CharMatcher matcher = CharMatcher.anyOf(",; |");
       if (matcher.matchesAnyOf(c.getProfile())) {
         // 批量创建
-        for (String i : Splitter.on(matcher).trimResults().omitEmptyStrings().splitToList(c.getProfile())) {
+        for (String i : Splitter.on(matcher).trimResults().omitEmptyStrings().split(c.getProfile())) {
           Config one = new Config();
           one.setEditor(getCurrentUserName());
           one.setName(c.getName());
           one.setProfile(i);
           one.setContent(c.getContent());
           config.save(one);
-          publish.cpZookeeper(one, true);
+          publish.cpZookeeper(one);
         }
       } else {
         config.save(c);
-        publish.cpZookeeper(c, true);
+        publish.cpZookeeper(c);
       }
       return "redirect:/?search=" + encodeURL(c.getName());
     } catch (Exception e) {
@@ -126,7 +126,7 @@ public class AdminController {
     try {
       c.setEditor(getCurrentUserName());
       config.save(c);
-      publish.cpZookeeper(c, true);
+      publish.cpZookeeper(c);
       r.addFlashAttribute("message", "修改成功");
     } catch (Exception e) {
       log.error("/edit/config/: {}", c, e);
@@ -152,7 +152,7 @@ public class AdminController {
       c.setEditor(getCurrentUserName());
       c.setContent(h.getContent());
       config.save(c);
-      publish.cpZookeeper(c, true);
+      publish.cpZookeeper(c);
       r.addFlashAttribute("message", "回滚版本为" + h.getVersion() + "的配置\"" + c.getName() + "\"成功");
     } catch (Exception e) {
       log.error("/recover/history/: {}", h, e);
@@ -198,13 +198,14 @@ public class AdminController {
     Set<Long> ids = Sets.newHashSet(req.getConfigIds());
     try {
       for (Config c : config.findAll()) {
-        if (!ids.contains(c.getId()))
+        if (!ids.contains(c.getId())) {
           continue;
+        }
         if (c.getContent().contains(req.getSrc())) {
           c.setEditor(getCurrentUserName());
           c.setContent(StringUtils.replace(c.getContent(), req.getSrc(), req.getDst()));
           config.save(c);
-          publish.cpZookeeper(c, true);
+          publish.cpZookeeper(c);
           log.info("{}(profile={}) replace [{}] -> [{}]", c.getName(), c.getProfile(), req.getSrc(), req.getDst());
         }
       }

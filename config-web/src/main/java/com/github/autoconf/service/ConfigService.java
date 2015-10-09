@@ -50,5 +50,9 @@ public class ConfigService {
       mapper.deleteById(config.getId());
     }
   }
+
+  public void updatePath(String path, Long id) {
+    mapper.updatePath(path, id);
+  }
 }
 

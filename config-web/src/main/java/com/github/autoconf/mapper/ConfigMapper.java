@@ -23,10 +23,13 @@ public interface ConfigMapper {
   @Delete("DELETE FROM config WHERE id=#{id}")
   void deleteById(@Param("id") Long id);
 
-  @Insert("INSERT config SET editor=#{editor}, name=#{name}, profile=#{profile}, path=#{path}, content=#{content}")
+  @Insert("INSERT config SET editor=#{editor}, name=#{name}, profile=#{profile}, content=#{content}")
   @Options(useGeneratedKeys = true)
   void insertAndGetId(Config config);
 
   @Update("UPDATE config SET editor=#{editor}, version=#{version}, content=#{content} WHERE id=#{id}")
   void update(Config config);
+
+  @Update("UPDATE config SET path=#{path} WHERE id=#{id}")
+  void updatePath(@Param("path") String path, @Param("id") Long id);
 }
