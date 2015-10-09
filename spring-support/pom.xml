@@ -8,8 +8,8 @@
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
+    <name>spring-support</name>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>spring-support</artifactId>
 
     <licenses>

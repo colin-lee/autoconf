@@ -3,7 +3,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <name>auto-config</name>
     <groupId>com.github.colin-lee</groupId>
     <artifactId>auto-config</artifactId>
     <packaging>pom</packaging>
@@ -19,8 +19,12 @@
     <modules>
         <module>config-core</module>
         <module>spring-support</module>
-        <module>config-web</module>
     </modules>
+    <scm>
+        <connection>scm:git:https://github.com/colin-lee/autoconf.git</connection>
+        <developerConnection>scm:git:https://github.com/colin-lee/autoconf.git</developerConnection>
+        <url>https://github.com/colin-lee/autoconf</url>
+    </scm>
     <properties>
         <autoconf.version>1.0.0-SNAPSHOT</autoconf.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -353,7 +357,7 @@
     </developers>
     <profiles>
         <profile>
-            <id>release</id>
+            <id>nexus-release</id>
             <distributionManagement>
                 <snapshotRepository>
                     <id>nexus-release</id>
