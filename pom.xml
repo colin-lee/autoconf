@@ -26,7 +26,7 @@
         <url>https://github.com/colin-lee/autoconf</url>
     </scm>
     <properties>
-        <autoconf.version>1.0.0-SNAPSHOT</autoconf.version>
+        <autoconf.version>1.0.0</autoconf.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <encoding>UTF-8</encoding>
