@@ -10,7 +10,7 @@ import java.util.Locale;
 
 /**
  * 为jetbrick-template提供的一个公共扩展
- * <p/>
+ *
  * Created by lirui on 2015/1/15.
  */
 @JetAnnotations.Functions

@@ -6,7 +6,6 @@ import java.util.List;
 
 /**
  * 动态属性meta信息
- * <p/>
  * Created by lirui on 2015/02/27 上午10:23.
  */
 public class DynamicProperty {

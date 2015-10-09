@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 /**
  * 配置对象
- * <p/>
  * Created by lirui on 15/1/10.
  */
 public class Config {

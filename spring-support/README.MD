@@ -19,18 +19,18 @@ spring-support
 maven配置
 ===
     <dependency>
-        <groupId>com.wenwen.common</groupId>
+        <groupId>com.github.colin-lee</groupId>
         <artifactId>spring-support</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </dependency>
 
 使用ReloadablePropertySourcesPlaceholderConfigurer的spring配置文件
 ====
-    <bean class="com.wenwen.spring.reloadable.ReloadablePropertyPostProcessor">
+    <bean class="com.github.autoconf.spring.reloadable.ReloadablePropertyPostProcessor">
             <constructor-arg ref="propertyConfigurator"/>
     </bean>
 
-    <bean id="propertyConfigurator" class="com.wenwen.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer">
+    <bean id="propertyConfigurator" class="com.github.autoconf.spring.reloadable.ReloadablePropertySourcesPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="false"/>
         <property name="ignoreResourceNotFound" value="true"/>
         <!-- 可以是逗号分隔的多个配置文件名 -->
@@ -44,7 +44,7 @@ maven配置
     </bean>
 
     <!-- 通过 ${} 引用的变量有更改的时候，会自动更新对应属性 -->
-    <bean class="com.wenwen.support.spring.reloadable.Article">
+    <bean class="com.github.autoconf.support.spring.reloadable.Article">
         <property name="author" value="${article.author}"/>
         <property name="content" value="${article.content}, welcome"/>
     </bean>

@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 访问config对象
- * <p/>
+ *
  * Created by lirui on 2015/1/10.
  */
 public interface ConfigHistoryMapper {

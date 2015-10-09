@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class DefaultExceptionHandler {
   /**
    * 没有权限 异常
-   * <p/>
+   *
    * 后续根据不同的需求定制即可
    */
   @ExceptionHandler({UnauthorizedException.class})

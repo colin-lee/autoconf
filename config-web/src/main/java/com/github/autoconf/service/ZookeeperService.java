@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * 异步发布配置到zookeeper服务器
- * <p/>
+ *
  * Created by lirui on 15/2/9.
  */
 @Service

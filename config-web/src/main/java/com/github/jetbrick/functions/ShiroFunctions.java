@@ -13,7 +13,7 @@ import java.util.Collection;
 
 /**
  * shiro扩展
- * <p/>
+ *
  * Created by lirui on 2015/1/16.
  */
 @JetAnnotations.Functions

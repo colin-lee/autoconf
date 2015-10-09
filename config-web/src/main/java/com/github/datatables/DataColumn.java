@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 单个数据列
- * <p/>
+ *
  * Created by lirui on 15/2/8.
  */
 public class DataColumn implements Serializable {

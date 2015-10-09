@@ -21,7 +21,7 @@ public class DataRequest implements Serializable {
 
   /**
    * 解析请求参数
-   * <p/>
+   *
    * <pre>
    * draw:1
    * columns[0][data]:name
