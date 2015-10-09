@@ -6,11 +6,14 @@
 /*!40101 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0 */;
 
+CREATE DATABASE IF NOT EXISTS autoconf;
+
+USE autoconf;
 
 # Dump of table config
 # ------------------------------------------------------------
 
-CREATE TABLE `config` (
+CREATE TABLE IF NOT EXISTS `config` (
   `id`          INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `version`     INT(11) UNSIGNED NOT NULL DEFAULT '0'
   COMMENT '版本号',
@@ -30,12 +33,12 @@ CREATE TABLE `config` (
   UNIQUE KEY `uniqConfig` (`name`, `profile`)
 )
   ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8;
 
 # Dump of table config_history
 # ------------------------------------------------------------
 
-CREATE TABLE `config_history` (
+CREATE TABLE IF NOT EXISTS `config_history` (
   `id`          INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `config_id`   INT(11) UNSIGNED NOT NULL,
   `version`     INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -50,15 +53,13 @@ CREATE TABLE `config_history` (
   KEY `configId` (`config_id`)
 )
   ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8;
 
 
 # Dump of table user
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user`;
-
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS `user` (
   `id`          INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username`    VARCHAR(128)     NOT NULL DEFAULT '',
   `password`    VARCHAR(128)     NOT NULL DEFAULT '',
@@ -72,7 +73,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `name` (`username`)
 )
   ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8;
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
