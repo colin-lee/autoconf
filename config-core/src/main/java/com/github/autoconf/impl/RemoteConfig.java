@@ -91,6 +91,7 @@ public class RemoteConfig extends ChangeableConfig {
   }
 
   public void start() {
+    loaded = false;
     initZookeeper();
   }
 
