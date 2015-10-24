@@ -24,6 +24,7 @@ public class RemoteConfig extends ChangeableConfig {
   private final String path;
   private final List<String> paths;
   private final CuratorFramework client;
+  private boolean loaded = false;
   private final Watcher baseWatcher = new Watcher() {
     public void process(WatchedEvent event) {
       Event.EventType t = event.getType();
@@ -120,8 +121,11 @@ public class RemoteConfig extends ChangeableConfig {
     if (!found) {
       ZookeeperUtil.exists(client, path, baseWatcher);
       LOG.warn("cannot find {} in zookeeper, path{}", getName(), path);
-      reload(new byte[0]);
+      if (loaded) {
+        reload(new byte[0]);
+      }
     }
+    loaded = true;
   }
 
   protected void reload(byte[] content) {

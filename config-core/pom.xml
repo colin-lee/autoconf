@@ -6,7 +6,6 @@
         <artifactId>auto-config</artifactId>
         <groupId>com.github.colin-lee</groupId>
         <version>1.0.0</version>
-        <relativePath>../</relativePath>
     </parent>
     <name>config-core</name>
     <modelVersion>4.0.0</modelVersion>
