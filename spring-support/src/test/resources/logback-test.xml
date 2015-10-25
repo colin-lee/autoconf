@@ -1,5 +1,5 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
-    <property name="APP_Name" value="ConfigTest"/>
+    <property name="APP_Name" value="MyApp"/>
 
     <contextName>${APP_Name}</contextName>
 

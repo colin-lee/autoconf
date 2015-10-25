@@ -31,6 +31,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
    * 延迟加载远程配置初始值,避免加载配置影响启动
    */
   private long delaySeconds = 20;
+  private boolean loadedFromZookeeper = false;
 
   public RemoteConfigWithCache(String name, String basePath, List<String> paths, CuratorFramework client, File cacheFile) {
     super(name, basePath, paths, client);
@@ -67,7 +68,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
       @Override
       public void changed(Path path, byte[] content) {
         LOG.info("local change: {}", path);
-        reload(content);
+        refresh(content);
       }
     });
     //延迟加载zookeeper上的配置,避免服务启动过慢
@@ -98,8 +99,7 @@ public class RemoteConfigWithCache extends RemoteConfig {
     zkThread.start();
   }
 
-  @Override
-  protected void reload(byte[] content) {
+  private void refresh(byte[] content) {
     if (isChanged(content)) {
       copyOf(content);
       notifyListeners();
@@ -111,6 +111,17 @@ public class RemoteConfigWithCache extends RemoteConfig {
         LOG.error("cannot write {}", cacheFile);
       }
     }
+  }
+
+  @Override
+  protected void reload(byte[] content) {
+    //避免首次启动,远程配置不存在反而覆盖了本地配置
+    if ((content == null || content.length == 0) && !loadedFromZookeeper) {
+      LOG.warn("{} deleted, wont clean local for safety", getPath());
+      return;
+    }
+    loadedFromZookeeper = true;
+    refresh(content);
   }
 
   @Override
